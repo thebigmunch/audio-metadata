@@ -220,6 +220,7 @@ class FLACStreamInfo(StreamInfo):
 	_min_frame_size = attrib()
 	_max_frame_size = attrib()
 	bit_depth = attrib()
+	bitrate = attrib()
 	channels = attrib()
 	duration = attrib()
 	md5 = attrib()
@@ -253,8 +254,9 @@ class FLACStreamInfo(StreamInfo):
 		md5sum = binascii.hexlify(stream_info_block_data[12:][0]).decode('ascii', 'replace')
 
 		return cls(
-			None, None, min_block_size, max_block_size, min_frame_size,
-			max_frame_size, bit_depth, channels, duration, md5sum, sample_rate
+			None, None, min_block_size, max_block_size,
+			min_frame_size, max_frame_size, bit_depth,
+			None, channels, duration, md5sum, sample_rate
 		)
 
 
