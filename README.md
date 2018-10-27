@@ -98,7 +98,7 @@ Please don't submit issues regarding the following:
 	* MP4 reading is already well underway.
 * Add write support.
 
-If you're willing to [contribute](https://github.com/thebigmunch/audio-metadata/blob/master/CONTRIBUTING.md)
+If you're willing to [contribute](https://github.com/thebigmunch/audio-metadata/blob/master/.github/CONTRIBUTING.md)
 your time to work on them, post on the **Development** category on the [Discourse forum](https://forum.thebigmunch.me/).
 
 
@@ -114,7 +114,7 @@ Get your own thanks inbox at [SayThanks.io](https://saythanks.io/).
 
 #### Contribute
 
-[Contribute](https://github.com/thebigmunch/audio-metadata/blob/master/CONTRIBUTING.md) by submitting bug reports, feature requests, or code.
+[Contribute](https://github.com/thebigmunch/audio-metadata/blob/master/.github/CONTRIBUTING.md) by submitting bug reports, feature requests, or code.
 
 #### Help Others/Stay Informed
 
