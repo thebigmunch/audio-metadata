@@ -82,7 +82,8 @@ Features and functionality that set it apart:
 
 ## Usage
 
-See the [docs](https://audio-metadata.readthedocs.io).
+For the release version, see the [stable docs](https://audio-metadata.readthedocs.io/en/stable/).  
+For the development version, see the [latest docs](https://audio-metadata.readthedocs.io/en/latest/).
 
 The high-level API and basic usage are covered, but more advanced features/functionality need documentation.
 
