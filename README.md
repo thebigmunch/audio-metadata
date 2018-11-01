@@ -1,5 +1,7 @@
 # audio-metadata
 
+[![Read the Docs](https://img.shields.io/readthedocs/audio-metadata.svg)](https://audio-metadata.readthedocs.io)
+
 [audio-metadata](https://github.com/thebigmunch/audio-metadata) is a library for reading and, in the future, writing metadata from audio files.
 
 ### Why another audio metadata library? / Why not just use mutagen et al?
