@@ -270,7 +270,10 @@ class MPEGFrameHeader(DictMixin):
 
 		frame_start = data.tell()
 
-		sync, flags, indexes, remainder = struct.unpack('BBBB', data.read(4))
+		try:
+			sync, flags, indexes, remainder = struct.unpack('BBBB', data.read(4))
+		except struct.error:
+			raise InvalidFrame('Not a valid MPEG audio frame.')
 
 		if sync != 255 or flags >> 5 != 7:
 			raise InvalidFrame('Not a valid MPEG audio frame.')
