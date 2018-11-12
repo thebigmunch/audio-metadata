@@ -12,6 +12,11 @@ This project adheres to [Semantic Versioning](https://semver.org).
 
 * Add support for loading ID3v2.2 tags.
 
+### Fixed
+
+* Loading MP3 files with less than 4 MPEG frames
+  now works so long as there is a XING header.
+
 
 ## [0.1.0](https://github.com/thebigmunch/audio-metadata/releases/tag/0.1.0) (2018-10-19)
 

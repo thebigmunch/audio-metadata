@@ -16,7 +16,7 @@ from .tables import (
 	LAMEBitrateMode, LAMEChannelMode, LAMEPreset, LAMEReplayGainOrigin, LAMEReplayGainType, LAMESurroundInfo,
 	MP3BitrateMode, MP3Bitrates, MP3ChannelMode, MP3SampleRates, MP3SamplesPerFrame
 )
-from ..exceptions import InvalidFrame, InvalidHeader
+from ..exceptions import InvalidFormat, InvalidFrame, InvalidHeader
 from ..structures import DictMixin, ListMixin
 from ..utils import DataReader, humanize_bitrate, humanize_filesize, humanize_sample_rate
 
@@ -347,8 +347,9 @@ class MP3StreamInfo(StreamInfo):
 			data = DataReader(data)
 
 		frames = []
-		while len(frames) < 4:
-			buffer = data.peek()
+		xing_frame = None
+		while (len(frames) < 4) and (not xing_frame):
+			buffer = data.peek(4)
 			if len(buffer) < 4:
 				break
 
@@ -358,6 +359,8 @@ class MP3StreamInfo(StreamInfo):
 					try:
 						frame = MPEGFrameHeader.load(data)
 						frames.append(frame)
+						if frame._xing:
+							xing_frame = frame
 						data.seek(frame._start + frame._size, os.SEEK_SET)
 					except InvalidFrame:
 						del frames[:]
@@ -368,6 +371,12 @@ class MP3StreamInfo(StreamInfo):
 				if index == -1:
 					index = len(buffer)
 				data.seek(max(index, 1), os.SEEK_CUR)
+
+		if not frames and not xing_frame:
+			raise InvalidFormat("Missing XING header and insufficient MPEG frames.")
+
+		if not frames and xing_frame:
+			frames.append(xing_frame)
 
 		samples_per_frame, _ = MP3SamplesPerFrame[(frames[0].version, frames[0].layer)]
 
@@ -407,10 +416,13 @@ class MP3StreamInfo(StreamInfo):
 			# Google Music seems to do so for calculating client ID.
 			# Haven't tested in too many other scenarios.
 			# But, there should be enough low-level info for people to calculate this if desired.
-			# audio_start = frames[1]._start
 			if xing_header._lame:
-				num_samples -= xing_header._lame.delay
-				num_samples -= xing_header._lame.padding
+				# Old versions of LAME wrote invalid delay/padding for
+				# short MP3s with low bitrate.
+				# Subtract them only them if there would be samples left.
+				lame_padding = xing_header._lame.delay + xing_header._lame.padding
+				if lame_padding < num_samples:
+					num_samples -= lame_padding
 
 				if xing_header._lame.bitrate_mode in [1, 8]:
 					bitrate_mode = MP3BitrateMode.CBR

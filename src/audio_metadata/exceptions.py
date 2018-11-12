@@ -1,10 +1,20 @@
 __all__ = [
-	'AudioMetadataException', 'InvalidHeader', 'InvalidFrame', 'UnsupportedFormat'
+	'AudioMetadataException',
+	'InvalidFormat',
+	'InvalidFrame',
+	'InvalidHeader',
+	'UnsupportedFormat'
 ]
 
 
 class AudioMetadataException(Exception):
 	"""Base exception class."""
+
+	pass
+
+
+class InvalidFormat(AudioMetadataException):
+	"""Exception raised when a file format is invalid."""
 
 	pass
 

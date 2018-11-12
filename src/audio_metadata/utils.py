@@ -27,7 +27,12 @@ class DataReader:
 			size = DEFAULT_BUFFER_SIZE
 
 		try:
-			return self.data.peek(size)[:size]
+			peeked = self.data.peek(size)[:size]
+			if len(peeked) != size:
+				peeked = self.data.read(size)
+				self.data.seek(-size, os.SEEK_CUR)
+
+			return peeked
 		except AttributeError:
 			return self.data[self._position:self._position + size]
 
