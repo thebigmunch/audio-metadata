@@ -96,7 +96,6 @@ Please don't submit issues regarding the following:
 
 * Docs, docs, and more docs.
 * Finish ID3 abstractions.
-* Add support for older ID3 versions.
 * Add support for more file formats.
 	* MP4 reading is already well underway.
 * Add write support.

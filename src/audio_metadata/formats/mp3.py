@@ -10,7 +10,7 @@ from enum import Enum
 import more_itertools
 from attr import attrib, attrs
 
-from .id3 import ID3v2, ID3v2Frames
+from .id3v2 import ID3v2, ID3v2Frames
 from .models import Format, StreamInfo
 from .tables import (
 	LAMEBitrateMode, LAMEChannelMode, LAMEPreset, LAMEReplayGainOrigin, LAMEReplayGainType, LAMESurroundInfo,

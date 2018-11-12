@@ -1,5 +1,6 @@
 from .flac import *
-from .id3 import *
+from .id3v2 import *
+from .id3v2_frames import *
 from .models import *
 from .mp3 import *
 from .vorbis import *

@@ -6,6 +6,7 @@ __all__ = [
 
 import os
 import struct
+from codecs import BOM_UTF16_BE, BOM_UTF16_LE
 from functools import reduce
 from io import DEFAULT_BUFFER_SIZE
 
@@ -77,8 +78,41 @@ def int_to_bytes_le(i):
 	return i.to_bytes((i.bit_length() + 7) // 8, 'little')
 
 
+def decode_bytestring(b, encoding='iso-8859-1'):
+	if not b:
+		return ''
+
+	if encoding.startswith('utf-16'):
+		if len(b) % 2 != 0 and b[-1:] == b'\x00':
+			b = b[:-1]
+
+		if b.startswith(BOM_UTF16_BE):
+			b = b[len(BOM_UTF16_BE):]
+		elif b.startswith(BOM_UTF16_LE):
+			b = b[len(BOM_UTF16_LE):]
+
+	return b.decode(encoding).rstrip('\x00')
+
+
 def decode_synchsafe_int(data, per_byte):
 	return reduce(lambda value, element: (value << per_byte) + element, data, 0)
+
+
+def determine_encoding(b):
+	first = b[0:1]
+
+	if first == b'\x00':
+		encoding = 'iso-8859-1'
+	elif first == b'\x01':
+		encoding = 'utf-16-be' if b[1:3] == b'\xfe\xff' else 'utf-16-le'
+	elif first == b'\x02':
+		encoding = 'utf-16-be'
+	elif first == b'\x03':
+		encoding = 'utf-8'
+	else:
+		encoding = 'iso-8859-1'
+
+	return encoding
 
 
 def get_image_size(data):
@@ -172,3 +206,22 @@ def humanize_sample_rate(sample_rate):
 	value = sample_rate / divisor
 
 	return f'{value if value.is_integer() else value:.1f} {symbol}'
+
+
+def split_encoded(data, encoding):
+	try:
+		if encoding in ['iso-8859-1', 'utf-8']:
+			head, tail = data.split(b'\x00', 1)
+		else:
+			if len(data) % 2 != 0:
+				data += b'\x00'
+
+			head, tail = data.split(b'\x00\x00', 1)
+
+			if len(head) % 2 != 0:
+				head, tail = data.split(b'\x00\x00\x00', 1)
+				head += b'\x00'
+	except ValueError:
+		return (data,)
+
+	return head, tail
