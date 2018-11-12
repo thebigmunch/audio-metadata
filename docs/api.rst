@@ -11,6 +11,7 @@ The main methods of interacting with audio metadata are :func:`load` and :func:`
 Core
 ----
 
+.. autofunction:: determine_format
 .. autofunction:: load
 .. autofunction:: loads
 

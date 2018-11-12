@@ -12,6 +12,10 @@ This project adheres to [Semantic Versioning](https://semver.org).
 
 * Add support for loading ID3v2.2 tags.
 
+### Changed
+
+* Refactor ``determine_format``.
+
 ### Fixed
 
 * Loading MP3 files with less than 4 MPEG frames
