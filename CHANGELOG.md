@@ -8,6 +8,12 @@ This project adheres to [Semantic Versioning](https://semver.org).
 
 [Commits](https://github.com/thebigmunch/audio-metadata/compare/0.1.0...master)
 
+
+
+## [0.2.0](https://github.com/thebigmunch/audio-metadata/releases/tag/0.2.0) (2018-11-13)
+
+[Commits](https://github.com/thebigmunch/audio-metadata/compare/0.1.0...0.2.0)
+
 ### Added
 
 * Add support for loading ID3v2.2 tags.
