@@ -20,6 +20,7 @@ This project adheres to [Semantic Versioning](https://semver.org).
 
 * Loading MP3 files with less than 4 MPEG frames
   now works so long as there is a XING header.
+* Various bugs with loading WAV files.
 
 
 ## [0.1.0](https://github.com/thebigmunch/audio-metadata/releases/tag/0.1.0) (2018-10-19)

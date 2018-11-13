@@ -1,5 +1,6 @@
 __all__ = ['WAV', 'WAVStreamInfo']
 
+import os
 import struct
 
 from attr import attrib, attrs
@@ -53,13 +54,13 @@ class WAV(Format):
 				bitrate = byte_rate * 8
 
 				self._obj.read(subchunk_size - 16)  # Read through rest of subchunk if not PCM.
-			elif subchunk_id == b'self._obj':
+			elif subchunk_id == b'data':
 				audio_start = self._obj.tell()
 				audio_size = subchunk_size
-			elif subchunk_id.upper() == b'ID3 ':
+				self._obj.seek(subchunk_size, os.SEEK_CUR)
+			elif subchunk_id.lower() == b'id3 ':
 				try:
-					id3 = ID3v2()
-					id3._load(self._obj)
+					id3 = ID3v2.load(self._obj)
 					self._id3 = id3._header
 					self.pictures = id3.pictures
 					self.tags = id3.tags
