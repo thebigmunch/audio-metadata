@@ -6,6 +6,7 @@ import os
 import re
 import struct
 
+import bitstruct
 import more_itertools
 from attr import attrib, attrs
 
@@ -41,22 +42,21 @@ class LAMEReplayGain(DictMixin):
 		if not isinstance(data, DataReader):
 			data = DataReader(data)
 
-		replay_gain_data = struct.unpack('>I2B', data.read(6))
-
-		peak_data = replay_gain_data[0]
+		peak_data = struct.unpack('>I', data.read(4))[0]
 
 		if peak_data == b'\x00\x00\x00\x00':
 			gain_peak = None
 		else:
 			gain_peak = (peak_data - 0.5) / 2 ** 23
 
-		gain_type = LAMEReplayGainType(replay_gain_data[1] >> 5)
-		gain_origin = LAMEReplayGainOrigin((replay_gain_data[1] >> 2) & 7)
-		gain_sign = (replay_gain_data[1] >> 1) & 1
+		gain_type_, gain_origin_, gain_sign, gain_adjustment_ = bitstruct.unpack(
+			'u3 u3 u1 u9',
+			data.read(2)
+		)
 
-		adjustment_start = (replay_gain_data[1] & 1) << 4
-		adjustment_end = replay_gain_data[2]
-		gain_adjustment = (adjustment_start + adjustment_end) / 10
+		gain_type = LAMEReplayGainType(gain_type_)
+		gain_origin = LAMEReplayGainOrigin(gain_origin_)
+		gain_adjustment = gain_adjustment_ / 10.0
 
 		if gain_sign:
 			gain_adjustment *= -1
@@ -109,9 +109,7 @@ class LAMEHeader(DictMixin):
 		if not isinstance(data, DataReader):
 			data = DataReader(data)
 
-		lame_header_data = struct.unpack('>9s2B4s2s2s9BIHH', data.read(36))
-
-		encoder = lame_header_data[0]
+		encoder = data.read(9)
 		if not encoder.startswith(b'LAME'):
 			raise InvalidHeader('Valid LAME header not found.')
 
@@ -121,60 +119,91 @@ class LAMEHeader(DictMixin):
 		else:
 			version = None
 
-		rev_mode = lame_header_data[1]
-		revision = rev_mode >> 4
-		bitrate_mode = LAMEBitrateMode(rev_mode & 15)
+		revision, bitrate_mode_ = bitstruct.unpack(
+			'u4 u4',
+			data.read(1)
+		)
+		bitrate_mode = LAMEBitrateMode(bitrate_mode_)
 
 		# TODO: Decide what, if anything, to do with the different meanings in LAME.
 		# quality = (100 - xing_quality) % 10
 		# vbr_quality = (100 - xing_quality) // 10
 
-		lowpass_filter = lame_header_data[2] * 100
+		lowpass_filter = struct.unpack(
+			'B',
+			data.read(1)
+		)[0] * 100
 
-		track_gain = LAMEReplayGain.load(lame_header_data[3] + lame_header_data[4])
-		album_gain = LAMEReplayGain.load(lame_header_data[3] + lame_header_data[5])
+		gain_data = struct.unpack(
+			'4s2s2s',
+			data.read(8)
+		)
+		track_gain = LAMEReplayGain.load(gain_data[0] + gain_data[1])
+		album_gain = LAMEReplayGain.load(gain_data[0] + gain_data[2])
 
-		enc_flags = lame_header_data[6] >> 4
-		nspsytune = bool(enc_flags & 1)
-		nssafejoint = bool(enc_flags & 2)
-		nogap_continued = bool(enc_flags & 4)
-		nogap_continuation = bool(enc_flags & 8)
+		flags_ath = bitstruct.unpack_dict(
+			'b1 b1 b1 b1 u4',
+			[
+				'nogap_continuation',
+				'nogap_continued',
+				'nssafejoint',
+				'nspsytune',
+				'ath_type'
+			],
+			data.read(1)
+		)
 
 		encoding_flags = {
-			'nogap_continuation': nogap_continuation, 'nogap_continued': nogap_continued,
-			'nspsytune': nspsytune, 'nssafejoint': nssafejoint
+			k: v
+			for k, v in flags_ath.items()
+			if k != 'ath_type'
 		}
 
-		ath_type = lame_header_data[6] & 15
+		ath_type = flags_ath['ath_type']
 
 		# TODO: Different representation for VBR minimum bitrate vs CBR/ABR specified bitrate?
 		# Can only go up to 255.
-		bitrate = lame_header_data[7] * 1000
+		bitrate = struct.unpack(
+			'B',
+			data.read(1)
+		)[0] * 1000
 
-		delay = (lame_header_data[8] + (lame_header_data[9] >> 4)) << 4
-		padding = ((lame_header_data[9] & 15) << 8) + lame_header_data[10]
+		delay, padding = bitstruct.unpack(
+			'u12 u12',
+			data.read(3)
+		)
 
-		source_sample_rate = (lame_header_data[11] >> 6) & 3
-		unwise_settings_used = bool((lame_header_data[11] >> 5) & 1)
-		channel_mode = LAMEChannelMode((lame_header_data[11] >> 2) & 7)
-		noise_shaping = lame_header_data[11] & 3
+		source_sample_rate, unwise_settings_used, channel_mode_, noise_shaping = bitstruct.unpack(
+			'u2 u1 u3 u2',
+			data.read(1)
+		)
+		channel_mode = LAMEChannelMode(channel_mode_)
 
-		mp3_gain = lame_header_data[12] & 127
-		if lame_header_data[12] & 1:
-			mp3_gain *= -1
+		# lame_header_data = struct.unpack('>IHH', data.read(36))
 
-		surround_info = LAMESurroundInfo((lame_header_data[13] >> 3) & 7)
-		preset_used = ((lame_header_data[13] & 7) << 8) + lame_header_data[14]
+		mp3_gain = bitstruct.unpack(
+			's8',
+			data.read(1)
+		)[0]
+		# mp3_gain = lame_header_data[12] & 127
+		# if lame_header_data[12] & 1:
+		# 	mp3_gain *= -1
+
+		surround_info_, preset_used_ = bitstruct.unpack(
+			'p2 u3 u11',
+			data.read(2)
+		)
+		surround_info = LAMESurroundInfo(surround_info_)
 
 		try:
-			preset = LAMEPreset(preset_used)
+			preset = LAMEPreset(preset_used_)
 		except ValueError:  # 8-320 are used for bitrates and aren't defined in LAMEPreset.
-			preset = f"{preset_used} Kbps"
+			preset = f"{preset_used_} Kbps"
 
-		audio_size = lame_header_data[15]
-
-		audio_crc = lame_header_data[16]
-		lame_crc = lame_header_data[17]
+		audio_size, audio_crc, lame_crc = struct.unpack(
+			'>I2s2s',
+			data.read(8)
+		)
 
 		return cls(
 			lame_crc, version, revision, album_gain, ath_type, audio_crc, audio_size, bitrate,
@@ -263,32 +292,36 @@ class MPEGFrameHeader(DictMixin):
 
 		frame_start = data.tell()
 
-		try:
-			sync, flags, indexes, remainder = struct.unpack('BBBB', data.read(4))
-		except struct.error:
+		sync, version_id, layer_index, protection = bitstruct.unpack(
+			'u11 u2 u2 b1',
+			data.read(2)
+		)
+		# sync, flags, indexes, remainder = struct.unpack('BBBB', data.read(4))
+
+		if sync != 2047:
 			raise InvalidFrame('Not a valid MPEG audio frame.')
 
-		if sync != 255 or flags >> 5 != 7:
-			raise InvalidFrame('Not a valid MPEG audio frame.')
-
-		version_id = (flags >> 3) & 0x03
 		version = [2.5, None, 2, 1][version_id]
 
-		layer_index = (flags >> 1) & 0x03
 		layer = 4 - layer_index
 
-		protected = bool(not (flags & 1))
+		protected = not protection
 
-		bitrate_index = (indexes >> 4) & 0x0F
-		sample_rate_index = (indexes >> 2) & 0x03
-
-		padded = bool(indexes & 0x02)
-
-		channel_mode = MP3ChannelMode((remainder >> 6) & 0x03)
-		channels = 1 if channel_mode == 3 else 2
+		bitrate_index, sample_rate_index, padded = bitstruct.unpack(
+			'u4 u2 u1',
+			data.read(1)
+		)
 
 		if version_id == 1 or layer_index == 0 or bitrate_index == 0 or bitrate_index == 15 or sample_rate_index == 3:
 			raise InvalidFrame('Not a valid MPEG audio frame.')
+
+		channel_mode = MP3ChannelMode(
+			bitstruct.unpack(
+				'u2',
+				data.read(1)
+			)[0]
+		)
+		channels = 1 if channel_mode == 3 else 2
 
 		bitrate = MP3Bitrates[(version, layer)][bitrate_index] * 1000
 		sample_rate = MP3SampleRates[version][sample_rate_index]

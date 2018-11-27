@@ -67,22 +67,6 @@ class DataReader:
 		return self._position
 
 
-def bytes_to_int_be(b):
-	return int.from_bytes(b, 'big')
-
-
-def bytes_to_int_le(b):
-	return int.from_bytes(b, 'little')
-
-
-def int_to_bytes_be(i):
-	return i.to_bytes((i.bit_length() + 7) // 8, 'big')
-
-
-def int_to_bytes_le(i):
-	return i.to_bytes((i.bit_length() + 7) // 8, 'little')
-
-
 def decode_bytestring(b, encoding='iso-8859-1'):
 	if not b:
 		return ''

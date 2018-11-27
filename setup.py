@@ -30,6 +30,7 @@ setup(
 	install_requires=[
 		'attrs>=18.2',
 		'bidict>=0.17',
+		'bitstruct >=6.0',
 		'more-itertools>=4.0',
 		'pprintpp>=0.4'
 	],

@@ -7,14 +7,16 @@ __all__ = [
 import binascii
 import struct
 
+import bitstruct
 from attr import Factory, attrib, attrs
 
+from .id3v2 import ID3v2Header
 from .models import Format, StreamInfo
 from .tables import FLACMetadataBlockType
 from .vorbis import VorbisComment, VorbisPicture
 from ..exceptions import InvalidHeader
 from ..structures import DictMixin, ListMixin
-from ..utils import DataReader, bytes_to_int_be, decode_synchsafe_int
+from ..utils import DataReader, decode_synchsafe_int
 
 
 @attrs(repr=False)
@@ -120,30 +122,57 @@ class FLACCueSheet(ListMixin):
 			data = DataReader(data)
 
 		catalog_number = data.read(128).rstrip(b'\0').decode('ascii', 'replace')
-		lead_in_samples = bytes_to_int_be(data.read(8))
-		compact_disc = bool(bytes_to_int_be(data.read(1)) & 128)
+		lead_in_samples = struct.unpack(
+			'>Q',
+			data.read(8)
+		)[0]
+		compact_disc = bitstruct.unpack(
+			'b1',
+			data.read(1)
+		)[0]
 
 		data.read(258)
-		num_tracks = bytes_to_int_be(data.read(1))
+		num_tracks = struct.unpack(
+			'B',
+			data.read(1)
+		)[0]
 
 		tracks = []
 		for i in range(num_tracks):
-			offset = bytes_to_int_be(data.read(8))
-			track_number = bytes_to_int_be(data.read(1))
+			offset = struct.unpack(
+				'>Q',
+				data.read(8)
+			)[0]
+			track_number = struct.unpack(
+				'>B',
+				data.read(1)
+			)[0]
 			isrc = data.read(12).rstrip(b'\x00').decode('ascii', 'replace')
 
-			flags = bytes_to_int_be(data.read(1))
-			type_ = (flags & 128) >> 7
-			pre_emphasis = bool(flags & 64)
+			type_, pre_emphasis = bitstruct.unpack(
+				'u1 b1',
+				data.read(1)
+			)
 
 			data.read(13)
-			num_indexes = bytes_to_int_be(data.read(1))
+			num_indexes = struct.unpack(
+				'>B',
+				data.read(1)
+			)[0]
 
 			track = FLACCueSheetTrack(track_number, offset, isrc, type_, pre_emphasis)
 
 			for i in range(num_indexes):
-				offset = bytes_to_int_be(data.read(8))
-				number = bytes_to_int_be(data.read(1))
+				offset = struct.unpack(
+					'>Q',
+					data.read(8)
+				)[0]
+
+				number = struct.unpack(
+					'>B',
+					data.read(1)
+				)[0]
+
 				data.read(3)
 
 				track.indexes.append(FLACCueSheetIndex(number, offset))
@@ -231,27 +260,21 @@ class FLACStreamInfo(StreamInfo):
 		if not isinstance(data, DataReader):
 			data = DataReader(data)
 
-		stream_info_block_data = struct.unpack('2s2s3s3s8B16s', data.read(34))
-
-		min_block_size = bytes_to_int_be(stream_info_block_data[0])
-		max_block_size = bytes_to_int_be(stream_info_block_data[1])
-		min_frame_size = bytes_to_int_be(stream_info_block_data[2])
-		max_frame_size = bytes_to_int_be(stream_info_block_data[3])
-
-		sample_rate = bytes_to_int_be(stream_info_block_data[4:7]) >> 4
-		channels = ((stream_info_block_data[6] >> 1) & 7) + 1
-
-		bps_start = (stream_info_block_data[6] & 1) << 4
-		bps_end = (stream_info_block_data[7] & 240) >> 4
-
-		bit_depth = int(bps_start + bps_end + 1)
-
-		total_samples = bytes_to_int_be(
-			[stream_info_block_data[7] & 15] + list(stream_info_block_data[8:12])
+		stream_info_block_data = bitstruct.unpack(
+			'u16 u16 u24 u24 u20 u3 u5 u36 r128',
+			data.read(34)
 		)
-		duration = total_samples / sample_rate
 
-		md5sum = binascii.hexlify(stream_info_block_data[12:][0]).decode('ascii', 'replace')
+		min_block_size = stream_info_block_data[0]
+		max_block_size = stream_info_block_data[1]
+		min_frame_size = stream_info_block_data[2]
+		max_frame_size = stream_info_block_data[3]
+		sample_rate = stream_info_block_data[4]
+		channels = stream_info_block_data[5] + 1
+		bit_depth = stream_info_block_data[6] + 1
+		total_samples = stream_info_block_data[7]
+		md5sum = binascii.hexlify(stream_info_block_data[8]).decode('ascii', 'replace')
+		duration = total_samples / sample_rate
 
 		return cls(
 			None, None, min_block_size, max_block_size,
@@ -284,14 +307,23 @@ class FLAC(Format):
 		self = super()._load(data)
 
 		# Ignore ID3v2 in FLAC.
-		if self._obj.peek(3)[0:3] == b'ID3':
-			self._obj.seek(5)
-			extended = bool((self._obj.read(1)[0] & 64))
-			self._obj.read(decode_synchsafe_int(self._obj.read(4), 7))
+		if self._obj.peek(3) == b'ID3':
+			id3_header = ID3v2Header.load(self._obj.read(10))
+			self._obj.read(id3_header._size)
 
-			if extended:
-				ext_size = decode_synchsafe_int(struct.unpack('4B', self._obj.read(4))[0], 7)
-				self._obj.read(ext_size)
+			if id3_header.flags.extended:
+				ext_size = decode_synchsafe_int(
+					struct.unpack(
+						'4B',
+						self._obj.read(4)
+					),
+					7
+				)
+
+				if id3_header.version[1] == 4:
+					data.read(ext_size - 4)
+				else:
+					data.read(ext_size)
 
 		if self._obj.read(4) != b'fLaC':
 			raise InvalidHeader("Valid FLAC header not found.")
@@ -299,16 +331,16 @@ class FLAC(Format):
 		header_data = self._obj.read(4)
 
 		while len(header_data):
-			metadata_block_header = struct.unpack('B3B', header_data)
-			block_type = metadata_block_header[0] & 127
-			is_last_block = bool(metadata_block_header[0] & 128)
+			is_last_block, block_type, block_size = bitstruct.unpack(
+				'b1 u7 u24',
+				header_data
+			)
 
 			# There are examples of tools writing incorrect block sizes.
 			# The FLAC reference implementation unintentionally (I hope?) parses them.
 			# I've chosen not to add special handling for these invalid files.
 			# If needed, mutagen (https://github.com/quodlibet/mutagen) may support them.
-			size = bytes_to_int_be(metadata_block_header[1:4])
-			metadata_block_data = self._obj.read(size)
+			metadata_block_data = self._obj.read(block_size)
 
 			if block_type == FLACMetadataBlockType.STREAMINFO:
 				streaminfo_block = FLACStreamInfo.load(metadata_block_data)
@@ -338,7 +370,7 @@ class FLAC(Format):
 			elif block_type >= 127:
 				raise InvalidHeader("FLAC header contains invalid block type.")
 			else:
-				self._blocks.append(FLACMetadataBlock(block_type, size))
+				self._blocks.append(FLACMetadataBlock(block_type, block_size))
 
 			if is_last_block:
 				pos = self._obj.tell()
