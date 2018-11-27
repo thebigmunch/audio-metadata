@@ -5,7 +5,6 @@ __all__ = [
 import os
 import re
 import struct
-from enum import Enum
 
 import more_itertools
 from attr import attrib, attrs
@@ -32,9 +31,7 @@ class LAMEReplayGain(DictMixin):
 		repr_dict = {}
 
 		for k, v in sorted(self.items()):
-			if isinstance(v, Enum):
-				repr_dict[k] = v.name
-			elif not k.startswith('_'):
+			if not k.startswith('_'):
 				repr_dict[k] = v
 
 		return super().__repr__(repr_dict=repr_dict)
@@ -102,8 +99,6 @@ class LAMEHeader(DictMixin):
 				repr_dict[k] = humanize_bitrate(v)
 			elif k == 'audio_size':
 				repr_dict[k] = humanize_filesize(v, precision=2)
-			elif isinstance(v, Enum):
-				repr_dict[k] = v.name
 			elif not k.startswith('_'):
 				repr_dict[k] = v
 
@@ -256,8 +251,6 @@ class MPEGFrameHeader(DictMixin):
 				repr_dict[k] = humanize_bitrate(v)
 			elif k == 'sample_rate':
 				repr_dict[k] = humanize_sample_rate(v)
-			elif isinstance(v, Enum):
-				repr_dict[k] = v.name
 			elif not k.startswith('_'):
 				repr_dict[k] = v
 

@@ -8,7 +8,12 @@ __all__ = [
 from enum import IntEnum
 
 
-class FLACMetadataBlockType(IntEnum):
+class _BaseIntEnum(IntEnum):
+	def __repr__(self):
+		return f'<{self.__class__.__name__}.{self.name}>'
+
+
+class FLACMetadataBlockType(_BaseIntEnum):
 	STREAMINFO = 0
 	PADDING = 1
 	APPLICATION = 2
@@ -18,7 +23,7 @@ class FLACMetadataBlockType(IntEnum):
 	PICTURE = 6
 
 
-class ID3PictureType(IntEnum):
+class ID3PictureType(_BaseIntEnum):
 	OTHER = 0
 	FILE_ICON = 1
 	OTHER_FILE_ICON = 2
@@ -70,7 +75,7 @@ ID3v1Genres = [
 ]
 
 
-class LAMEBitrateMode(IntEnum):
+class LAMEBitrateMode(_BaseIntEnum):
 	UNKNOWN = 0
 	CBR = 1
 	ABR = 2
@@ -83,7 +88,7 @@ class LAMEBitrateMode(IntEnum):
 	RESERVED = 15
 
 
-class LAMEChannelMode(IntEnum):
+class LAMEChannelMode(_BaseIntEnum):
 	MONO = 0
 	STEREO = 1
 	DUAL_CHANNEL = 2
@@ -95,7 +100,7 @@ class LAMEChannelMode(IntEnum):
 
 
 # 8 through 320 are reserved for ABR bitrates.
-class LAMEPreset(IntEnum):
+class LAMEPreset(_BaseIntEnum):
 	Unknown = 0
 	V9 = 410
 	V8 = 420
@@ -117,7 +122,7 @@ class LAMEPreset(IntEnum):
 	medium_fast = 1007
 
 
-class LAMEReplayGainOrigin(IntEnum):
+class LAMEReplayGainOrigin(_BaseIntEnum):
 	not_set = 0
 	artist = 1
 	user = 2
@@ -125,13 +130,13 @@ class LAMEReplayGainOrigin(IntEnum):
 	average = 4
 
 
-class LAMEReplayGainType(IntEnum):
+class LAMEReplayGainType(_BaseIntEnum):
 	not_set = 0
 	radio = 1
 	audiophile = 2
 
 
-class LAMESurroundInfo(IntEnum):
+class LAMESurroundInfo(_BaseIntEnum):
 	NO_SURROUND = 0
 	DPL = 1
 	DPL2 = 2
@@ -152,14 +157,14 @@ MP3Bitrates = {
 }
 
 
-class MP3BitrateMode(IntEnum):
+class MP3BitrateMode(_BaseIntEnum):
 	UNKNOWN = 0
 	CBR = 1
 	VBR = 2
 	ABR = 3
 
 
-class MP3ChannelMode(IntEnum):
+class MP3ChannelMode(_BaseIntEnum):
 	STEREO = 0
 	JOINT_STEREO = 1
 	DUAL_CHANNEL = 2

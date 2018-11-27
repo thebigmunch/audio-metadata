@@ -1,7 +1,6 @@
 __all__ = ['Format', 'Picture', 'Tags']
 
 import os
-from enum import Enum
 from io import BytesIO
 
 import pprintpp
@@ -65,8 +64,6 @@ class Format(DictMixin):
 		for k, v in sorted(self.items()):
 			if k == 'filesize':
 				repr_dict[k] = humanize_filesize(v, precision=2)
-			elif isinstance(v, Enum):
-				repr_dict[k] = v.name
 			elif isinstance(v, BytesIO):
 				repr_dict[k] = f"<{v.__class__.__name__}>"
 			elif not k.startswith('_'):
@@ -100,8 +97,6 @@ class Picture(DictMixin):
 		for k, v in sorted(self.items()):
 			if k == 'data':
 				repr_dict[k] = humanize_filesize(len(v), precision=2)
-			elif isinstance(v, Enum):
-				repr_dict[k] = v.name
 			elif not k.startswith('_'):
 				repr_dict[k] = v
 
@@ -119,8 +114,6 @@ class StreamInfo(DictMixin):
 				repr_dict[k] = humanize_duration(v)
 			elif k == 'sample_rate':
 				repr_dict[k] = humanize_sample_rate(v)
-			elif isinstance(v, Enum):
-				repr_dict[k] = v.name
 			elif not k.startswith('_'):
 				repr_dict[k] = v
 
