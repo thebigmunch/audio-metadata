@@ -130,6 +130,9 @@ class ID3v2Header(DictMixin):
 		if not isinstance(data, DataReader):
 			data = DataReader(data)
 
+		if data.read(3) != b"ID3":
+			raise InvalidHeader("Valid ID3v2 header not found.")
+
 		major, revision, _flags, sync_size = struct.unpack('BBB4s', data.read(7))
 
 		version = (2, major, revision)
@@ -157,10 +160,10 @@ class ID3v2(DictMixin):
 
 		self = cls()
 
-		if data.read(3) != b"ID3":
+		if data.peek(3) != b"ID3":
 			raise InvalidHeader("Valid ID3v2 header not found.")
 
-		self._header = ID3v2Header.load(data.read(7))
+		self._header = ID3v2Header.load(data.read(10))
 
 		if self._header.flags.extended:
 			ext_size = decode_synchsafe_int(struct.unpack('4B', data.read(4))[0:4], 7)

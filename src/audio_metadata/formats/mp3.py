@@ -240,16 +240,16 @@ class XingHeader(DictMixin):
 		num_frames = num_bytes = toc = quality = lame_header = None
 
 		if flags & 1:
-			num_frames = struct.unpack('>i', data.read(4))[0]
+			num_frames = struct.unpack('>I', data.read(4))[0]
 
 		if flags & 2:
-			num_bytes = struct.unpack('>i', data.read(4))[0]
+			num_bytes = struct.unpack('>I', data.read(4))[0]
 
 		if flags & 4:
 			toc = XingTOC(list(bytearray(data.read(100))))
 
 		if flags & 8:
-			quality = struct.unpack('>i', data.read(4))[0]
+			quality = struct.unpack('>I', data.read(4))[0]
 
 		if data.read(4) == b'LAME':
 			data.seek(-4, os.SEEK_CUR)

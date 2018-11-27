@@ -37,7 +37,12 @@ class WAV(Format):
 	def load(cls, data):
 		self = super()._load(data)
 
-		chunk_id, chunk_size, format_ = struct.unpack('4sI4s', self._obj.read(12))
+		chunk_id = self._obj.read(4)
+
+		# chunk_size
+		self._obj.read(4)
+
+		format_ = self._obj.read(4)
 
 		if chunk_id != b'RIFF' or format_ != b'WAVE':
 			raise InvalidHeader("Valid WAVE header not found.")
@@ -45,11 +50,20 @@ class WAV(Format):
 		# TODO: Support other subchunks?
 		subchunk_header = self._obj.read(8)
 		while len(subchunk_header) == 8:
-			subchunk_id, subchunk_size = struct.unpack('4sI', subchunk_header)
+			subchunk_id, subchunk_size = struct.unpack(
+				'4sI',
+				subchunk_header
+			)
 
 			if subchunk_id == b'fmt ':
-				audio_format, channels, sample_rate = struct.unpack('HHI', self._obj.read(8))
-				byte_rate, block_align, bit_depth = struct.unpack('<IHH', self._obj.read(8))
+				audio_format, channels, sample_rate = struct.unpack(
+					'HHI',
+					self._obj.read(8))
+
+				byte_rate, block_align, bit_depth = struct.unpack(
+					'<IHH',
+					self._obj.read(8)
+				)
 
 				bitrate = byte_rate * 8
 
