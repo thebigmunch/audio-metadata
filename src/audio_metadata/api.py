@@ -57,7 +57,7 @@ def load(f):
 
 	Raises:
 		UnsupportedFormat: If file is not of a supported format.
-		ValueError: If filepath/file-like object is not valid nor readable.
+		ValueError: If filepath/file-like object is not valid or readable.
 	"""
 
 	if isinstance(f, (os.PathLike, str)):
@@ -83,7 +83,7 @@ def load(f):
 
 
 def loads(b):
-	"""Load audio metadata from filepath or file-like object.
+	"""Load audio metadata from a bytes-like object.
 
 	Parameters:
 		b (bytes-like object): A bytes-like object of an audio file.
