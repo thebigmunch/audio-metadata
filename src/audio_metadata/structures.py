@@ -1,5 +1,6 @@
 __all__ = ['DictMixin', 'ListMixin']
 
+from collections import UserList
 from collections.abc import MutableMapping
 
 import pprintpp
@@ -56,24 +57,8 @@ class DictMixin(MutableMapping):
 		return self.__dict__.values()
 
 
-class ListMixin:
-	def __init__(self, items=None, item_label=None):
-		self.items = items or []
-
-		if item_label:
-			self.item_label = item_label
-
-	def __contains__(self, item):
-		return item in self.items
-
-	def __getitem__(self, key):
-		return self.items[key]
-
-	def __iter__(self):
-		return iter(self.items)
-
-	def __len__(self):
-		return len(self.items)
+class ListMixin(UserList):
+	item_label = 'items'
 
 	def __repr__(self):
 		return f"<{self.__class__.__name__} ({len(self)} {self.item_label})>"
