@@ -6,7 +6,11 @@ This project adheres to [Semantic Versioning](https://semver.org).
 
 ## [Unreleased](https://github.com/thebigmunch/audio-metadata/tree/master)
 
-[Commits](https://github.com/thebigmunch/audio-metadata/compare/0.1.0...master)
+[Commits](https://github.com/thebigmunch/audio-metadata/compare/0.2.0...master)
+
+### Fixed
+
+* High memory usage spikes when loading some ID3 tags.
 
 
 

@@ -66,7 +66,7 @@ class ID3v2Frames(Tags):
 		self.update(*args, **kwargs)
 
 	@classmethod
-	def load(cls, data, id3_version, header_size):
+	def load(cls, data, id3_version):
 		if not isinstance(data, DataReader):
 			data = DataReader(data)
 
@@ -172,7 +172,7 @@ class ID3v2(DictMixin):
 			else:
 				data.read(ext_size)
 
-		self.tags = ID3v2Frames.load(data, self._header.version, self._header._size)
+		self.tags = ID3v2Frames.load(data.read(self._header._size), self._header.version)
 		self.pictures = self.tags.pop('pictures', [])
 
 		return self
