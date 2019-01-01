@@ -10,6 +10,7 @@ import bitstruct
 import more_itertools
 from attr import attrib, attrs
 
+from .id3v1 import ID3v1
 from .id3v2 import ID3v2, ID3v2Frames
 from .models import Format, StreamInfo
 from .tables import (
@@ -507,14 +508,35 @@ class MP3(Format):
 		self = super()._load(data)
 
 		try:
-			id3 = ID3v2.load(self._obj)
-			self._id3 = id3._header
-			self.pictures = id3.pictures
-			self.tags = id3.tags
+			id3v2 = ID3v2.load(self._obj)
+			self._id3 = id3v2._header
+			self.pictures = id3v2.pictures
+			self.tags = id3v2.tags
 			self._obj.seek(self._id3._size, os.SEEK_SET)
 		except (InvalidFrame, InvalidHeader):
 			self._obj.seek(0, os.SEEK_SET)
 
 		self.streaminfo = MP3StreamInfo.load(self._obj)
+
+		# Use ID3v1 if present and ID3v2 is not.
+		if '_id3' not in self:
+			self._obj.seek(self.streaminfo._start + self.streaminfo._size, os.SEEK_SET)
+
+			end_buffer = self._obj.read()
+
+			id3v1_data = None
+			while True:
+				id3v1_index = end_buffer.find(b'TAG')
+
+				if end_buffer[id3v1_index:id3v1_index + 5] == b'TAGEX':
+					end_buffer = end_buffer[id3v1_index + 3:]
+					continue
+				else:
+					id3v1_data = end_buffer[id3v1_index:id3v1_index + 128]
+					break
+
+			if id3v1_data:
+				id3v1 = ID3v1.load(id3v1_data)
+				self.tags = id3v1.tags
 
 		return self

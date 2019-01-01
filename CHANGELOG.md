@@ -8,10 +8,13 @@ This project adheres to [Semantic Versioning](https://semver.org).
 
 [Commits](https://github.com/thebigmunch/audio-metadata/compare/0.2.0...master)
 
+### Added
+
+* ID3v1 support. ID3v1 is loaded from MP3s if, and only if, no ID3v2 header is found.
+
 ### Fixed
 
 * High memory usage spikes when loading some ID3 tags.
-
 
 
 ## [0.2.0](https://github.com/thebigmunch/audio-metadata/releases/tag/0.2.0) (2018-11-13)

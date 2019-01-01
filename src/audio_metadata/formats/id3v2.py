@@ -158,11 +158,10 @@ class ID3v2(DictMixin):
 		if not isinstance(data, DataReader):
 			data = DataReader(data)
 
-		self = cls()
-
 		if data.peek(3) != b"ID3":
 			raise InvalidHeader("Valid ID3v2 header not found.")
 
+		self = cls()
 		self._header = ID3v2Header.load(data.read(10))
 
 		if self._header.flags.extended:
