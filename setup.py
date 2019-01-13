@@ -35,6 +35,16 @@ setup(
 		'pprintpp>=0.4'
 	],
 
+	extras_require={
+		'doc': ['sphinx'],
+		'lint': [
+			'flake8',
+			'flake8-builtins',
+			'flake8-import-order',
+			'flake8-import-order-tbm'
+		],
+	},
+
 	packages=find_packages('src'),
 	package_dir={
 		'': 'src'
