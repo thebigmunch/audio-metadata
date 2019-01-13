@@ -1,6 +1,7 @@
 # audio-metadata
 
-[![Read the Docs](https://img.shields.io/readthedocs/audio-metadata.svg)](https://audio-metadata.readthedocs.io)
+[![Read the Docs - Stable](https://img.shields.io/readthedocs/audio-metadata/stable.svg?label=stable%20docs)](https://audio-metadata.readthedocs.io/en/stable/)
+[![Read the Docs - Latest](https://img.shields.io/readthedocs/audio-metadata/latest.svg?label=latest%20docs)](https://audio-metadata.readthedocs.io/en/latest/)
 
 [audio-metadata](https://github.com/thebigmunch/audio-metadata) is a library for reading and, in the future, writing metadata from audio files.
 
