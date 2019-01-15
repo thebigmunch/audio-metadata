@@ -11,6 +11,7 @@ This project adheres to [Semantic Versioning](https://semver.org).
 ### Added
 
 * ID3v1 support. ID3v1 is loaded from MP3s if, and only if, no ID3v2 header is found.
+* ``items`` property to ``ListMixin``.
 
 ### Fixed
 
