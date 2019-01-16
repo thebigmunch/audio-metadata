@@ -62,9 +62,6 @@ class ID3v2Frames(Tags):
 		'tracknumber': 'TRCK'
 	})
 
-	def __init__(self, *args, **kwargs):
-		self.update(*args, **kwargs)
-
 	@classmethod
 	def load(cls, data, id3_version):
 		if not isinstance(data, DataReader):

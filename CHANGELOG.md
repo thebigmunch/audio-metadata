@@ -8,6 +8,13 @@ This project adheres to [Semantic Versioning](https://semver.org).
 
 [Commits](https://github.com/thebigmunch/audio-metadata/compare/0.3.0...master)
 
+### Changed
+
+* Move ``Tags`` subclass ``__init__`` methods to ``Tags`` class.
+  This should have been the case from the beginning; I just didn't notice.
+  This should have no effect to users except that ``Tags`` can now be
+  initialized like a dict itself.
+
 
 ## [0.3.0](https://github.com/thebigmunch/audio-metadata/releases/tag/0.3.0) (2019-01-15)
 

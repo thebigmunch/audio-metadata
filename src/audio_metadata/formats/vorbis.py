@@ -10,9 +10,6 @@ from ..utils import DataReader
 
 # TODO: Number frames.
 class VorbisComment(Tags):
-	def __init__(self, *args, **kwargs):
-		self.update(*args, **kwargs)
-
 	@classmethod
 	def load(cls, data):
 		if not isinstance(data, DataReader):

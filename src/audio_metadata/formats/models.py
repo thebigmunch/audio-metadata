@@ -13,6 +13,9 @@ from ..utils import DataReader, humanize_bitrate, humanize_duration, humanize_fi
 class Tags(DictMixin):
 	FIELD_MAP = frozenbidict()
 
+	def __init__(self, *args, **kwargs):
+		self.update(*args, **kwargs)
+
 	def __getitem__(self, key):
 		k = self.FIELD_MAP.get(key, key)
 
