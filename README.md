@@ -1,7 +1,9 @@
 # audio-metadata
 
-[![Read the Docs - Stable](https://img.shields.io/readthedocs/audio-metadata/stable.svg?label=Read%20the%20Docs%20%28Stable%29)](https://audio-metadata.readthedocs.io/en/stable/)
-[![Read the Docs - Latest](https://img.shields.io/readthedocs/audio-metadata/latest.svg?label=Read%20the%20Docs%20%28Latest%29)](https://audio-metadata.readthedocs.io/en/latest/)
+[![PyPI](https://img.shields.io/pypi/v/audio-metadata.svg?label=PyPI)](https://pypi.org/project/audio-metadata/)
+![](https://img.shields.io/badge/Python-3.6%2B-blue.svg)  
+[![Docs - Stable](https://img.shields.io/readthedocs/audio-metadata/stable.svg?label=Docs%20%28Stable%29)](https://audio-metadata.readthedocs.io/en/stable/)
+[![Docs - Latest](https://img.shields.io/readthedocs/audio-metadata/latest.svg?label=Docs%20%28Latest%29)](https://audio-metadata.readthedocs.io/en/latest/)
 
 [audio-metadata](https://github.com/thebigmunch/audio-metadata) is a library for reading and, in the future, writing metadata from audio files.
 
