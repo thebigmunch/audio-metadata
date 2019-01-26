@@ -110,6 +110,11 @@ class ID3v2Frames(Tags):
 				frames[f'PRIV:{frame.owner}'].append(frame.value)
 			elif isinstance(frame, (ID3v2UserTextFrame, ID3v2UserURLLinkFrame)):
 				frames[f'{frame.id}:{frame.description}'].append(frame.value)
+			elif isinstance(
+				frame,
+				(ID3v2NumericTextFrame, ID3v2TextFrame)
+			):
+				frames[frame.id] = frame.value
 			else:
 				frames[frame.id].append(frame.value)
 

@@ -167,11 +167,12 @@ class ID3v2YearFrame(ID3v2NumericTextFrame):
 
 	@value.validator
 	def validate_value(self, attribute, value):
-		if (
-			not value.isdigit()
-			or len(value) != 4
-		):
-			raise ValueError("Year frame values must be 4-character number strings.")
+		for v in value:
+			if (
+				not v.isdigit()
+				or len(v) != 4
+			):
+				raise ValueError("Year frame values must be 4-character number strings.")
 
 
 @attrs(repr=False)
@@ -400,10 +401,21 @@ class ID3v2Frame(ID3v2BaseFrame):
 			args.append(unquote(decode_bytestring(url)))
 		elif issubclass(
 			frame_type,
-			(ID3v2NumberFrame, ID3v2NumericTextFrame, ID3v2TextFrame, ID3v2UserTextFrame,)
+			(ID3v2NumberFrame, ID3v2UserTextFrame)
 		):
 			encoding = determine_encoding(frame_data[0:1])
 			args.append(decode_bytestring(frame_data[1:], encoding))
+		elif issubclass(
+			frame_type,
+			(ID3v2NumericTextFrame, ID3v2TextFrame)
+		):
+			encoding = determine_encoding(frame_data[0:1])
+			values = [
+				decode_bytestring(value)
+				for value in split_encoded(frame_data[1:], encoding)
+				if value
+			]
+			args.append(values)
 		elif frame_type is ID3v2Frame:
 			args.append(frame_data)
 		else:
