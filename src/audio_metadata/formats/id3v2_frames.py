@@ -421,7 +421,7 @@ class ID3v2Frame(ID3v2BaseFrame):
 		):
 			encoding = determine_encoding(frame_data[0:1])
 			values = [
-				decode_bytestring(value)
+				decode_bytestring(value, encoding)
 				for value in split_encoded(frame_data[1:], encoding)
 				if value
 			]

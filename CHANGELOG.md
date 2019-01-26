@@ -8,6 +8,10 @@ This project adheres to [Semantic Versioning](https://semver.org).
 
 [Commits](https://github.com/thebigmunch/audio-metadata/compare/0.3.2...master)
 
+### Fixed
+
+* Missing ``encoding`` argument to ``decode_bytestring`` call.
+
 
 ## [0.3.2](https://github.com/thebigmunch/audio-metadata/releases/tag/0.3.2) (2019-01-26)
 
