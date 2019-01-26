@@ -11,6 +11,7 @@ This project adheres to [Semantic Versioning](https://semver.org).
 ### Added
 
 * Support for multiple values in ID3v2.4 text information frames.
+* Support for ``TDRC`` and ``TDRL`` frames.
 
 
 ## [0.3.1](https://github.com/thebigmunch/audio-metadata/releases/tag/0.3.1) (2019-01-16)

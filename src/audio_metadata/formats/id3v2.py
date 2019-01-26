@@ -112,7 +112,7 @@ class ID3v2Frames(Tags):
 				frames[f'{frame.id}:{frame.description}'].append(frame.value)
 			elif isinstance(
 				frame,
-				(ID3v2NumericTextFrame, ID3v2TextFrame)
+				(ID3v2NumericTextFrame, ID3v2TextFrame, ID3v2TimestampFrame)
 			):
 				frames[frame.id] = frame.value
 			else:

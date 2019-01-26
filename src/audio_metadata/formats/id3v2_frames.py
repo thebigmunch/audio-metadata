@@ -11,6 +11,7 @@ __all__ = [
 	'ID3v2PrivateFrame',
 	'ID3v2SynchronizedLyricsFrame',
 	'ID3v2TextFrame',
+	'ID3v2TimestampFrame',
 	'ID3v2UnsynchronizedLyricsFrame',
 	'ID3v2URLLinkFrame',
 	'ID3v2UserTextFrame',
@@ -134,6 +135,11 @@ class ID3v2SynchronizedLyricsFrame(ID3v2BaseFrame):
 
 @attrs(repr=False)
 class ID3v2TextFrame(ID3v2BaseFrame):
+	value = attrib()
+
+
+@attrs(repr=False)
+class ID3v2TimestampFrame(ID3v2BaseFrame):
 	value = attrib()
 
 
@@ -287,6 +293,10 @@ class ID3v2Frame(ID3v2BaseFrame):
 		'TSOP': ID3v2TextFrame, 'TSOT': ID3v2TextFrame, 'TSRC': ID3v2TextFrame,
 		'TSSE': ID3v2TextFrame, 'TSST': ID3v2TextFrame,
 
+		# Timestamp Frames
+		# TODO: Proper.
+		'TDRC': ID3v2TimestampFrame, 'TDRL': ID3v2TimestampFrame,
+
 		# URL Link Frames
 		'WAF': ID3v2URLLinkFrame, 'WAR': ID3v2URLLinkFrame,
 		'WAS': ID3v2URLLinkFrame, 'WCM': ID3v2URLLinkFrame,
@@ -407,7 +417,7 @@ class ID3v2Frame(ID3v2BaseFrame):
 			args.append(decode_bytestring(frame_data[1:], encoding))
 		elif issubclass(
 			frame_type,
-			(ID3v2NumericTextFrame, ID3v2TextFrame)
+			(ID3v2NumericTextFrame, ID3v2TextFrame, ID3v2TimestampFrame)
 		):
 			encoding = determine_encoding(frame_data[0:1])
 			values = [
