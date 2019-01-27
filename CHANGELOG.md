@@ -6,7 +6,12 @@ This project adheres to [Semantic Versioning](https://semver.org).
 
 ## [Unreleased](https://github.com/thebigmunch/audio-metadata/tree/master)
 
-[Commits](https://github.com/thebigmunch/audio-metadata/compare/0.3.3...master)
+[Commits](https://github.com/thebigmunch/audio-metadata/compare/0.3.4...master)
+
+
+## [0.3.4](https://github.com/thebigmunch/audio-metadata/releases/tag/0.3.4) (2019-01-27)
+
+[Commits](https://github.com/thebigmunch/audio-metadata/compare/0.3.3...0.3.4)
 
 ### Fixed
 
