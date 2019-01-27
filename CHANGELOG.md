@@ -8,6 +8,10 @@ This project adheres to [Semantic Versioning](https://semver.org).
 
 [Commits](https://github.com/thebigmunch/audio-metadata/compare/0.3.3...master)
 
+### Fixed
+
+* ``TDAT`` and ``TIME`` frame validation to support multiple values.
+
 
 ## [0.3.3](https://github.com/thebigmunch/audio-metadata/releases/tag/0.3.3) (2019-01-26)
 

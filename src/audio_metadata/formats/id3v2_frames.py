@@ -187,15 +187,16 @@ class ID3v2TDATFrame(ID3v2NumericTextFrame):
 
 	@value.validator
 	def validate_value(self, attribute, value):
-		if (
-			not value.isdigit()
-			or len(value) != 4
-			or int(value[0:2]) not in range(1, 32)
-			or int(value[2:4]) not in range(1, 13)
-		):
-			raise ValueError(
-				"TDAT frame value must be a 4-character number string in the DDMM format."
-			)
+		for v in value:
+			if (
+				not v.isdigit()
+				or len(v) != 4
+				or int(v[0:2]) not in range(1, 32)
+				or int(v[2:4]) not in range(1, 13)
+			):
+				raise ValueError(
+					"TDAT frame values must be a 4-character number string in the DDMM format."
+				)
 
 
 @attrs(repr=False)
@@ -204,15 +205,16 @@ class ID3v2TIMEFrame(ID3v2NumericTextFrame):
 
 	@value.validator
 	def validate_value(self, attribute, value):
-		if (
-			not value.isdigit()
-			or len(value) != 4
-			or int(value[0:2]) not in range(0, 24)
-			or int(value[2:4]) not in range(0, 60)
-		):
-			raise ValueError(
-				"TIME frame value must be a 4-character number string in the HHMM format."
-			)
+		for v in value:
+			if (
+				not v.isdigit()
+				or len(v) != 4
+				or int(v[0:2]) not in range(0, 24)
+				or int(v[2:4]) not in range(0, 60)
+			):
+				raise ValueError(
+					"TIME frame values must be a 4-character number string in the HHMM format."
+				)
 
 
 @attrs(repr=False)
