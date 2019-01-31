@@ -20,6 +20,7 @@ __all__ = [
 ]
 
 import re
+import string
 import struct
 from urllib.parse import unquote
 
@@ -95,6 +96,13 @@ class ID3v2GEOBFrame(ID3v2BaseFrame):
 class ID3v2NumberFrame(ID3v2BaseFrame):
 	value = attrib()
 
+	@value.validator
+	def validate_value(self, attribute, value):
+		if not all(char in [*string.digits, '/'] for char in value):
+			raise ValueError(
+				"Number frame values must consist only of digits and '/'."
+			)
+
 	@property
 	def number(self):
 		return self.value.split('/')[0]
@@ -112,6 +120,14 @@ class ID3v2NumberFrame(ID3v2BaseFrame):
 @attrs(repr=False)
 class ID3v2NumericTextFrame(ID3v2BaseFrame):
 	value = attrib()
+
+	@value.validator
+	def validate_value(self, attribute, value):
+		for v in value:
+			if not v.isdigit():
+				raise ValueError(
+					"Numeric text frame values must consist only of digits."
+				)
 
 
 @attrs(repr=False)

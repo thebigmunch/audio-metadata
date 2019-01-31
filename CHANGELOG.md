@@ -8,6 +8,9 @@ This project adheres to [Semantic Versioning](https://semver.org).
 
 [Commits](https://github.com/thebigmunch/audio-metadata/compare/0.3.4...master)
 
+## Added
+
+* Validation for ``ID3v2NumberFrame`` and ``ID3v2NumericTextFrame``.
 
 ## [0.3.4](https://github.com/thebigmunch/audio-metadata/releases/tag/0.3.4) (2019-01-27)
 
