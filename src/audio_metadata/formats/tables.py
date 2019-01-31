@@ -1,11 +1,27 @@
 __all__ = [
-	'FLACMetadataBlockType', 'ID3PictureType', 'ID3v1Genres', 'LAMEBitrateMode',
-	'LAMEChannelMode', 'LAMEPreset', 'LAMEReplayGainOrigin', 'LAMEReplayGainType',
-	'LAMESurroundInfo', 'MP3BitrateMode', 'MP3Bitrates', 'MP3ChannelMode',
-	'MP3SampleRates', 'MP3SamplesPerFrame'
+	'FLACMetadataBlockType',
+	'ID3PictureType',
+	'ID3Version',
+	'ID3v1Genres',
+	'LAMEBitrateMode',
+	'LAMEChannelMode',
+	'LAMEPreset',
+	'LAMEReplayGainOrigin',
+	'LAMEReplayGainType',
+	'LAMESurroundInfo',
+	'MP3BitrateMode',
+	'MP3Bitrates',
+	'MP3ChannelMode',
+	'MP3SampleRates',
+	'MP3SamplesPerFrame'
 ]
 
-from enum import IntEnum
+from enum import Enum, IntEnum
+
+
+class _BaseEnum(Enum):
+	def __repr__(self):
+		return f'<{self.__class__.__name__}.{self.name}>'
 
 
 class _BaseIntEnum(IntEnum):
@@ -47,6 +63,14 @@ class ID3PictureType(_BaseIntEnum):
 	BAND_LOGOTYPE = 19
 	PUBLISHER_LOGOTYPE = 20
 	STUDIO_LOGOTYPE = 20
+
+
+class ID3Version(_BaseEnum):
+	v10 = (1, 0)
+	v11 = (1, 1)
+	v22 = (2, 2)
+	v23 = (2, 3)
+	v24 = (2, 4)
 
 
 ID3v1Genres = [

@@ -11,6 +11,12 @@ This project adheres to [Semantic Versioning](https://semver.org).
 ## Added
 
 * Validation for ``ID3v2NumberFrame`` and ``ID3v2NumericTextFrame``.
+* ``ID3Version`` enum.
+
+### Changed
+
+* Use different field maps for different ID3v2 versions.
+
 
 ## [0.3.4](https://github.com/thebigmunch/audio-metadata/releases/tag/0.3.4) (2019-01-27)
 
