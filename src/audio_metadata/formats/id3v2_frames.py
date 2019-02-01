@@ -54,7 +54,7 @@ class ID3v2Picture(Picture):
 		mime_end = data.index(b'\x00', 1)
 		mime_type = decode_bytestring(data[mime_start:mime_end])
 
-		type = ID3PictureType(data[mime_end + 1])  # noqa
+		type_ = ID3PictureType(data[mime_end + 1])  # noqa
 
 		desc_start = mime_end + 2
 		description, image_data = split_encoded(data[desc_start:], encoding)
@@ -62,7 +62,7 @@ class ID3v2Picture(Picture):
 		width, height = get_image_size(image_data)
 
 		return cls(
-			type=type, mime_type=mime_type, description=description,
+			type=type_, mime_type=mime_type, description=description,
 			width=width, height=height, data=image_data
 		)
 

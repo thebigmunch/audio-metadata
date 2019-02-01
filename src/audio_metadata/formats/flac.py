@@ -39,10 +39,10 @@ class FLACApplication(DictMixin):
 		if not isinstance(data, DataReader):
 			data = DataReader(data)
 
-		id = data.read(4).decode('utf-8', 'replace')  # noqa.
+		id_ = data.read(4).decode('utf-8', 'replace')
 		data = data.read()
 
-		return cls(id, data)
+		return cls(id_, data)
 
 
 @attrs(repr=False)
@@ -138,7 +138,7 @@ class FLACCueSheet(ListMixin):
 		)[0]
 
 		tracks = []
-		for i in range(num_tracks):
+		for _ in range(num_tracks):
 			offset = struct.unpack(
 				'>Q',
 				data.read(8)

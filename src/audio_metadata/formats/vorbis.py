@@ -21,7 +21,7 @@ class VorbisComment(Tags):
 
 		fields = defaultdict(list)
 
-		for i in range(num_comments):
+		for _ in range(num_comments):
 			length = struct.unpack('I', data.read(4))[0]
 			comment = data.read(length).decode('utf-8', 'replace')
 
