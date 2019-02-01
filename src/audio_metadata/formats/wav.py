@@ -14,6 +14,7 @@ from ..exceptions import InvalidFrame, InvalidHeader
 class WAVStreamInfo(StreamInfo):
 	_start = attrib()
 	_size = attrib()
+	bit_depth = attrib()
 	bitrate = attrib()
 	channels = attrib()
 	duration = attrib()
@@ -88,7 +89,13 @@ class WAV(Format):
 		duration = audio_size / byte_rate
 
 		self.streaminfo = WAVStreamInfo(
-			audio_start, audio_size, bitrate, channels, duration, sample_rate
+			audio_start,
+			audio_size,
+			bit_depth,
+			bitrate,
+			channels,
+			duration,
+			sample_rate
 		)
 
 		return self

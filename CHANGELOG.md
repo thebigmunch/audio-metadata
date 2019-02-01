@@ -8,6 +8,10 @@ This project adheres to [Semantic Versioning](https://semver.org).
 
 [Commits](https://github.com/thebigmunch/audio-metadata/compare/0.4.0...master)
 
+### Added
+
+* ``bit_depth`` to ``WAVStreamInfo``.
+
 
 ## [0.4.0](https://github.com/thebigmunch/audio-metadata/releases/tag/0.4.0) (2019-01-31)
 
