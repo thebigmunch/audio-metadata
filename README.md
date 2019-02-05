@@ -82,7 +82,7 @@ Features and functionality that set it apart:
 
 ## Installation
 
-``pip install audio-metadata``
+``pip install -U audio-metadata``
 
 
 ## Usage
