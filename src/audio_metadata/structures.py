@@ -66,4 +66,3 @@ class ListMixin(UserList):
 	@property
 	def items(self):
 		return self.data
-

@@ -162,7 +162,7 @@ class FLACCueSheet(ListMixin):
 
 			track = FLACCueSheetTrack(track_number, offset, isrc, type_, pre_emphasis)
 
-			for i in range(num_indexes):
+			for _ in range(num_indexes):
 				offset = struct.unpack(
 					'>Q',
 					data.read(8)
