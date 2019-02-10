@@ -82,7 +82,7 @@ class Format(DictMixin):
 			self.filepath = os.path.abspath(data.name)
 			self.filesize = os.path.getsize(data.name)
 		else:
-			self.filepath = ''
+			self.filepath = None
 			self.filesize = len(data)
 
 		if not isinstance(data, DataReader):

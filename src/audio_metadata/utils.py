@@ -12,7 +12,7 @@ import os
 import struct
 from codecs import BOM_UTF16_BE, BOM_UTF16_LE
 from functools import reduce
-from io import DEFAULT_BUFFER_SIZE
+from io import DEFAULT_BUFFER_SIZE, BytesIO
 
 from attr import attrib, attrs
 
@@ -20,55 +20,38 @@ from attr import attrib, attrs
 @attrs(slots=True)
 class DataReader:
 	data = attrib()
-	_position = attrib(default=0, repr=False)
 
 	def __attrs_post_init__(self):
-		if hasattr(self.data, 'read'):
-			self._position = self.data.tell()
+		if not hasattr(self.data, 'read'):
+			self.data = BytesIO(self.data)
+
+	def close(self):
+		self.data.close()
 
 	def peek(self, size=DEFAULT_BUFFER_SIZE):
 		if size > DEFAULT_BUFFER_SIZE:
 			size = DEFAULT_BUFFER_SIZE
 
+		peeked = None
 		try:
 			peeked = self.data.peek(size)[:size]
-			if len(peeked) != size:
-				peeked = self.data.read(size)
-				self.data.seek(-size, os.SEEK_CUR)
-
-			return peeked
 		except AttributeError:
-			return self.data[self._position:self._position + size]
+			pass
+
+		if peeked is None or len(peeked) != size:
+			peeked = self.data.read(size)
+			self.data.seek(-len(peeked), os.SEEK_CUR)
+
+		return peeked
 
 	def read(self, size=None):
-		try:
-			read_ = self.data.read(size)
-		except AttributeError:
-			if size is None:
-				size = len(self.data)
-
-			read_ = self.data[self._position:self._position + size]
-
-		self._position += len(read_)
-
-		return read_
+		return self.data.read(size)
 
 	def seek(self, offset, whence=os.SEEK_SET):
-		try:
-			self.data.seek(offset, whence)
-			self._position = self.data.tell()
-		except AttributeError:
-			if whence == os.SEEK_CUR:
-				self._position += offset
-			elif whence == os.SEEK_SET:
-				self._position = 0 + offset
-			elif whence == os.SEEK_END:
-				self._position = len(self.data) + offset
-			else:
-				raise ValueError("Invalid 'whence'.")
+		self.data.seek(offset, whence)
 
 	def tell(self):
-		return self._position
+		return self.data.tell()
 
 
 def decode_bytestring(b, encoding='iso-8859-1'):
