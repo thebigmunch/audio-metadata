@@ -62,9 +62,9 @@ This project adheres to [Semantic Versioning](https://semver.org).
 ### Changed
 
 * Move ``Tags`` subclass ``__init__`` methods to ``Tags`` class.
-  This should have been the case from the beginning; I just didn't notice.
-  This should have no effect to users except that ``Tags`` can now be
-  initialized like a dict itself.
+	This should have been the case from the beginning; I just didn't notice.
+	This should have no effect to users except that ``Tags`` can now be
+	initialized like a dict itself.
 
 
 ## [0.3.0](https://github.com/thebigmunch/audio-metadata/releases/tag/0.3.0) (2019-01-15)
@@ -96,7 +96,7 @@ This project adheres to [Semantic Versioning](https://semver.org).
 ### Fixed
 
 * Loading MP3 files with less than 4 MPEG frames
-  now works so long as there is a XING header.
+	now works so long as there is a XING header.
 * Various bugs with loading WAV files.
 
 

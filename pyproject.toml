@@ -22,7 +22,7 @@ python = "^3.6"
 attrs = "^18.2"
 bidict = "0.*"
 bitstruct = "^6.0"
-more-itertools = ">=4.0,<6.0"
+more-itertools = ">=4.0,<7.0"
 pprintpp = "0.*"
 
 flake8 = { version = "^3.5", optional = true }
