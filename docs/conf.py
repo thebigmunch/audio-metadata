@@ -14,14 +14,16 @@ with open(os.path.join(project_dir, 'src', 'audio_metadata', '__about__.py')) as
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
 extensions = [
-	'sphinx.ext.autodoc',
+	'autoapi.extension',
 	'sphinx.ext.extlinks',
-	'sphinx.ext.ifconfig',
 	'sphinx.ext.intersphinx',
 	'sphinx.ext.napoleon',
-	'sphinx.ext.todo',
 	'sphinx.ext.viewcode'
 ]
+
+autoapi_dirs = ['../src']
+autoapi_add_toctree_entry = False
+autoapi_generate_api_docs = False
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
