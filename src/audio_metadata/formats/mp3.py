@@ -509,10 +509,10 @@ class MP3(Format):
 
 		try:
 			id3v2 = ID3v2.load(self._obj)
-			self._id3 = id3v2._header
-			self.pictures = id3v2.pictures
-			self.tags = id3v2.tags
-			self._obj.seek(self._id3._size, os.SEEK_SET)
+			self._id3 = id3v2
+			self.pictures = self._id3.pictures
+			self.tags = self._id3.tags
+			self._obj.seek(self._id3._header._size, os.SEEK_SET)
 		except (InvalidFrame, InvalidHeader):
 			self._obj.seek(0, os.SEEK_SET)
 
@@ -537,6 +537,7 @@ class MP3(Format):
 
 			if id3v1_data:
 				id3v1 = ID3v1.load(id3v1_data)
-				self.tags = id3v1.tags
+				self._id3 = id3v1
+				self.tags = self._id3.tags
 
 		return self

@@ -12,6 +12,10 @@ This project adheres to [Semantic Versioning](https://semver.org).
 
 * ``bit_depth`` to ``WAVStreamInfo``.
 
+### Changed
+
+* Expose full ID2v2 object in MP3 instead of just the header.
+
 
 ## [0.4.0](https://github.com/thebigmunch/audio-metadata/releases/tag/0.4.0) (2019-01-31)
 
