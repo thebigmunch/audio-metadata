@@ -11,6 +11,7 @@ This project adheres to [Semantic Versioning](https://semver.org).
 ### Added
 
 * ``bit_depth`` to ``WAVStreamInfo``.
+* Add support for RIFF tags to WAV.
 
 ### Changed
 

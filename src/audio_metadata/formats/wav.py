@@ -1,13 +1,56 @@
-__all__ = ['WAV', 'WAVStreamInfo']
+__all__ = ['RIFFTags', 'WAV', 'WAVStreamInfo']
 
 import os
 import struct
 
 from attr import attrib, attrs
+from bidict import frozenbidict
 
 from .id3v2 import ID3v2, ID3v2Frames
-from .models import Format, StreamInfo
+from .models import Format, StreamInfo, Tags
 from ..exceptions import InvalidFrame, InvalidHeader
+from ..utils import DataReader
+
+
+class RIFFTags(Tags):
+	FIELD_MAP = frozenbidict({
+		'album': 'IPRD',
+		'artist': 'IART',
+		'comment': 'ICMT',
+		'copyright': 'ICOP',
+		'date': 'ICRD',
+		'encodedby': 'IENC',
+		'genre': 'IGNR',
+		'language': 'ILNG',
+		'rating': 'IRTD',
+		'title': 'INAM',
+		'tracknumber': 'ITRK'
+	})
+
+	@classmethod
+	def load(cls, data):
+		if not isinstance(data, DataReader):
+			data = DataReader(data)
+
+		fields = {}
+
+		field = data.read(4)
+		while len(field):
+			size = struct.unpack('I', data.read(4))[0]
+			value = data.read(size).strip(b'\x00').decode('utf8')
+			fields[field.decode('utf8')] = value
+
+			b = data.read(1)
+			while b == b'\x00':
+				b = data.read(1)
+
+			if b:
+				data.seek(-1, os.SEEK_CUR)
+
+			field = data.read(4)
+
+		return cls(**fields)
+
 
 
 @attrs(repr=False)
@@ -48,7 +91,6 @@ class WAV(Format):
 		if chunk_id != b'RIFF' or format_ != b'WAVE':
 			raise InvalidHeader("Valid WAVE header not found.")
 
-		# TODO: Support other subchunks?
 		subchunk_header = self._obj.read(8)
 		while len(subchunk_header) == 8:
 			subchunk_id, subchunk_size = struct.unpack(
@@ -73,18 +115,29 @@ class WAV(Format):
 				audio_start = self._obj.tell()
 				audio_size = subchunk_size
 				self._obj.seek(subchunk_size, os.SEEK_CUR)
+			elif subchunk_id == b'LIST':
+				if self._obj.read(4) != b'INFO':
+					self._obj.seek(subchunk_size - 4, os.SEEK_CUR)
+				else:
+					self._riff = RIFFTags.load(self._obj.read(subchunk_size - 4))
 			elif subchunk_id.lower() == b'id3 ':
 				try:
 					id3 = ID3v2.load(self._obj)
-					self._id3 = id3._header
-					self.pictures = id3.pictures
-					self.tags = id3.tags
 				except (InvalidFrame, InvalidHeader):
-					self._id3 = None
+					raise
+				else:
+					self._id3 = id3
+
 			else:
-				self._obj.read(subchunk_size)
+				self._obj.seek(subchunk_size, os.SEEK_CUR)
 
 			subchunk_header = self._obj.read(8)
+
+		if '_id3' in self:
+			self.pictures = self._id3.pictures
+			self.tags = self._id3.tags
+		elif '_riff' in self:
+			self.tags = self._riff
 
 		duration = audio_size / byte_rate
 
