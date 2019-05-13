@@ -72,7 +72,7 @@ class WAV(Format):
 	Attributes:
 		pictures (list): A list of :class:`ID3v2Picture` objects.
 		streaminfo (WAVStreamInfo): The audio stream information.
-		tags (ID3v2Frames): The ID3v2 tag frames, if present.
+		tags (ID3v2Frames or RIFFTags): The ID3v2 or RIFF tags, if present.
 	"""
 
 	tags_type = ID3v2Frames
