@@ -21,7 +21,8 @@ class ID3v1Fields(Tags):
 		artist = data.read(30).strip(b'\x00').decode('iso-8859-1')
 		album = data.read(30).strip(b'\x00').decode('iso-8859-1')
 		year = data.read(4).strip(b'\x00').decode('iso-8859-1')
-		comment = data.read(30).strip(b'\x00').decode('iso-8859-1')
+		comment = data.read(29).strip(b'\x00').decode('iso-8859-1')
+		tracknumber = str(data.read(1)[0])
 		genre_index = int.from_bytes(data.read(1), byteorder='big')
 
 		if title:
@@ -35,8 +36,12 @@ class ID3v1Fields(Tags):
 
 		if year:
 			self.year = [year]
+
 		if comment:
 			self.comment = [comment]
+
+		if tracknumber:
+			self.tracknumber = [tracknumber]
 
 		if genre_index < len(ID3v1Genres):
 			self.genre = [ID3v1Genres[genre_index]]

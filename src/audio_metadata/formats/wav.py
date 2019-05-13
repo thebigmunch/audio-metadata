@@ -127,7 +127,6 @@ class WAV(Format):
 					raise
 				else:
 					self._id3 = id3
-
 			else:
 				self._obj.seek(subchunk_size, os.SEEK_CUR)
 
