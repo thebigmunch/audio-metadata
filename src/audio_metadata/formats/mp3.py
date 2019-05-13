@@ -384,7 +384,8 @@ class MP3StreamInfo(StreamInfo):
 				break
 
 			start = data.tell()
-			if buffer[0] == 255 and buffer[1] >> 5 == 7:
+
+			if bitstruct.unpack('u11', buffer[0:2])[0] == 2047:
 				for _ in range(4):
 					try:
 						frame = MPEGFrameHeader.load(data)
