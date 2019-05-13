@@ -92,50 +92,46 @@ def determine_encoding(b):
 
 
 def get_image_size(data):
-	if hasattr(data, 'read'):
-		data = data.read(56)
+	if not isinstance(data, DataReader):
+		data = DataReader(data)
 
-	size = len(data)
+	b = data.read(56)
+	size = len(b)
 
 	width = height = 0
-	if size >= 10 and data[:6] in [b'GIF87a', b'GIF89a']:
+	if size >= 10 and b[:6] in [b'GIF87a', b'GIF89a']:
 		try:
-			width, height = struct.unpack("<hh", data[6:10])
+			width, height = struct.unpack("<hh", b[6:10])
 		except struct.error:
 			raise ValueError("Invalid GIF file.")
-	elif size >= 24 and data.startswith(b'\x89PNG') and data[12:16] == b'IHDR':
+	elif size >= 24 and b.startswith(b'\x89PNG') and b[12:16] == b'IHDR':
 		try:
-			width, height = struct.unpack(">LL", data[16:24])
+			width, height = struct.unpack(">LL", b[16:24])
 		except struct.error:
 			raise ValueError("Invalid PNG file.")
-	elif size >= 16 and data.startswith(b'\x89PNG'):
-		try:
-			width, height = struct.unpack(">LL", data[8:16])
-		except struct.error:
-			raise ValueError("Invalid PNG file.")
-	elif size >= 2 and data.startswith(b'\xff\xd8'):
-		data = DataReader(data)
+	elif size >= 2 and b.startswith(b'\xff\xd8'):
+		data.seek(0)
+
 		try:
 			size = 2
 			ftype = 0
 			while not 0xc0 <= ftype <= 0xcf or ftype in [0xc4, 0xc8, 0xcc]:
 				data.seek(size, os.SEEK_CUR)
 				while True:
-					b = ord(data.read(1))
-
-					if b != 0xff:
+					b = data.read(1)
+					if b != b'\xff':
 						break
 
-				ftype = b
+				ftype = ord(b)
 				size = struct.unpack('>H', data.read(2))[0] - 2
 
 			data.seek(1, os.SEEK_CUR)
 			height, width = struct.unpack('>HH', data.read(4))
 		except struct.error:
 			raise ValueError("Invalid JPEG file.")
-	elif size >= 12 and data.startswith(b'\x00\x00\x00\x0cjP'):
+	elif size >= 12 and b.startswith(b'\x00\x00\x00\x0cjP'):
 		try:
-			height, width = struct.unpack('>LL', data[48:])
+			height, width = struct.unpack('>LL', b[48:])
 		except struct.error:
 			raise ValueError("Invalid JPEG2000 file.")
 
