@@ -36,7 +36,7 @@ setup(
 	],
 
 	extras_require={
-		'doc': ['sphinx'],
+		'doc': ['sphinx', 'sphinx-autoapi'],
 		'lint': [
 			'flake8',
 			'flake8-builtins',
