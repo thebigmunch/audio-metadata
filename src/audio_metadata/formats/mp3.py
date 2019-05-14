@@ -377,12 +377,9 @@ class MP3StreamInfo(StreamInfo):
 			data = DataReader(data)
 
 		frames = []
-		xing_frame = None
-		while (len(frames) < 4) and (not xing_frame):
-			buffer = data.peek(4)
-			if len(buffer) < 4:
-				break
-
+		cached_frames = None
+		buffer = data.peek(4)
+		while len(buffer) >= 4:
 			start = data.tell()
 
 			if bitstruct.unpack('u11', buffer[0:2])[0] == 2047:
@@ -391,11 +388,9 @@ class MP3StreamInfo(StreamInfo):
 						frame = MPEGFrameHeader.load(data)
 						frames.append(frame)
 						if frame._xing:
-							xing_frame = frame
+							break
 						data.seek(frame._start + frame._size, os.SEEK_SET)
 					except InvalidFrame:
-						del frames[:]
-						data.seek(start + 1, os.SEEK_SET)
 						break
 			else:
 				index = buffer.find(b'\xFF', 1)
@@ -403,11 +398,21 @@ class MP3StreamInfo(StreamInfo):
 					index = len(buffer)
 				data.seek(max(index, 1), os.SEEK_CUR)
 
-		if not frames and not xing_frame:
-			raise InvalidFormat("Missing XING header and insufficient MPEG frames.")
+			if frames and (len(frames) >= 4 or frames[0]._xing):
+				break
 
-		if not frames and xing_frame:
-			frames.append(xing_frame)
+			if len(frames) >= 2 and cached_frames is None:
+				cached_frames = frames.copy()
+
+			del frames[:]
+			data.seek(start + 1, os.SEEK_SET)
+			buffer = data.peek(4)
+
+		if not frames:
+			if not cached_frames:
+				raise InvalidFormat("Missing XING header and insufficient MPEG frames.")
+			else:
+				frames = cached_frames
 
 		samples_per_frame, _ = MP3SamplesPerFrame[(frames[0].version, frames[0].layer)]
 
