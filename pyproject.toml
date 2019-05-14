@@ -33,5 +33,5 @@ sphinx = { version= "^1.8", optional = true}
 
 [tool.poetry.extras]
 dev = [ "flake8", "flake8-builtins", "flake8-import-order", "flake8-import-order-tbm", "sphinx", "sphinx-autoapi" ]
-docs = [ "sphinx", "sphinx-autoapi"]
+doc = [ "sphinx", "sphinx-autoapi"]
 lint = [ "flake8", "flake8-builtins", "flake8-import-order", "flake8-import-order-tbm" ]
