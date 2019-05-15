@@ -11,67 +11,67 @@ The main methods of interacting with audio metadata are :func:`load` and :func:`
 Core
 ----
 
-.. autoapifunction:: determine_format
-.. autoapifunction:: load
-.. autoapifunction:: loads
+.. autofunction:: determine_format
+.. autofunction:: load
+.. autofunction:: loads
 
 
 Exceptions
 ----------
 
-.. autoapiexception:: AudioMetadataException
-.. autoapiexception:: InvalidFrame
-.. autoapiexception:: InvalidHeader
-.. autoapiexception:: UnsupportedFormat
+.. autoexception:: AudioMetadataException
+.. autoexception:: InvalidFrame
+.. autoexception:: InvalidHeader
+.. autoexception:: UnsupportedFormat
 
 
 Base Classes
 ------------
 
-.. autoapiclass:: Format
+.. autoclass:: Format
 
-.. autoapiclass:: Picture
-.. autoapiclass:: Tags
+.. autoclass:: Picture
+.. autoclass:: Tags
 
 
 FLAC
 ----
 
-.. autoapiclass:: FLAC
+.. autoclass:: FLAC
 
-.. autoapiclass:: FLACMetadataBlock
-.. autoapiclass:: FLACApplication
-.. autoapiclass:: FLACCueSheet
-.. autoapiclass:: FLACCueSheetTrack
-.. autoapiclass:: FLACCueSheetIndex
-.. autoapiclass:: FLACPadding
-.. autoapiclass:: FLACSeekPoint
-.. autoapiclass:: FLACSeekTable
-.. autoapiclass:: FLACStreamInfo
+.. autoclass:: FLACMetadataBlock
+.. autoclass:: FLACApplication
+.. autoclass:: FLACCueSheet
+.. autoclass:: FLACCueSheetTrack
+.. autoclass:: FLACCueSheetIndex
+.. autoclass:: FLACPadding
+.. autoclass:: FLACSeekPoint
+.. autoclass:: FLACSeekTable
+.. autoclass:: FLACStreamInfo
 
 
 
 ID3v2
 -----
 
-.. autoapiclass:: ID3v2
+.. autoclass:: ID3v2
 
 
 MP3
 ---
 
-.. autoapiclass:: MP3
+.. autoclass:: MP3
 
 
 Vorbis
 ------
 
-.. autoapiclass:: VorbisComment
-.. autoapiclass:: VorbisPicture
+.. autoclass:: VorbisComment
+.. autoclass:: VorbisPicture
 
 
 WAV
 ---
 
-.. autoapiclass:: WAV
-.. autoapiclass:: WAVStreamInfo
+.. autoclass:: WAV
+.. autoclass:: WAVStreamInfo
