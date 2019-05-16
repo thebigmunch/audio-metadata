@@ -40,7 +40,7 @@ class ID3v1Fields(Tags):
 		if comment:
 			self.comment = [comment]
 
-		if tracknumber:
+		if tracknumber != '0':
 			self.tracknumber = [tracknumber]
 
 		if genre_index < len(ID3v1Genres):

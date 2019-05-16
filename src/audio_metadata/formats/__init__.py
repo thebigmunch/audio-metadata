@@ -1,4 +1,5 @@
 from .flac import *
+from .id3v1 import *
 from .id3v2 import *
 from .id3v2_frames import *
 from .models import *
@@ -10,6 +11,7 @@ from .wav import *
 
 __all__ = [
 	*flac.__all__,
+	*id3v1.__all__,
 	*id3v2_frames.__all__,
 	*id3v2.__all__,
 	*models.__all__,
