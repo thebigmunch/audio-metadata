@@ -95,6 +95,11 @@ def loads(b):
 		UnsupportedFormat: If file is not of a supported format.
 	"""
 
+	try:
+		memoryview(b)
+	except TypeError:
+		raise ValueError("Not a valid bytes-like object.")
+
 	parser_cls = determine_format(b)
 
 	if parser_cls is None:

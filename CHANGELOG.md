@@ -21,6 +21,10 @@ This project adheres to [Semantic Versioning](https://semver.org).
 	* Force lowercase comparison.
 	* Don't require period.
 
+### Fixed
+
+* Actually check if a bytes-like object was given to ``loads``.
+
 
 ## [0.4.0](https://github.com/thebigmunch/audio-metadata/releases/tag/0.4.0) (2019-01-31)
 
