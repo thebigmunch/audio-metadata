@@ -17,6 +17,9 @@ This project adheres to [Semantic Versioning](https://semver.org).
 
 * Expose full ID2v2 object in MP3 instead of just the header.
 * Use ID3v1.1 format instead of ID3v1.0.
+* ``determine_format`` extension check:
+	* Force lowercase comparison.
+	* Don't require period.
 
 
 ## [0.4.0](https://github.com/thebigmunch/audio-metadata/releases/tag/0.4.0) (2019-01-31)

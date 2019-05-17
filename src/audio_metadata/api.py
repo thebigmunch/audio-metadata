@@ -31,15 +31,15 @@ def determine_format(data, extension=None):
 	d = data_reader.read(4)
 
 	if d.startswith((b'ID3', b'\xFF\xFB')):  # TODO: Catch all MP3 possibilities.
-		if extension is None or extension.endswith('.mp3'):
+		if extension is None or extension.lower().endswith('mp3'):
 			return MP3
 
 	if d.startswith((b'fLaC', b'ID3')):
-		if extension is None or extension.endswith('.flac'):
+		if extension is None or extension.lower().endswith('flac'):
 			return FLAC
 
 	if d.startswith(b'RIFF'):
-		if extension is None or extension.endswith('.wav'):
+		if extension is None or extension.lower().endswith('wav'):
 			return WAV
 
 	return None
