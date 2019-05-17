@@ -75,7 +75,7 @@ class WAV(Format):
 		tags (ID3v2Frames or RIFFTags): The ID3v2 or RIFF tags, if present.
 	"""
 
-	tags_type = ID3v2Frames
+	tags_type = RIFFTags
 
 	@classmethod
 	def load(cls, data):
