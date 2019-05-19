@@ -13,7 +13,7 @@ from attr import Factory, attrib, attrs
 from .id3v2 import ID3v2Header
 from .models import Format, StreamInfo
 from .tables import FLACMetadataBlockType
-from .vorbis import VorbisComment, VorbisPicture
+from .vorbis import VorbisComments, VorbisPicture
 from ..exceptions import InvalidHeader
 from ..structures import DictMixin, ListMixin
 from ..utils import DataReader, decode_synchsafe_int
@@ -293,10 +293,10 @@ class FLAC(Format):
 		pictures (list): A list of :class:`VorbisPicture` objects.
 		seektable (FLACSeekTable): The seektable metadata block.
 		streaminfo (FLACStreamInfo): The audio stream information.
-		tags (VorbisComment): The Vorbis comment metadata block.
+		tags (VorbisComments): The Vorbis comment metadata block.
 	"""
 
-	tags_type = VorbisComment
+	tags_type = VorbisComments
 
 	def __init__(self):
 		super().__init__()
@@ -356,7 +356,7 @@ class FLAC(Format):
 				self.seektable = seektable
 				self._blocks.append(seektable)
 			elif block_type == FLACMetadataBlockType.VORBIS_COMMENT:
-				comment_block = VorbisComment.load(metadata_block_data)
+				comment_block = VorbisComments.load(metadata_block_data)
 				self.tags = comment_block
 				self._blocks.append(comment_block)
 			elif block_type == FLACMetadataBlockType.CUESHEET:

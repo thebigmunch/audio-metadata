@@ -20,6 +20,7 @@ This project adheres to [Semantic Versioning](https://semver.org).
 * ``determine_format`` extension check:
 	* Force lowercase comparison.
 	* Don't require period.
+* Rename ``VorbisComment`` to ``VorbisComments``.
 
 ### Fixed
 

@@ -1,4 +1,4 @@
-__all__ = ['VorbisComment', 'VorbisPicture']
+__all__ = ['VorbisComments', 'VorbisPicture']
 
 import struct
 from collections import defaultdict
@@ -9,7 +9,7 @@ from ..utils import DataReader
 
 
 # TODO: Number frames.
-class VorbisComment(Tags):
+class VorbisComments(Tags):
 	@classmethod
 	def load(cls, data):
 		if not isinstance(data, DataReader):
