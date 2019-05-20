@@ -524,8 +524,7 @@ class MP3(Format):
 		self = super()._load(data)
 
 		try:
-			id3v2 = ID3v2.load(self._obj)
-			self._id3 = id3v2
+			self._id3 = ID3v2.load(self._obj)
 			self.pictures = self._id3.pictures
 			self.tags = self._id3.tags
 			self._obj.seek(self._id3._header._size, os.SEEK_SET)

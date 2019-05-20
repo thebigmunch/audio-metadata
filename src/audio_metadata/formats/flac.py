@@ -10,7 +10,7 @@ import struct
 import bitstruct
 from attr import Factory, attrib, attrs
 
-from .id3v2 import ID3v2Header
+from .id3v2 import ID3v2
 from .models import Format, StreamInfo
 from .tables import FLACMetadataBlockType
 from .vorbis import VorbisComments, VorbisPicture
@@ -308,22 +308,7 @@ class FLAC(Format):
 
 		# Ignore ID3v2 in FLAC.
 		if self._obj.peek(3) == b'ID3':
-			id3_header = ID3v2Header.load(self._obj.read(10))
-			self._obj.read(id3_header._size)
-
-			if id3_header.flags.extended:
-				ext_size = decode_synchsafe_int(
-					struct.unpack(
-						'4B',
-						self._obj.read(4)
-					),
-					7
-				)
-
-				if id3_header.version[1] == 4:
-					data.read(ext_size - 4)
-				else:
-					data.read(ext_size)
+			ID3v2.load(self._obj)
 
 		if self._obj.read(4) != b'fLaC':
 			raise InvalidHeader("Valid FLAC header not found.")
