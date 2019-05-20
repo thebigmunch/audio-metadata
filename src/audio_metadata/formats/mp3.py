@@ -376,6 +376,7 @@ class MP3StreamInfo(StreamInfo):
 		if not isinstance(data, DataReader):
 			data = DataReader(data)
 
+	def find_mp3_frames(data):
 		frames = []
 		cached_frames = None
 		buffer = data.peek(4)
@@ -413,6 +414,15 @@ class MP3StreamInfo(StreamInfo):
 				raise InvalidFormat("Missing XING header and insufficient MPEG frames.")
 			else:
 				frames = cached_frames
+
+		return frames
+
+	@classmethod
+	def load(cls, data):
+		if not isinstance(data, DataReader):  # pragma: nocover
+			data = DataReader(data)
+
+		frames = cls.find_mp3_frames(data)
 
 		samples_per_frame, _ = MP3SamplesPerFrame[(frames[0].version, frames[0].layer)]
 
