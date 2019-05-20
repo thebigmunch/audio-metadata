@@ -6,8 +6,8 @@ __all__ = [
 
 import os
 
-from .exceptions import UnsupportedFormat
-from .formats import FLAC, MP3, WAV
+from .exceptions import InvalidFormat, UnsupportedFormat
+from .formats import FLAC, ID3v2, MP3, WAV, MP3StreamInfo
 from .utils import DataReader
 
 
@@ -23,6 +23,9 @@ def determine_format(data, extension=None):
 			be used in multiple containers (e.g. ID3).
 	"""
 
+	if extension and not extension.endswith(('flac', 'mp3', 'wav')):
+		raise UnsupportedFormat(f"'{extension}' is not an extension of a supported format.")
+
 	if isinstance(data, (os.PathLike, str)):
 		data = open(data, 'rb')
 
@@ -30,17 +33,48 @@ def determine_format(data, extension=None):
 	data_reader.seek(0, os.SEEK_SET)
 	d = data_reader.read(4)
 
-	if d.startswith((b'ID3', b'\xFF\xFB')):  # TODO: Catch all MP3 possibilities.
-		if extension is None or extension.lower().endswith('mp3'):
-			return MP3
+	if (
+		d.startswith(b'\xFF\xFB')
+		or (
+			extension
+			and extension.lower().endswith('mp3')
+		)
+	):
+		return MP3
 
-	if d.startswith((b'fLaC', b'ID3')):
-		if extension is None or extension.lower().endswith('flac'):
+	if (
+		d.startswith(b'fLaC')
+		or (
+			extension
+			and extension.lower().endswith('flac')
+		)
+	):
+		return FLAC
+
+	if (
+		d.startswith(b'RIFF')
+		or (
+			extension
+			and extension.lower().endswith('wav')
+		)
+	):
+		return WAV
+
+	if d.startswith(b'ID3'):
+		data_reader.seek(0)
+		ID3v2.load(data_reader)
+
+		if data_reader.peek(4) == b'fLaC':
 			return FLAC
-
-	if d.startswith(b'RIFF'):
-		if extension is None or extension.lower().endswith('wav'):
-			return WAV
+		elif data_reader.peek(2) == b'\xFF\xFB':
+			return MP3
+		else:
+			try:
+				frames = MP3StreamInfo.find_mp3_frames(data_reader)
+			except InvalidFormat:
+				return None
+			else:
+				return MP3 if frames else None
 
 	return None
 
