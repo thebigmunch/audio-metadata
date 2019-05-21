@@ -371,11 +371,6 @@ class MP3StreamInfo(StreamInfo):
 	duration = attrib()
 	sample_rate = attrib()
 
-	@classmethod
-	def load(cls, data):
-		if not isinstance(data, DataReader):
-			data = DataReader(data)
-
 	def find_mp3_frames(data):
 		frames = []
 		cached_frames = None

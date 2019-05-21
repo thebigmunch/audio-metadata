@@ -16,7 +16,7 @@ from .tables import FLACMetadataBlockType
 from .vorbis import VorbisComments, VorbisPicture
 from ..exceptions import InvalidHeader
 from ..structures import DictMixin, ListMixin
-from ..utils import DataReader, decode_synchsafe_int
+from ..utils import DataReader
 
 
 @attrs(repr=False)
