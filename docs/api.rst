@@ -66,7 +66,7 @@ MP3
 Vorbis
 ------
 
-.. autoclass:: VorbisComment
+.. autoclass:: VorbisComments
 .. autoclass:: VorbisPicture
 
 
