@@ -142,7 +142,7 @@ class ID3v2Frames(Tags):
 
 	@classmethod
 	def load(cls, data, id3_version):
-		if not isinstance(data, DataReader):
+		if not isinstance(data, DataReader):  # pragma: nocover
 			data = DataReader(data)
 
 		if id3_version is ID3Version.v22:
@@ -213,7 +213,7 @@ class ID3v2Header(DictMixin):
 
 	@classmethod
 	def load(cls, data):
-		if not isinstance(data, DataReader):
+		if not isinstance(data, DataReader):  # pragma: nocover
 			data = DataReader(data)
 
 		if data.read(3) != b"ID3":
@@ -241,7 +241,7 @@ class ID3v2Header(DictMixin):
 class ID3v2(DictMixin):
 	@classmethod
 	def load(cls, data):
-		if not isinstance(data, DataReader):
+		if not isinstance(data, DataReader):  # pragma: nocover
 			data = DataReader(data)
 
 		if data.peek(3) != b"ID3":

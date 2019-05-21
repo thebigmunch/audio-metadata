@@ -12,7 +12,7 @@ from ..utils import DataReader
 class VorbisComments(Tags):
 	@classmethod
 	def load(cls, data):
-		if not isinstance(data, DataReader):
+		if not isinstance(data, DataReader):  # pragma: nocover
 			data = DataReader(data)
 
 		vendor_length = struct.unpack('I', data.read(4))[0]
@@ -25,7 +25,7 @@ class VorbisComments(Tags):
 			length = struct.unpack('I', data.read(4))[0]
 			comment = data.read(length).decode('utf-8', 'replace')
 
-			if '=' in comment:
+			if '=' in comment:  # pragma: nobranch
 				field, value = comment.split('=', 1)
 
 				fields[field.lower()].append(value)
@@ -34,12 +34,9 @@ class VorbisComments(Tags):
 
 
 class VorbisPicture(Picture):
-	def __init__(self, **kwargs):
-		self.update(**kwargs)
-
 	@classmethod
 	def load(cls, data):
-		if not isinstance(data, DataReader):
+		if not isinstance(data, DataReader):  # pragma: nocover
 			data = DataReader(data)
 
 		type_, mime_length = struct.unpack('>2I', data.read(8))

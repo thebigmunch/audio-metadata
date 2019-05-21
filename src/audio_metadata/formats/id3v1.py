@@ -12,7 +12,7 @@ from ..utils import DataReader
 class ID3v1Fields(Tags):
 	@classmethod
 	def load(cls, data):
-		if not isinstance(data, DataReader):
+		if not isinstance(data, DataReader):  # pragma: nocover
 			data = DataReader(data)
 
 		self = cls()
@@ -52,7 +52,7 @@ class ID3v1Fields(Tags):
 class ID3v1:
 	@classmethod
 	def load(cls, data):
-		if not isinstance(data, DataReader):
+		if not isinstance(data, DataReader):  # pragma: nocover
 			data = DataReader(data)
 
 		if data.read(3) != b"TAG":

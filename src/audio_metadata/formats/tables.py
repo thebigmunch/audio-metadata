@@ -19,12 +19,12 @@ __all__ = [
 from enum import Enum, IntEnum
 
 
-class _BaseEnum(Enum):
+class _BaseEnum(Enum):  # pragma: nocover
 	def __repr__(self):
 		return f'<{self.__class__.__name__}.{self.name}>'
 
 
-class _BaseIntEnum(IntEnum):
+class _BaseIntEnum(IntEnum):  # pragma: nocover
 	def __repr__(self):
 		return f'<{self.__class__.__name__}.{self.name}>'
 

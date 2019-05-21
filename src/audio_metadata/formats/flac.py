@@ -36,7 +36,7 @@ class FLACApplication(DictMixin):
 
 	@classmethod
 	def load(cls, data):
-		if not isinstance(data, DataReader):
+		if not isinstance(data, DataReader):  # pragma: nocover
 			data = DataReader(data)
 
 		id_ = data.read(4).decode('utf-8', 'replace')
@@ -118,7 +118,7 @@ class FLACCueSheet(ListMixin):
 
 	@classmethod
 	def load(cls, data):
-		if not isinstance(data, DataReader):
+		if not isinstance(data, DataReader):  # pragma: nocover
 			data = DataReader(data)
 
 		catalog_number = data.read(128).rstrip(b'\0').decode('ascii', 'replace')
@@ -200,7 +200,7 @@ class FLACPadding(DictMixin):
 
 	@classmethod
 	def load(cls, data):
-		if not isinstance(data, DataReader):
+		if not isinstance(data, DataReader):  # pragma: nocover
 			data = DataReader(data)
 
 		return cls(len(data.peek()))
@@ -214,7 +214,7 @@ class FLACSeekPoint(DictMixin):
 
 	@classmethod
 	def load(cls, data):
-		if not isinstance(data, DataReader):
+		if not isinstance(data, DataReader):  # pragma: nocover
 			data = DataReader(data)
 
 		return cls(*struct.unpack('>QQH', data.read()))
@@ -228,7 +228,7 @@ class FLACSeekTable(ListMixin):
 
 	@classmethod
 	def load(cls, data):
-		if not isinstance(data, DataReader):
+		if not isinstance(data, DataReader):  # pragma: nocover
 			data = DataReader(data)
 
 		seekpoints = []
@@ -257,7 +257,7 @@ class FLACStreamInfo(StreamInfo):
 
 	@classmethod
 	def load(cls, data):
-		if not isinstance(data, DataReader):
+		if not isinstance(data, DataReader):  # pragma: nocover
 			data = DataReader(data)
 
 		stream_info_block_data = bitstruct.unpack(
@@ -315,7 +315,7 @@ class FLAC(Format):
 
 		header_data = self._obj.read(4)
 
-		while len(header_data):
+		while True:
 			is_last_block, block_type, block_size = bitstruct.unpack(
 				'b1 u7 u24',
 				header_data
@@ -364,6 +364,7 @@ class FLAC(Format):
 
 				if self.streaminfo.duration > 0:
 					self.streaminfo.bitrate = self.streaminfo._size * 8 / self.streaminfo.duration
+
 				break
 			else:
 				header_data = self._obj.read(4)

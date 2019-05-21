@@ -1,20 +1,26 @@
-__all__ = ['Format', 'Picture', 'Tags']
+__all__ = [
+	'Format',
+	'Picture',
+	'StreamInfo',
+	'Tags'
+]
 
 import os
-from io import BytesIO
 
-import pprintpp
 from bidict import frozenbidict
 
 from ..structures import DictMixin
-from ..utils import DataReader, humanize_bitrate, humanize_duration, humanize_filesize, humanize_sample_rate
+from ..utils import (
+	DataReader,
+	humanize_bitrate,
+	humanize_duration,
+	humanize_filesize,
+	humanize_sample_rate
+)
 
 
 class Tags(DictMixin):
 	FIELD_MAP = frozenbidict()
-
-	def __init__(self, *args, **kwargs):
-		self.update(*args, **kwargs)
 
 	def __getitem__(self, key):
 		k = self.FIELD_MAP.get(key, key)
@@ -32,15 +38,20 @@ class Tags(DictMixin):
 		return super().__delitem__(k)
 
 	def __iter__(self):
-		return iter(self.FIELD_MAP.inv.get(k, k) for k in self.__dict__)
+		return iter(
+			self.FIELD_MAP.inv.get(k, k)
+			for k in self.__dict__
+			if not k.startswith('_') and not k == 'FIELD_MAP'
+		)
 
 	def __repr__(self, repr_dict=None):
-		repr_dict = {self.FIELD_MAP.inv.get(k, k): v for k, v in self.__dict__.items() if not k.startswith('_')}
-		return super().__repr__(repr_dict=repr_dict)
+		repr_dict = {
+			self.FIELD_MAP.inv.get(k, k): v
+			for k, v in self.__dict__.items()
+			if not k.startswith('_') and not k == 'FIELD_MAP'
+		}
 
-	def __str__(self):
-		str_dict = {self.FIELD_MAP.inv.get(k, k): v for k, v in self.__dict__.items() if not k.startswith('_')}
-		return pprintpp.pformat(str_dict)
+		return super().__repr__(repr_dict=repr_dict)
 
 
 class Format(DictMixin):
@@ -67,8 +78,6 @@ class Format(DictMixin):
 		for k, v in sorted(self.items()):
 			if k == 'filesize':
 				repr_dict[k] = humanize_filesize(v, precision=2)
-			elif isinstance(v, BytesIO):
-				repr_dict[k] = f"<{v.__class__.__name__}>"
 			elif not k.startswith('_'):
 				repr_dict[k] = v
 
@@ -81,6 +90,13 @@ class Format(DictMixin):
 		if hasattr(data, 'name'):
 			self.filepath = os.path.abspath(data.name)
 			self.filesize = os.path.getsize(data.name)
+		elif isinstance(data, DataReader):
+			if hasattr(data.data, 'name'):
+				self.filepath = os.path.abspath(data.data.name)
+				self.filesize = os.path.getsize(data.data.name)
+			else:
+				self.filepath = None
+				self.filesize = len(data.data.getbuffer())
 		else:
 			self.filepath = None
 			self.filesize = len(data)

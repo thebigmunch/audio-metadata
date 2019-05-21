@@ -62,10 +62,8 @@ def decode_bytestring(b, encoding='iso-8859-1'):
 		if len(b) % 2 != 0 and b[-1:] == b'\x00':
 			b = b[:-1]
 
-		if b.startswith(BOM_UTF16_BE):
-			b = b[len(BOM_UTF16_BE):]
-		elif b.startswith(BOM_UTF16_LE):
-			b = b[len(BOM_UTF16_LE):]
+		if b.startswith((BOM_UTF16_BE, BOM_UTF16_LE)):  # pragma: nobranch
+			b = b[2:]
 
 	return b.decode(encoding).rstrip('\x00')
 
@@ -80,7 +78,7 @@ def determine_encoding(b):
 	if first == b'\x00':
 		encoding = 'iso-8859-1'
 	elif first == b'\x01':
-		encoding = 'utf-16-be' if b[1:3] == b'\xfe\xff' else 'utf-16-le'
+		encoding = 'utf-16-be' if b[1:3] == BOM_UTF16_BE else 'utf-16-le'
 	elif first == b'\x02':
 		encoding = 'utf-16-be'
 	elif first == b'\x03':
@@ -92,7 +90,7 @@ def determine_encoding(b):
 
 
 def get_image_size(data):
-	if not isinstance(data, DataReader):
+	if not isinstance(data, DataReader):  # pragma: nocover
 		data = DataReader(data)
 
 	b = data.read(56)
@@ -100,40 +98,30 @@ def get_image_size(data):
 
 	width = height = 0
 	if size >= 10 and b[:6] in [b'GIF87a', b'GIF89a']:
-		try:
-			width, height = struct.unpack("<hh", b[6:10])
-		except struct.error:
-			raise ValueError("Invalid GIF file.")
+		width, height = struct.unpack('<hh', b[6:10])
 	elif size >= 24 and b.startswith(b'\x89PNG') and b[12:16] == b'IHDR':
-		try:
-			width, height = struct.unpack(">LL", b[16:24])
-		except struct.error:
-			raise ValueError("Invalid PNG file.")
+		width, height = struct.unpack('>LL', b[16:24])
 	elif size >= 2 and b.startswith(b'\xff\xd8'):
 		data.seek(0)
 
-		try:
-			size = 2
-			ftype = 0
-			while not 0xc0 <= ftype <= 0xcf or ftype in [0xc4, 0xc8, 0xcc]:
-				data.seek(size, os.SEEK_CUR)
-				while True:
-					b = data.read(1)
-					if b != b'\xff':
-						break
+		size = 2
+		ftype = 0
+		while not 0xc0 <= ftype <= 0xcf or ftype in [0xc4, 0xc8, 0xcc]:
+			data.seek(size, os.SEEK_CUR)
+			while True:
+				b = data.read(1)
+				if b != b'\xff':
+					break
 
-				ftype = ord(b)
-				size = struct.unpack('>H', data.read(2))[0] - 2
+			ftype = ord(b)
+			size = struct.unpack('>H', data.read(2))[0] - 2
 
-			data.seek(1, os.SEEK_CUR)
-			height, width = struct.unpack('>HH', data.read(4))
-		except struct.error:
-			raise ValueError("Invalid JPEG file.")
+		data.seek(1, os.SEEK_CUR)
+		height, width = struct.unpack('>HH', data.read(4))
 	elif size >= 12 and b.startswith(b'\x00\x00\x00\x0cjP'):
-		try:
-			height, width = struct.unpack('>LL', b[48:])
-		except struct.error:
-			raise ValueError("Invalid JPEG2000 file.")
+		height, width = struct.unpack('>LL', b[48:])
+	else:
+		raise ValueError(f"'data' is not a supported image file.")
 
 	return width, height
 

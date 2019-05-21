@@ -6,7 +6,7 @@ import struct
 from attr import attrib, attrs
 from bidict import frozenbidict
 
-from .id3v2 import ID3v2, ID3v2Frames
+from .id3v2 import ID3v2
 from .models import Format, StreamInfo, Tags
 from ..exceptions import InvalidFrame, InvalidHeader
 from ..utils import DataReader
@@ -29,7 +29,7 @@ class RIFFTags(Tags):
 
 	@classmethod
 	def load(cls, data):
-		if not isinstance(data, DataReader):
+		if not isinstance(data, DataReader):  # pragma: nocover
 			data = DataReader(data)
 
 		fields = {}
@@ -37,8 +37,8 @@ class RIFFTags(Tags):
 		field = data.read(4)
 		while len(field):
 			size = struct.unpack('I', data.read(4))[0]
-			value = data.read(size).strip(b'\x00').decode('utf8')
-			fields[field.decode('utf8')] = value
+			value = data.read(size).strip(b'\x00').decode('utf-8')
+			fields[field.decode('utf-8')] = value
 
 			b = data.read(1)
 			while b == b'\x00':
@@ -49,8 +49,7 @@ class RIFFTags(Tags):
 
 			field = data.read(4)
 
-		return cls(**fields)
-
+		return cls(fields)
 
 
 @attrs(repr=False)

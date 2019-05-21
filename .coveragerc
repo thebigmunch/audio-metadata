@@ -1,0 +1,13 @@
+[run]
+branch = True
+source = audio_metadata
+
+[paths]
+source =
+	src/audio_metadata
+	.tox/*/lib/python*/site-packages/audio_metadata
+	.tox/pypy/site-packages/audio_metadata
+
+[report]
+precision = 2
+show_missing = True

@@ -39,12 +39,9 @@ _genre_re = re.compile(r"((?:\((?P<id>\d+|RX|CR)\))*)(?P<name>.+)?")
 
 
 class ID3v2Picture(Picture):
-	def __init__(self, **kwargs):
-		self.update(**kwargs)
-
 	@classmethod
 	def load(cls, data):
-		if not isinstance(data, DataReader):
+		if not isinstance(data, DataReader):  # pragma: nocover
 			data = DataReader(data)
 
 		data = data.read()
@@ -330,7 +327,7 @@ class ID3v2Frame(ID3v2BaseFrame):
 
 	@classmethod
 	def load(cls, data, struct_pattern, size_len, per_byte):
-		if not isinstance(data, DataReader):
+		if not isinstance(data, DataReader):  # pragma: nocover
 			data = DataReader(data)
 
 		try:

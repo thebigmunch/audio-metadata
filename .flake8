@@ -3,7 +3,10 @@ ignore = W191, W503, F403, F405
 max-line-length = 150
 import-order-style = tbm
 exclude =
-	conf.py
+	__pycache__
+	.tox
+	dist
+	docs
 enable-plugins =
 	builtins
 	import_order

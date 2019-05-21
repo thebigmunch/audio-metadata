@@ -7,7 +7,7 @@ __all__ = [
 import os
 
 from .exceptions import InvalidFormat, UnsupportedFormat
-from .formats import FLAC, ID3v2, MP3, WAV, MP3StreamInfo
+from .formats import FLAC, MP3, WAV, ID3v2, MP3StreamInfo
 from .utils import DataReader
 
 
@@ -101,7 +101,7 @@ def load(f):
 			f.read(0)
 		except AttributeError:
 			raise ValueError("Not a valid file-like object.")
-		except Exception:
+		except Exception:  # pragma: nocover
 			raise ValueError("Can't read from file-like object.")
 
 		fileobj = f

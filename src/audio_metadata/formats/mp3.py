@@ -40,7 +40,7 @@ class LAMEReplayGain(DictMixin):
 
 	@classmethod
 	def load(cls, data):
-		if not isinstance(data, DataReader):
+		if not isinstance(data, DataReader):  # pragma: nocover
 			data = DataReader(data)
 
 		peak_data = struct.unpack('>I', data.read(4))[0]
@@ -107,7 +107,7 @@ class LAMEHeader(DictMixin):
 
 	@classmethod
 	def load(cls, data, xing_quality):
-		if not isinstance(data, DataReader):
+		if not isinstance(data, DataReader):  # pragma: nocover
 			data = DataReader(data)
 
 		encoder = data.read(9)
@@ -230,7 +230,7 @@ class XingHeader(DictMixin):
 
 	@classmethod
 	def load(cls, data):
-		if not isinstance(data, DataReader):
+		if not isinstance(data, DataReader):  # pragma: nocover
 			data = DataReader(data)
 
 		if data.read(4) not in [b'Xing', b'Info']:
@@ -288,7 +288,7 @@ class MPEGFrameHeader(DictMixin):
 
 	@classmethod
 	def load(cls, data):
-		if not isinstance(data, DataReader):
+		if not isinstance(data, DataReader):  # pragma: nocover
 			data = DataReader(data)
 
 		frame_start = data.tell()
@@ -313,7 +313,13 @@ class MPEGFrameHeader(DictMixin):
 			data.read(1)
 		)
 
-		if version_id == 1 or layer_index == 0 or bitrate_index == 0 or bitrate_index == 15 or sample_rate_index == 3:
+		if (
+			version_id == 1
+			or layer_index == 0
+			or bitrate_index == 0
+			or bitrate_index == 15
+			or sample_rate_index == 3
+		):
 			raise InvalidFrame('Not a valid MPEG audio frame.')
 
 		channel_mode = MP3ChannelMode(
