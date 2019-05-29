@@ -85,11 +85,8 @@ Features and functionality that set it apart:
 
 See the full :doc:`api`.
 
-
-Table of Contents
-=================
-
 .. toctree::
-	:maxdepth: 2
+	:hidden:
 
+	self
 	api
