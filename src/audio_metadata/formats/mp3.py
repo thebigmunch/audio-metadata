@@ -377,6 +377,7 @@ class MP3StreamInfo(StreamInfo):
 	duration = attrib()
 	sample_rate = attrib()
 
+	@staticmethod
 	def find_mp3_frames(data):
 		frames = []
 		cached_frames = None
