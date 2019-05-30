@@ -50,17 +50,33 @@ FLAC
 .. autoclass:: FLACStreamInfo
 
 
+ID3v1
+-----
+
+.. autoclass:: ID3v1
+
+.. autoclass:: ID3v1Fields
+
 
 ID3v2
 -----
 
 .. autoclass:: ID3v2
 
+.. autoclass:: ID3v2Frames
+.. autoclass:: ID3v2Header
+
 
 MP3
 ---
 
 .. autoclass:: MP3
+
+.. autoclass:: LAMEHeader
+.. autoclass:: MP3StreamInfo
+.. autoclass:: MPEGFrameHeader
+.. autoclass:: XingHeader
+.. autoclass:: XingTOC
 
 
 Vorbis
@@ -74,4 +90,6 @@ WAV
 ---
 
 .. autoclass:: WAV
+
+.. autoclass:: RIFFTags
 .. autoclass:: WAVStreamInfo
