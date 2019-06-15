@@ -21,10 +21,13 @@ def determine_format(data, extension=None):
 		extension (str): The file extension of the file.
 			Used as a tie-breaker for formats that can
 			be used in multiple containers (e.g. ID3).
+
+	Returns:
+		Format: An audio format class if supported, else None.
 	"""
 
 	if extension and not extension.endswith(('flac', 'mp3', 'wav')):
-		raise UnsupportedFormat(f"'{extension}' is not an extension of a supported format.")
+		return None
 
 	if isinstance(data, (os.PathLike, str)):
 		data = open(data, 'rb')
