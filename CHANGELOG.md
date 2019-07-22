@@ -6,12 +6,17 @@ This project adheres to [Semantic Versioning](https://semver.org).
 
 ## [Unreleased](https://github.com/thebigmunch/audio-metadata/tree/master)
 
-[Commits](https://github.com/thebigmunch/audio-metadata/compare/0.4.0...master)
+[Commits](https://github.com/thebigmunch/audio-metadata/compare/0.5.0...master)
+
+
+## [0.5.0](https://github.com/thebigmunch/audio-metadata/releases/tag/0.5.0) (2019-07-22)
+
+[Commits](https://github.com/thebigmunch/audio-metadata/compare/0.4.0...0.5.0)
 
 ### Added
 
 * ``bit_depth`` to ``WAVStreamInfo``.
-* Add support for RIFF tags to WAV.
+* Support for RIFF tags to WAV.
 
 ### Changed
 
@@ -21,6 +26,7 @@ This project adheres to [Semantic Versioning](https://semver.org).
 	* Force lowercase comparison.
 	* Don't require period.
 * Rename ``VorbisComment`` to ``VorbisComments``.
+* Improve MP3 frame detection.
 
 ### Fixed
 
