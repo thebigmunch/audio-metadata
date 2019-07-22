@@ -78,29 +78,26 @@ def test_determine_format_pathobj_with_extension():
 
 def test_determine_format_filepath_with_wrong_extension():
 	for fp in test_filepaths:
-		with pytest.raises(UnsupportedFormat):
-			audio_metadata.determine_format(
-				fp,
-				extension='.py'
-			)
+		assert audio_metadata.determine_format(
+			fp,
+			extension='.py'
+		) is None
 
 
 def test_determine_format_fileobj_with_wrong_extension():
 	for fp in test_filepaths:
-		with pytest.raises(UnsupportedFormat):
-			audio_metadata.determine_format(
-				fp.open('rb'),
-				extension='.py'
-			)
+		assert audio_metadata.determine_format(
+			fp.open('rb'),
+			extension='.py'
+		) is None
 
 
 def test_determine_format_pathobj_with_wrong_extension():
 	for fp in test_filepaths:
-		with pytest.raises(UnsupportedFormat):
-			audio_metadata.determine_format(
-				fp,
-				extension='.py'
-			)
+		assert audio_metadata.determine_format(
+			fp,
+			extension='.py'
+		) is None
 
 
 def test_load_non_audio():
