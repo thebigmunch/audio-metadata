@@ -115,8 +115,8 @@ def load(f):
 		raise UnsupportedFormat("Supported format signature not found.")
 	else:
 		fileobj.seek(0, os.SEEK_SET)
-
-	return parser_cls.load(fileobj)
+	with fileobj:
+		return parser_cls.load(fileobj)
 
 
 def loads(b):
