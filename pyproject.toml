@@ -21,7 +21,7 @@ python = "^3.6"
 
 attrs = ">=18.2,<19.2"
 bidict = "0.*"
-bitstruct = ">=6.0,<=9.0"
+bitstruct = ">=6.0,<9.0"
 more-itertools = ">=4.0,<8.0"
 pprintpp = "0.*"
 
@@ -31,7 +31,7 @@ flake8-builtins = { version = "^1.0", optional = true }
 flake8-comprehensions = { version = "^2.0", optional = true }
 flake8-import-order = { version = "^0.18", optional = true }
 flake8-import-order-tbm = { version = "^1.0.0", optional = true }
-pytest = { version = "^4.0", optional = true }
+pytest = { version = ">=4.0,<6.0", optional = true }
 sphinx = { version= "^2.0", optional = true}
 tox = { version = "^3.0", optional = true }
 
