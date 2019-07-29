@@ -9,4 +9,5 @@ exclude =
 	docs
 enable-plugins =
 	builtins
+	comprehensions
 	import_order
