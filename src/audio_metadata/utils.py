@@ -12,46 +12,42 @@ import os
 import struct
 from codecs import BOM_UTF16_BE, BOM_UTF16_LE
 from functools import reduce
-from io import DEFAULT_BUFFER_SIZE, BytesIO
+from io import (
+	DEFAULT_BUFFER_SIZE,
+	BufferedReader,
+	BytesIO,
+	FileIO
+)
 
-from attr import attrib, attrs
 
+class DataReader(BufferedReader):
+	def __init__(self, data, buffer_size=DEFAULT_BUFFER_SIZE):
+		if isinstance(data, (BufferedReader, DataReader)):
+			if isinstance(data.raw, FileIO):
+				data = FileIO(data.name, 'rb')
+			else:
+				data = BytesIO(data.read())
+		elif isinstance(data, (os.PathLike, str)):
+			data = FileIO(data, 'rb')
+		elif isinstance(data, (bytearray, bytes, memoryview)):
+			data = BytesIO(data)
 
-@attrs(slots=True)
-class DataReader:
-	data = attrib()
-
-	def __attrs_post_init__(self):
-		if not hasattr(self.data, 'read'):
-			self.data = BytesIO(self.data)
-
-	def close(self):
-		self.data.close()
+		super().__init__(data, buffer_size=buffer_size)
 
 	def peek(self, size=DEFAULT_BUFFER_SIZE):
 		if size > DEFAULT_BUFFER_SIZE:
 			size = DEFAULT_BUFFER_SIZE
 
-		peeked = None
 		try:
-			peeked = self.data.peek(size)[:size]
+			peeked = self.raw.peek(size)[:size]
 		except AttributeError:
-			pass
-
-		if peeked is None or len(peeked) != size:
-			peeked = self.data.read(size)
-			self.data.seek(-len(peeked), os.SEEK_CUR)
+			peeked = None
+		finally:
+			if peeked is None or len(peeked) != size:
+				peeked = self.read(size)
+				self.seek(-len(peeked), os.SEEK_CUR)
 
 		return peeked
-
-	def read(self, size=None):
-		return self.data.read(size)
-
-	def seek(self, offset, whence=os.SEEK_SET):
-		self.data.seek(offset, whence)
-
-	def tell(self):
-		return self.data.tell()
 
 
 def decode_bytestring(b, encoding='iso-8859-1'):

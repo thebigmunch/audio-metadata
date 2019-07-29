@@ -369,4 +369,6 @@ class FLAC(Format):
 			else:
 				header_data = self._obj.read(4)
 
+		self._obj.close()
+
 		return self

@@ -87,24 +87,17 @@ class Format(DictMixin):
 	def _load(cls, data):
 		self = cls()
 
-		if hasattr(data, 'name'):
-			self.filepath = os.path.abspath(data.name)
-			self.filesize = os.path.getsize(data.name)
-		elif isinstance(data, DataReader):
-			if hasattr(data.data, 'name'):
-				self.filepath = os.path.abspath(data.data.name)
-				self.filesize = os.path.getsize(data.data.name)
-			else:
-				self.filepath = None
-				self.filesize = len(data.data.getbuffer())
-		else:
-			self.filepath = None
-			self.filesize = len(data)
-
 		if not isinstance(data, DataReader):
 			self._obj = DataReader(data)
 		else:
 			self._obj = data
+
+		try:
+			self.filepath = os.path.abspath(self._obj.name)
+			self.filesize = os.path.getsize(self._obj.name)
+		except AttributeError:
+			self.filepath = None
+			self.filesize = len(self._obj.raw.getbuffer())
 
 		return self
 

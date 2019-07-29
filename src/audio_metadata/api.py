@@ -5,6 +5,7 @@ __all__ = [
 ]
 
 import os
+from io import BufferedReader, FileIO
 
 from .exceptions import InvalidFormat, UnsupportedFormat
 from .formats import FLAC, MP3, WAV, ID3v2, MP3StreamInfo
@@ -29,12 +30,14 @@ def determine_format(data, extension=None):
 	if extension and not extension.endswith(('flac', 'mp3', 'wav')):
 		return None
 
-	if isinstance(data, (os.PathLike, str)):
-		data = open(data, 'rb')
+	if not isinstance(data, DataReader):
+		try:
+			data = DataReader(data)
+		except AttributeError:
+			return None
 
-	data_reader = DataReader(data)
-	data_reader.seek(0, os.SEEK_SET)
-	d = data_reader.read(4)
+	data.seek(0, os.SEEK_SET)
+	d = data.read(4)
 
 	if (
 		d.startswith(b'\xFF\xFB')
@@ -64,16 +67,16 @@ def determine_format(data, extension=None):
 		return WAV
 
 	if d.startswith(b'ID3'):
-		data_reader.seek(0)
-		ID3v2.load(data_reader)
+		data.seek(0)
+		ID3v2.load(data)
 
-		if data_reader.peek(4) == b'fLaC':
+		if data.peek(4) == b'fLaC':
 			return FLAC
-		elif data_reader.peek(2) == b'\xFF\xFB':
+		elif data.peek(2) == b'\xFF\xFB':
 			return MP3
 		else:
 			try:
-				frames = MP3StreamInfo.find_mp3_frames(data_reader)
+				frames = MP3StreamInfo.find_mp3_frames(data)
 			except InvalidFormat:
 				return None
 			else:
@@ -97,26 +100,25 @@ def load(f):
 		ValueError: If filepath/file-like object is not valid or readable.
 	"""
 
-	if isinstance(f, (os.PathLike, str)):
-		fileobj = open(f, 'rb')
-	else:
-		try:
-			f.read(0)
-		except AttributeError:
-			raise ValueError("Not a valid file-like object.")
-		except Exception:  # pragma: nocover
-			raise ValueError("Can't read from file-like object.")
+	if (
+		not isinstance(f, (os.PathLike, str))
+		and not (
+			isinstance(f, BufferedReader)
+			and isinstance(f.raw, FileIO)
+		)
+	):
+		raise ValueError("Not a valid filepath or file-like object.")
 
-		fileobj = f
+	data = DataReader(f)
 
-	parser_cls = determine_format(fileobj, os.path.splitext(fileobj.name)[1])
+	parser_cls = determine_format(data, os.path.splitext(data.name)[1])
 
 	if parser_cls is None:
 		raise UnsupportedFormat("Supported format signature not found.")
 	else:
-		fileobj.seek(0, os.SEEK_SET)
+		data.seek(0, os.SEEK_SET)
 
-	return parser_cls.load(fileobj)
+	return parser_cls.load(data)
 
 
 def loads(b):
@@ -137,9 +139,13 @@ def loads(b):
 	except TypeError:
 		raise ValueError("Not a valid bytes-like object.")
 
-	parser_cls = determine_format(b)
+	data = DataReader(b)
+
+	parser_cls = determine_format(data)
 
 	if parser_cls is None:
 		raise UnsupportedFormat("Supported format signature not found.")
+	else:
+		data.seek(0, os.SEEK_SET)
 
-	return parser_cls.load(b)
+	return parser_cls.load(data)

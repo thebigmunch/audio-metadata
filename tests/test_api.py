@@ -7,6 +7,10 @@ from audio_metadata import UnsupportedFormat
 test_filepaths = list((Path(__file__).parent / 'files' / 'audio').iterdir())
 
 
+def test_determine_format_invalid_value():
+	assert audio_metadata.determine_format([__file__]) is None
+
+
 def test_determine_format_non_audio():
 	assert audio_metadata.determine_format(__file__) is None
 

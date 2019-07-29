@@ -149,4 +149,6 @@ class WAV(Format):
 			sample_rate
 		)
 
+		self._obj.close()
+
 		return self

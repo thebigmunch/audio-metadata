@@ -557,4 +557,6 @@ class MP3(Format):
 				self._id3 = id3v1
 				self.tags = self._id3.tags
 
+		self._obj.close()
+
 		return self
