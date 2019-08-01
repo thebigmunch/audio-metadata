@@ -362,8 +362,10 @@ class FLAC(Format):
 				self.streaminfo._start = pos
 				self.streaminfo._size = self.filesize - self.streaminfo._start
 
-				if self.streaminfo.duration > 0:
+				if self.streaminfo.duration:
 					self.streaminfo.bitrate = self.streaminfo._size * 8 / self.streaminfo.duration
+				else:
+					self.streaminfo.bitrate = 0
 
 				break
 			else:

@@ -12,6 +12,7 @@ This project adheres to [Semantic Versioning](https://semver.org).
 
 * Refactor high-level API functions and ``DataReader`` to handle
 	various inputs better, especially file-like objects.
+* Support 0-duration FLAC files.
 
 
 ## [0.5.0](https://github.com/thebigmunch/audio-metadata/releases/tag/0.5.0) (2019-07-22)
