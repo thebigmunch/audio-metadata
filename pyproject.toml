@@ -31,9 +31,9 @@ flake8-builtins = { version = "^1.0", optional = true }
 flake8-comprehensions = { version = "^2.0", optional = true }
 flake8-import-order = { version = "^0.18", optional = true }
 flake8-import-order-tbm = { version = "^1.0.0", optional = true }
+nox = { version = "^2019", optional = true }
 pytest = { version = ">=4.0,<6.0", optional = true }
 sphinx = { version= "^2.0", optional = true}
-tox = { version = "^3.0", optional = true }
 
 [tool.poetry.extras]
 dev = [
@@ -43,9 +43,9 @@ dev = [
 	"flake8-comprehensions",
 	"flake8-import-order",
 	"flake8-import-order-tbm",
+	"nox",
 	"pytest",
-	"sphinx",
-	"tox"
+	"sphinx"
 ]
 doc = [ "sphinx" ]
 lint = [
@@ -57,6 +57,6 @@ lint = [
 ]
 test = [
 	"coverage",
-	"pytest",
-	"tox"
+	"nox",
+	"pytest"
 ]
