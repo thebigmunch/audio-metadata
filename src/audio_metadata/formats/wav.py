@@ -127,6 +127,7 @@ class WAV(Format):
 				else:
 					self._id3 = id3
 			else:
+				# TODO
 				self._obj.seek(subchunk_size, os.SEEK_CUR)
 
 			subchunk_header = self._obj.read(8)
@@ -137,17 +138,20 @@ class WAV(Format):
 		elif '_riff' in self:
 			self.tags = self._riff
 
-		duration = audio_size / byte_rate
+		try:
+			duration = audio_size / byte_rate
 
-		self.streaminfo = WAVStreamInfo(
-			audio_start,
-			audio_size,
-			bit_depth,
-			bitrate,
-			channels,
-			duration,
-			sample_rate
-		)
+			self.streaminfo = WAVStreamInfo(
+				audio_start,
+				audio_size,
+				bit_depth,
+				bitrate,
+				channels,
+				duration,
+				sample_rate
+			)
+		except UnboundLocalError:
+			raise InvalidHeader("Valid WAV stream info not found.")
 
 		self._obj.close()
 
