@@ -38,14 +38,11 @@ class DataReader(BufferedReader):
 		if size > DEFAULT_BUFFER_SIZE:
 			size = DEFAULT_BUFFER_SIZE
 
-		try:
-			peeked = self.raw.peek(size)[:size]
-		except AttributeError:
-			peeked = None
-		finally:
-			if peeked is None or len(peeked) != size:
-				peeked = self.read(size)
-				self.seek(-len(peeked), os.SEEK_CUR)
+		peeked = super().peek(size)[:size]
+
+		if peeked is None or len(peeked) != size:
+			peeked = self.read(size)
+			self.seek(-len(peeked), os.SEEK_CUR)
 
 		return peeked
 
