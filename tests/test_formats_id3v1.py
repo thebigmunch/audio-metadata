@@ -1,5 +1,9 @@
 import pytest
-from audio_metadata import ID3v1, ID3v1Fields, InvalidHeader
+from audio_metadata import (
+	ID3v1,
+	ID3v1Fields,
+	InvalidHeader
+)
 
 ID3v1_DATA = (
 	b'TAG'
