@@ -27,7 +27,7 @@ def test_FLACApplication():
 	assert application_init == application_load
 	assert application_init.id == application_load.id == 'aiff'
 	assert application_init.data == application_load.data == b'FORM\x02\xe0\x9b\x08AIFF'
-	assert repr(application_init) == repr(application_load) == '<Application (aiff)>'
+	assert repr(application_init) == repr(application_load) == '<FLACApplication (aiff)>'
 
 
 def test_FLACMetadataBlock():
@@ -36,7 +36,7 @@ def test_FLACMetadataBlock():
 		size=10
 	)
 
-	assert repr(metadata_block) == '<MetadataBlock [100] (10 bytes)>'
+	assert repr(metadata_block) == '<FLACMetadataBlock [100] (10 bytes)>'
 
 
 def test_FLACPadding():
@@ -44,7 +44,7 @@ def test_FLACPadding():
 	padding_load = FLACPadding.load(b'\x00' * 10)
 
 	assert padding_init == padding_load
-	assert repr(padding_init) == repr(padding_load) == '<Padding (10 bytes)>'
+	assert repr(padding_init) == repr(padding_load) == '<FLACPadding (10 bytes)>'
 
 
 def test_FLACSeektable():

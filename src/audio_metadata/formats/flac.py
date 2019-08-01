@@ -32,7 +32,7 @@ class FLACApplication(DictMixin):
 	data = attrib()
 
 	def __repr__(self):
-		return f"<Application ({self.id})>"
+		return f"<FLACApplication ({self.id})>"
 
 	@classmethod
 	def load(cls, data):
@@ -78,7 +78,7 @@ class FLACCueSheetTrack(DictMixin):
 
 			For non-CD-DA, the track number must be 255 for the lead-out track.
 
-			Track numbers must be unique withint a cue sheet.
+			Track numbers must be unique within a cue sheet.
 		offset (int): Offset in samples relative to the beginning of the FLAC audio stream.
 		isrc (str): The ISRC (International Standard Recording Code) of the track.
 		type (int): ``0`` for audio, ``1`` for non-audio.
@@ -188,7 +188,7 @@ class FLACMetadataBlock(DictMixin):
 	size = attrib()
 
 	def __repr__(self):
-		return f"<MetadataBlock [{self.type}] ({self.size} bytes)>"
+		return f"<FLACMetadataBlock [{self.type}] ({self.size} bytes)>"
 
 
 @attrs(repr=False)
@@ -196,7 +196,7 @@ class FLACPadding(DictMixin):
 	size = attrib()
 
 	def __repr__(self):
-		return f"<Padding ({self.size} bytes)>"
+		return f"<FLACPadding ({self.size} bytes)>"
 
 	@classmethod
 	def load(cls, data):
