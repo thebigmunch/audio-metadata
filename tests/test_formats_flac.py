@@ -96,7 +96,8 @@ def test_FLACCueSheetTrack():
 	assert cuesheet_track_init.offset == cuesheet_track_load.offset == 0
 	assert cuesheet_track_init.isrc == cuesheet_track_load.isrc == '123456789012'
 	assert cuesheet_track_init.type == cuesheet_track_load.type == 0
-	assert cuesheet_track_init.pre_emphasis == cuesheet_track_load.pre_emphasis == False
+	assert cuesheet_track_init.pre_emphasis is False
+	assert cuesheet_track_load.pre_emphasis is False
 
 	cuesheet_track_init = FLACCueSheetTrack(
 		2,
@@ -122,7 +123,8 @@ def test_FLACCueSheetTrack():
 	assert cuesheet_track_init.offset == cuesheet_track_load.offset == 44100
 	assert cuesheet_track_init.isrc == cuesheet_track_load.isrc == ''
 	assert cuesheet_track_init.type == cuesheet_track_load.type == 1
-	assert cuesheet_track_init.pre_emphasis == cuesheet_track_load.pre_emphasis == True
+	assert cuesheet_track_init.pre_emphasis is True
+	assert cuesheet_track_load.pre_emphasis is True
 
 
 def test_FLACCueSheet():
