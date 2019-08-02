@@ -64,6 +64,25 @@ class FLACCueSheetIndex(DictMixin):
 	number = attrib()
 	offset = attrib()
 
+	@classmethod
+	def load(cls, data):
+		if not isinstance(data, DataReader):  # pragma: nocover
+			data = DataReader(data)
+
+		offset = struct.unpack(
+			'>Q',
+			data.read(8)
+		)[0]
+
+		number = struct.unpack(
+			'>B',
+			data.read(1)
+		)[0]
+
+		data.read(3)
+
+		return cls(number, offset)
+
 
 @attrs(repr=False)
 class FLACCueSheetTrack(DictMixin):
@@ -92,6 +111,38 @@ class FLACCueSheetTrack(DictMixin):
 	type = attrib()  # noqa
 	pre_emphasis = attrib()
 	indexes = attrib(default=Factory(list))
+
+	@classmethod
+	def load(cls, data):
+		if not isinstance(data, DataReader):  # pragma: nocover
+			data = DataReader(data)
+
+		offset = struct.unpack(
+			'>Q',
+			data.read(8)
+		)[0]
+		track_number = struct.unpack(
+			'>B',
+			data.read(1)
+		)[0]
+		isrc = data.read(12).rstrip(b'\x00').decode('ascii', 'replace')
+
+		type_, pre_emphasis = bitstruct.unpack(
+			'u1 b1',
+			data.read(1)
+		)
+
+		data.read(13)
+		num_indexes = struct.unpack(
+			'>B',
+			data.read(1)
+		)[0]
+
+		indexes = []
+		for _ in range(num_indexes):
+			indexes.append(FLACCueSheetIndex.load(data))
+
+		return cls(track_number, offset, isrc, type_, pre_emphasis, indexes)
 
 
 class FLACCueSheet(ListMixin):
@@ -139,45 +190,7 @@ class FLACCueSheet(ListMixin):
 
 		tracks = []
 		for _ in range(num_tracks):
-			offset = struct.unpack(
-				'>Q',
-				data.read(8)
-			)[0]
-			track_number = struct.unpack(
-				'>B',
-				data.read(1)
-			)[0]
-			isrc = data.read(12).rstrip(b'\x00').decode('ascii', 'replace')
-
-			type_, pre_emphasis = bitstruct.unpack(
-				'u1 b1',
-				data.read(1)
-			)
-
-			data.read(13)
-			num_indexes = struct.unpack(
-				'>B',
-				data.read(1)
-			)[0]
-
-			track = FLACCueSheetTrack(track_number, offset, isrc, type_, pre_emphasis)
-
-			for _ in range(num_indexes):
-				offset = struct.unpack(
-					'>Q',
-					data.read(8)
-				)[0]
-
-				number = struct.unpack(
-					'>B',
-					data.read(1)
-				)[0]
-
-				data.read(3)
-
-				track.indexes.append(FLACCueSheetIndex(number, offset))
-
-			tracks.append(track)
+			tracks.append(FLACCueSheetTrack.load(data))
 
 		return cls(tracks, catalog_number, lead_in_samples, compact_disc)
 
@@ -185,10 +198,10 @@ class FLACCueSheet(ListMixin):
 @attrs(repr=False)
 class FLACMetadataBlock(DictMixin):
 	type = attrib()  # noqa
-	size = attrib()
+	data = attrib()
 
 	def __repr__(self):
-		return f"<FLACMetadataBlock [{self.type}] ({self.size} bytes)>"
+		return f"<FLACMetadataBlock [{self.type}] ({len(self.data)} bytes)>"
 
 
 @attrs(repr=False)
@@ -355,7 +368,7 @@ class FLAC(Format):
 			elif block_type >= 127:
 				raise InvalidHeader("FLAC header contains invalid block type.")
 			else:
-				self._blocks.append(FLACMetadataBlock(block_type, block_size))
+				self._blocks.append(FLACMetadataBlock(block_type, metadata_block_data))
 
 			if is_last_block:
 				pos = self._obj.tell()

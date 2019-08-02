@@ -36,7 +36,7 @@ def test_FLAC_reserved_block_type():
 	flac_data = orig[0:4] + bitstruct.pack('b1 u7 u24', False, 10, 0) + orig[4:]
 
 	flac = FLAC.load(flac_data)
-	assert flac._blocks[0] == FLACMetadataBlock(10, 0)
+	assert flac._blocks[0] == FLACMetadataBlock(10, b'')
 
 
 def test_FLACApplication():
@@ -52,6 +52,77 @@ def test_FLACApplication():
 	assert application_init.id == application_load.id == 'aiff'
 	assert application_init.data == application_load.data == b'FORM\x02\xe0\x9b\x08AIFF'
 	assert repr(application_init) == repr(application_load) == '<FLACApplication (aiff)>'
+
+
+def test_FLACCueSheetIndex():
+	cuesheet_index_init = FLACCueSheetIndex(1, 0)
+	cuesheet_index_load = FLACCueSheetIndex.load(
+		b'\x00\x00\x00\x00\x00\x00\x00\x00\x01\x00\x00\x00'
+	)
+
+	assert cuesheet_index_init == cuesheet_index_load
+	assert cuesheet_index_init.number == cuesheet_index_load.number == 1
+	assert cuesheet_index_init.offset == cuesheet_index_load.offset == 0
+	assert repr(cuesheet_index_init) == repr(cuesheet_index_load) == "<FLACCueSheetIndex ({'number': 1, 'offset': 0})>"
+
+	cuesheet_index_init = FLACCueSheetIndex(2, 588)
+	cuesheet_index_load = FLACCueSheetIndex.load(
+		b'\x00\x00\x00\x00\x00\x00\x02L\x02\x00\x00\x00'
+	)
+
+	assert cuesheet_index_init == cuesheet_index_load
+	assert cuesheet_index_init.number == cuesheet_index_load.number == 2
+	assert cuesheet_index_init.offset == cuesheet_index_load.offset == 588
+	assert repr(cuesheet_index_init) == repr(cuesheet_index_load) == "<FLACCueSheetIndex ({'number': 2, 'offset': 588})>"
+
+
+def test_FLACCueSheetTrack():
+	cuesheet_track_init = FLACCueSheetTrack(
+		1,
+		0,
+		'123456789012',
+		0,
+		False,
+		[FLACCueSheetIndex(1, 0)]
+	)
+	cuesheet_track_load = FLACCueSheetTrack.load(
+		b'\x00\x00\x00\x00\x00\x00\x00\x00\x01123456789012'
+		b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
+		b'\x00\x00\x01\x00\x00\x00\x00\x00\x00\x00\x00\x01\x00\x00\x00'
+	)
+
+	assert cuesheet_track_init == cuesheet_track_load
+	assert cuesheet_track_init.track_number == cuesheet_track_load.track_number == 1
+	assert cuesheet_track_init.offset == cuesheet_track_load.offset == 0
+	assert cuesheet_track_init.isrc == cuesheet_track_load.isrc == '123456789012'
+	assert cuesheet_track_init.type == cuesheet_track_load.type == 0
+	assert cuesheet_track_init.pre_emphasis == cuesheet_track_load.pre_emphasis == False
+
+	cuesheet_track_init = FLACCueSheetTrack(
+		2,
+		44100,
+		'',
+		1,
+		True,
+		[
+			FLACCueSheetIndex(1, 0),
+			FLACCueSheetIndex(2, 588),
+		],
+	)
+	cuesheet_track_load = FLACCueSheetTrack.load(
+		b'\x00\x00\x00\x00\x00\x00\xacD\x02\x00\x00\x00'
+		b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\xc0\x00'
+		b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
+		b'\x00\x02\x00\x00\x00\x00\x00\x00\x00\x00\x01'
+		b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x02L\x02\x00\x00\x00'
+	)
+
+	assert cuesheet_track_init == cuesheet_track_load
+	assert cuesheet_track_init.track_number == cuesheet_track_load.track_number == 2
+	assert cuesheet_track_init.offset == cuesheet_track_load.offset == 44100
+	assert cuesheet_track_init.isrc == cuesheet_track_load.isrc == ''
+	assert cuesheet_track_init.type == cuesheet_track_load.type == 1
+	assert cuesheet_track_init.pre_emphasis == cuesheet_track_load.pre_emphasis == True
 
 
 def test_FLACCueSheet():
@@ -137,9 +208,11 @@ def test_FLACCueSheet():
 def test_FLACMetadataBlock():
 	metadata_block = FLACMetadataBlock(
 		type=100,
-		size=10
+		data=b'\x00' * 10
 	)
 
+	assert metadata_block.type == 100
+	assert metadata_block.data == b'\x00' * 10
 	assert repr(metadata_block) == '<FLACMetadataBlock [100] (10 bytes)>'
 
 
