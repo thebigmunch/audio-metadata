@@ -40,7 +40,7 @@ class DataReader(BufferedReader):
 
 		peeked = super().peek(size)[:size]
 
-		if peeked is None or len(peeked) != size:
+		if len(peeked) < size:
 			peeked = self.read(size)
 			self.seek(-len(peeked), os.SEEK_CUR)
 
