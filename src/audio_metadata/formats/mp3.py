@@ -381,10 +381,9 @@ class MP3StreamInfo(StreamInfo):
 	def find_mp3_frames(data):
 		frames = []
 		cached_frames = None
-		buffer = data.peek(4)
-		while len(buffer) >= 4:
-			start = data.tell()
-
+		buffer_size = 2
+		buffer = data.peek(buffer_size)
+		while len(buffer) >= buffer_size:
 			if bitstruct.unpack('u11', buffer[0:2])[0] == 2047:
 				for _ in range(4):
 					try:
@@ -408,8 +407,9 @@ class MP3StreamInfo(StreamInfo):
 				cached_frames = frames.copy()
 
 			del frames[:]
-			data.seek(start + 1, os.SEEK_SET)
-			buffer = data.peek(4)
+
+			buffer_size *= 2
+			buffer = data.peek(buffer_size)
 
 		if not frames:
 			if not cached_frames:
