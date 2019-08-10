@@ -41,7 +41,7 @@ before_install:
   - pip install codecov
 
 after_success:
-  - nox -s coverage
+  - nox -s combine
   - codecov
 
 notifications:

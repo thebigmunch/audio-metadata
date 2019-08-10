@@ -1,3 +1,5 @@
+import shutil
+
 import nox
 
 py36 = '3.6'
@@ -13,7 +15,7 @@ def lint(session):
 
 @nox.session(python=py37)
 def doc(session):
-	session.run('rm', '-rf', 'docs/_build', external=True)
+	shutil.rmtree('docs/_build', ignore_errors=True)
 	session.install('.[doc]')
 	session.cd('docs')
 	session.run(
@@ -34,8 +36,15 @@ def test(session):
 	session.run('coverage', 'run', '--parallel', '-m', 'pytest')
 
 
-@nox.session(python=py37)
+@nox.session()
 def coverage(session):
+	session.install('.[test]')
+	session.run('coverage', 'run', '-m', 'pytest')
+	session.run('coverage', 'report', '-m')
+
+
+@nox.session(python=py37)
+def combine(session):
 	session.install('coverage')
 	session.run('coverage', 'combine')
 	session.run('coverage', 'report', '-m')
