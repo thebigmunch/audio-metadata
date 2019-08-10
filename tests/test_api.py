@@ -23,7 +23,7 @@ def test_determine_format_bytes():
 		)
 
 
-def test_determine_format_filepath_no_extension():
+def test_determine_format_filepath():
 	for fp in test_filepaths:
 		assert issubclass(
 			audio_metadata.determine_format(fp),
@@ -31,7 +31,7 @@ def test_determine_format_filepath_no_extension():
 		)
 
 
-def test_determine_format_fileobj_no_extension():
+def test_determine_format_fileobj():
 	for fp in test_filepaths:
 		assert issubclass(
 			audio_metadata.determine_format(fp.open('rb')),
@@ -39,69 +39,12 @@ def test_determine_format_fileobj_no_extension():
 		)
 
 
-def test_determine_format_pathobj_no_extension():
+def test_determine_format_pathobj():
 	for fp in test_filepaths:
 		assert issubclass(
 			audio_metadata.determine_format(fp),
 			audio_metadata.Format
 		)
-
-
-def test_determine_format_filepath_with_extension():
-	for fp in test_filepaths:
-		assert issubclass(
-			audio_metadata.determine_format(
-				fp,
-				extension=fp.suffix
-			),
-			audio_metadata.Format
-		)
-
-
-def test_determine_format_fileobj_with_extension():
-	for fp in test_filepaths:
-		assert issubclass(
-			audio_metadata.determine_format(
-				fp.open('rb'),
-				extension=fp.suffix
-			),
-			audio_metadata.Format
-		)
-
-
-def test_determine_format_pathobj_with_extension():
-	for fp in test_filepaths:
-		assert issubclass(
-			audio_metadata.determine_format(
-				fp,
-				extension=fp.suffix
-			),
-			audio_metadata.Format
-		)
-
-
-def test_determine_format_filepath_with_wrong_extension():
-	for fp in test_filepaths:
-		assert audio_metadata.determine_format(
-			fp,
-			extension='.py'
-		) is None
-
-
-def test_determine_format_fileobj_with_wrong_extension():
-	for fp in test_filepaths:
-		assert audio_metadata.determine_format(
-			fp.open('rb'),
-			extension='.py'
-		) is None
-
-
-def test_determine_format_pathobj_with_wrong_extension():
-	for fp in test_filepaths:
-		assert audio_metadata.determine_format(
-			fp,
-			extension='.py'
-		) is None
 
 
 def test_load_non_audio():

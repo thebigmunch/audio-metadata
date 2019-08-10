@@ -15,6 +15,11 @@ This project adheres to [Semantic Versioning](https://semver.org).
 * Support 0-duration FLAC files.
 * Raise proper exception if WAV stream info not found.
 
+### Removed
+
+* ``extension`` parameter from ``determine_format``.
+	The purpose it served is no longer necessary.
+
 
 ## [0.5.0](https://github.com/thebigmunch/audio-metadata/releases/tag/0.5.0) (2019-07-22)
 

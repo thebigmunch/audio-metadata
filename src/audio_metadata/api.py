@@ -7,6 +7,8 @@ __all__ = [
 import os
 from io import BufferedReader, FileIO
 
+import bitstruct
+
 from .exceptions import InvalidFormat, UnsupportedFormat
 from .formats import FLAC, MP3, WAV, ID3v2, MP3StreamInfo
 from .utils import DataReader
@@ -19,16 +21,10 @@ def determine_format(data, extension=None):
 		data (bytes-like object, str, os.PathLike, or file-like object):
 			A bytes-like object, filepath, path-like object
 			or file-like object of an audio file.
-		extension (str): The file extension of the file.
-			Used as a tie-breaker for formats that can
-			be used in multiple containers (e.g. ID3).
 
 	Returns:
 		Format: An audio format class if supported, else None.
 	"""
-
-	if extension and not extension.endswith(('flac', 'mp3', 'wav')):
-		return None
 
 	if not isinstance(data, DataReader):
 		try:
@@ -37,42 +33,24 @@ def determine_format(data, extension=None):
 			return None
 
 	data.seek(0, os.SEEK_SET)
-	d = data.read(4)
+	d = data.peek(4)
 
-	if (
-		d.startswith(b'\xFF\xFB')
-		or (
-			extension
-			and extension.lower().endswith('mp3')
-		)
-	):
+	if bitstruct.unpack('u11', d[0:2])[0] == 2047:
 		return MP3
 
-	if (
-		d.startswith(b'fLaC')
-		or (
-			extension
-			and extension.lower().endswith('flac')
-		)
-	):
+	if d.startswith(b'fLaC'):
 		return FLAC
 
-	if (
-		d.startswith(b'RIFF')
-		or (
-			extension
-			and extension.lower().endswith('wav')
-		)
-	):
+	if d.startswith(b'RIFF'):
 		return WAV
 
 	if d.startswith(b'ID3'):
-		data.seek(0)
 		ID3v2.load(data)
+		d = data.peek(4)
 
-		if data.peek(4) == b'fLaC':
+		if d == b'fLaC':
 			return FLAC
-		elif data.peek(2) == b'\xFF\xFB':
+		elif bitstruct.unpack('u11', d[0:2])[0] == 2047:
 			return MP3
 		else:
 			try:
