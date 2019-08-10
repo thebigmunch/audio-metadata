@@ -365,6 +365,7 @@ class MPEGFrameHeader(DictMixin):
 @attrs(repr=False)
 class MP3StreamInfo(StreamInfo):
 	_start = attrib()
+	_end = attrib()
 	_size = attrib()
 	_xing = attrib()
 	version = attrib()
@@ -452,7 +453,8 @@ class MP3StreamInfo(StreamInfo):
 					end_tag_offset = tag_offset
 
 		audio_start = frames[0]._start
-		audio_size = end_pos - audio_start - end_tag_offset
+		audio_end = end_pos - end_tag_offset
+		audio_size = audio_end - audio_start
 
 		bitrate_mode = MP3BitrateMode.UNKNOWN
 
@@ -503,8 +505,8 @@ class MP3StreamInfo(StreamInfo):
 		channels = frames[0].channels
 
 		return cls(
-			audio_start, audio_size, xing_header, version, layer, protected, bitrate,
-			bitrate_mode, channel_mode, channels, duration, sample_rate
+			audio_start, audio_end, audio_size, xing_header, version, layer, protected,
+			bitrate, bitrate_mode, channel_mode, channels, duration, sample_rate
 		)
 
 
@@ -529,7 +531,6 @@ class MP3(Format):
 			self._id3 = ID3v2.load(self._obj)
 			self.pictures = self._id3.pictures
 			self.tags = self._id3.tags
-			self._obj.seek(self._id3._header._size, os.SEEK_SET)
 		except (InvalidFrame, InvalidHeader):
 			self._obj.seek(0, os.SEEK_SET)
 

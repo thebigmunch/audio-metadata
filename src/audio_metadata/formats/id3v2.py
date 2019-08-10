@@ -248,14 +248,22 @@ class ID3v2(DictMixin):
 			raise InvalidHeader("Valid ID3v2 header not found.")
 
 		self = cls()
+
 		self._header = ID3v2Header.load(data.read(10))
+		self._size = 10 + self._header._size
 
 		if self._header.flags.extended:
 			ext_size = decode_synchsafe_int(struct.unpack('4B', data.read(4))[0:4], 7)
+			self._size += ext_size
+
 			if self._header is ID3Version.v24:
 				data.read(ext_size - 4)
 			else:
 				data.read(ext_size)
+
+		if self._header.flags.footer:
+			self._size += 10
+			data.read(10)
 
 		self.tags = ID3v2Frames.load(data.read(self._header._size), self._header.version)
 		self.pictures = self.tags.pop('pictures', [])
