@@ -382,10 +382,20 @@ class MP3StreamInfo(StreamInfo):
 	def find_mp3_frames(data):
 		frames = []
 		cached_frames = None
-		buffer_size = 2
+		buffer_size = 128
 		buffer = data.peek(buffer_size)
+
 		while len(buffer) >= buffer_size:
-			if bitstruct.unpack('u11', buffer[0:2])[0] == 2047:
+			sync_start = buffer.find(b'\xFF')
+
+			if sync_start == -1:
+				data.seek(buffer_size, os.SEEK_CUR)
+				buffer = data.peek(buffer_size)
+				continue
+			else:
+				data.seek(sync_start, os.SEEK_CUR)
+
+			if bitstruct.unpack('u11', data.peek(2))[0] == 2047:
 				for _ in range(4):
 					try:
 						frame = MPEGFrameHeader.load(data)
@@ -394,12 +404,10 @@ class MP3StreamInfo(StreamInfo):
 							break
 						data.seek(frame._start + frame._size, os.SEEK_SET)
 					except InvalidFrame:
+						data.seek(1, os.SEEK_CUR)
 						break
 			else:
-				index = buffer.find(b'\xFF', 1)
-				if index == -1:
-					index = len(buffer)
-				data.seek(max(index, 1), os.SEEK_CUR)
+				data.seek(sync_start + 1, os.SEEK_CUR)
 
 			if frames and (len(frames) >= 4 or frames[0]._xing):
 				break
@@ -409,7 +417,6 @@ class MP3StreamInfo(StreamInfo):
 
 			del frames[:]
 
-			buffer_size *= 2
 			buffer = data.peek(buffer_size)
 
 		if not frames:
