@@ -11,7 +11,7 @@ from bidict import frozenbidict
 
 from ..structures import DictMixin
 from ..utils import (
-	DataReader,
+	datareader,
 	humanize_bitrate,
 	humanize_duration,
 	humanize_filesize,
@@ -83,14 +83,11 @@ class Format(DictMixin):
 
 		return super().__repr__(repr_dict=repr_dict)
 
+	@datareader
 	@classmethod
 	def _load(cls, data):
 		self = cls()
-
-		if not isinstance(data, DataReader):
-			self._obj = DataReader(data)
-		else:
-			self._obj = data
+		self._obj = data
 
 		try:
 			self.filepath = os.path.abspath(self._obj.name)

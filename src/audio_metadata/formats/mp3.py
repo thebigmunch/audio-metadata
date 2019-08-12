@@ -19,7 +19,12 @@ from .tables import (
 )
 from ..exceptions import InvalidFormat, InvalidFrame, InvalidHeader
 from ..structures import DictMixin, ListMixin
-from ..utils import DataReader, humanize_bitrate, humanize_filesize, humanize_sample_rate
+from ..utils import (
+	datareader,
+	humanize_bitrate,
+	humanize_filesize,
+	humanize_sample_rate
+)
 
 
 @attrs(repr=False)
@@ -38,11 +43,9 @@ class LAMEReplayGain(DictMixin):
 
 		return super().__repr__(repr_dict=repr_dict)
 
+	@datareader
 	@classmethod
 	def load(cls, data):
-		if not isinstance(data, DataReader):  # pragma: nocover
-			data = DataReader(data)
-
 		peak_data = struct.unpack('>I', data.read(4))[0]
 
 		if peak_data == b'\x00\x00\x00\x00':
@@ -105,11 +108,9 @@ class LAMEHeader(DictMixin):
 
 		return super().__repr__(repr_dict=repr_dict)
 
+	@datareader
 	@classmethod
 	def load(cls, data, xing_quality):
-		if not isinstance(data, DataReader):  # pragma: nocover
-			data = DataReader(data)
-
 		encoder = data.read(9)
 		if not encoder.startswith(b'LAME'):
 			raise InvalidHeader('Valid LAME header not found.')
@@ -228,11 +229,9 @@ class XingHeader(DictMixin):
 	toc = attrib()
 	quality = attrib()
 
+	@datareader
 	@classmethod
 	def load(cls, data):
-		if not isinstance(data, DataReader):  # pragma: nocover
-			data = DataReader(data)
-
 		if data.read(4) not in [b'Xing', b'Info']:
 			raise InvalidHeader('Valid Xing header not found.')
 
@@ -286,11 +285,9 @@ class MPEGFrameHeader(DictMixin):
 
 		return super().__repr__(repr_dict=repr_dict)
 
+	@datareader
 	@classmethod
 	def load(cls, data):
-		if not isinstance(data, DataReader):  # pragma: nocover
-			data = DataReader(data)
-
 		frame_start = data.tell()
 
 		sync, version_id, layer_index, protection = bitstruct.unpack(
@@ -427,11 +424,9 @@ class MP3StreamInfo(StreamInfo):
 
 		return frames
 
+	@datareader
 	@classmethod
 	def load(cls, data):
-		if not isinstance(data, DataReader):  # pragma: nocover
-			data = DataReader(data)
-
 		frames = cls.find_mp3_frames(data)
 
 		samples_per_frame, _ = MP3SamplesPerFrame[(frames[0].version, frames[0].layer)]

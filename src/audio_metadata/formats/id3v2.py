@@ -15,7 +15,7 @@ from .models import Tags
 from .tables import ID3Version
 from ..exceptions import InvalidFrame, InvalidHeader
 from ..structures import DictMixin
-from ..utils import DataReader, decode_synchsafe_int
+from ..utils import datareader, decode_synchsafe_int
 
 
 class ID3v2Frames(Tags):
@@ -140,11 +140,9 @@ class ID3v2Frames(Tags):
 		'tracknumber': 'TRCK'
 	})
 
+	@datareader
 	@classmethod
 	def load(cls, data, id3_version):
-		if not isinstance(data, DataReader):  # pragma: nocover
-			data = DataReader(data)
-
 		if id3_version is ID3Version.v22:
 			cls.FIELD_MAP = cls._v22_FIELD_MAP
 
@@ -211,11 +209,9 @@ class ID3v2Header(DictMixin):
 	version = attrib()
 	flags = attrib(default=Factory(DictMixin))
 
+	@datareader
 	@classmethod
 	def load(cls, data):
-		if not isinstance(data, DataReader):  # pragma: nocover
-			data = DataReader(data)
-
 		if data.read(3) != b"ID3":
 			raise InvalidHeader("Valid ID3v2 header not found.")
 
@@ -239,11 +235,9 @@ class ID3v2Header(DictMixin):
 
 
 class ID3v2(DictMixin):
+	@datareader
 	@classmethod
 	def load(cls, data):
-		if not isinstance(data, DataReader):  # pragma: nocover
-			data = DataReader(data)
-
 		if data.peek(3) != b"ID3":
 			raise InvalidHeader("Valid ID3v2 header not found.")
 

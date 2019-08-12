@@ -6,15 +6,13 @@ __all__ = [
 from .models import Tags
 from .tables import ID3v1Genres
 from ..exceptions import InvalidHeader
-from ..utils import DataReader
+from ..utils import datareader
 
 
 class ID3v1Fields(Tags):
+	@datareader
 	@classmethod
 	def load(cls, data):
-		if not isinstance(data, DataReader):  # pragma: nocover
-			data = DataReader(data)
-
 		self = cls()
 
 		title = data.read(30).strip(b'\x00').decode('iso-8859-1')
@@ -50,11 +48,9 @@ class ID3v1Fields(Tags):
 
 
 class ID3v1:
+	@datareader
 	@classmethod
 	def load(cls, data):
-		if not isinstance(data, DataReader):  # pragma: nocover
-			data = DataReader(data)
-
 		if data.read(3) != b"TAG":
 			raise InvalidHeader("Valid ID3v1 header not found.")
 

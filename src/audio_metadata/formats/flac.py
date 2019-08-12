@@ -16,7 +16,7 @@ from .tables import FLACMetadataBlockType
 from .vorbis import VorbisComments, VorbisPicture
 from ..exceptions import InvalidHeader
 from ..structures import DictMixin, ListMixin
-from ..utils import DataReader
+from ..utils import datareader
 
 
 @attrs(repr=False)
@@ -34,11 +34,9 @@ class FLACApplication(DictMixin):
 	def __repr__(self):
 		return f"<FLACApplication ({self.id})>"
 
+	@datareader
 	@classmethod
 	def load(cls, data):
-		if not isinstance(data, DataReader):  # pragma: nocover
-			data = DataReader(data)
-
 		id_ = data.read(4).decode('utf-8', 'replace')
 		data = data.read()
 
@@ -64,11 +62,9 @@ class FLACCueSheetIndex(DictMixin):
 	number = attrib()
 	offset = attrib()
 
+	@datareader
 	@classmethod
 	def load(cls, data):
-		if not isinstance(data, DataReader):  # pragma: nocover
-			data = DataReader(data)
-
 		offset = struct.unpack(
 			'>Q',
 			data.read(8)
@@ -112,11 +108,9 @@ class FLACCueSheetTrack(DictMixin):
 	pre_emphasis = attrib()
 	indexes = attrib(default=Factory(list))
 
+	@datareader
 	@classmethod
 	def load(cls, data):
-		if not isinstance(data, DataReader):  # pragma: nocover
-			data = DataReader(data)
-
 		offset = struct.unpack(
 			'>Q',
 			data.read(8)
@@ -167,11 +161,9 @@ class FLACCueSheet(ListMixin):
 		self.lead_in_samples = lead_in_samples
 		self.compact_disc = compact_disc
 
+	@datareader
 	@classmethod
 	def load(cls, data):
-		if not isinstance(data, DataReader):  # pragma: nocover
-			data = DataReader(data)
-
 		catalog_number = data.read(128).rstrip(b'\0').decode('ascii', 'replace')
 		lead_in_samples = struct.unpack(
 			'>Q',
@@ -211,11 +203,9 @@ class FLACPadding(DictMixin):
 	def __repr__(self):
 		return f"<FLACPadding ({self.size} bytes)>"
 
+	@datareader
 	@classmethod
 	def load(cls, data):
-		if not isinstance(data, DataReader):  # pragma: nocover
-			data = DataReader(data)
-
 		return cls(len(data.peek()))
 
 
@@ -225,11 +215,9 @@ class FLACSeekPoint(DictMixin):
 	offset = attrib()
 	num_samples = attrib()
 
+	@datareader
 	@classmethod
 	def load(cls, data):
-		if not isinstance(data, DataReader):  # pragma: nocover
-			data = DataReader(data)
-
 		return cls(*struct.unpack('>QQH', data.read()))
 
 
@@ -239,11 +227,9 @@ class FLACSeekTable(ListMixin):
 	def __init__(self, items):
 		super().__init__(items)
 
+	@datareader
 	@classmethod
 	def load(cls, data):
-		if not isinstance(data, DataReader):  # pragma: nocover
-			data = DataReader(data)
-
 		seekpoints = []
 		seekpoint = data.read(18)
 		while len(seekpoint) == 18:
@@ -268,11 +254,9 @@ class FLACStreamInfo(StreamInfo):
 	md5 = attrib()
 	sample_rate = attrib()
 
+	@datareader
 	@classmethod
 	def load(cls, data):
-		if not isinstance(data, DataReader):  # pragma: nocover
-			data = DataReader(data)
-
 		stream_info_block_data = bitstruct.unpack(
 			'u16 u16 u24 u24 u20 u3 u5 u36 r128',
 			data.read(34)

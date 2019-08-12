@@ -5,16 +5,14 @@ from collections import defaultdict
 
 from .models import Picture, Tags
 from .tables import ID3PictureType
-from ..utils import DataReader
+from ..utils import datareader
 
 
 # TODO: Number frames.
 class VorbisComments(Tags):
+	@datareader
 	@classmethod
 	def load(cls, data):
-		if not isinstance(data, DataReader):  # pragma: nocover
-			data = DataReader(data)
-
 		vendor_length = struct.unpack('I', data.read(4))[0]
 		vendor = data.read(vendor_length).decode('utf-8', 'replace')
 		num_comments = struct.unpack('I', data.read(4))[0]
@@ -34,11 +32,9 @@ class VorbisComments(Tags):
 
 
 class VorbisPicture(Picture):
+	@datareader
 	@classmethod
 	def load(cls, data):
-		if not isinstance(data, DataReader):  # pragma: nocover
-			data = DataReader(data)
-
 		type_, mime_length = struct.unpack('>2I', data.read(8))
 		mime_type = data.read(mime_length).decode('utf-8', 'replace')
 

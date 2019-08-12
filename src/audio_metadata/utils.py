@@ -19,6 +19,8 @@ from io import (
 	FileIO
 )
 
+import wrapt
+
 
 class DataReader(BufferedReader):
 	def __init__(self, data, buffer_size=DEFAULT_BUFFER_SIZE):
@@ -45,6 +47,15 @@ class DataReader(BufferedReader):
 			self.seek(-len(peeked), os.SEEK_CUR)
 
 		return peeked
+
+
+@wrapt.decorator
+def datareader(wrapped, instance, args, kwargs):
+	if not isinstance(args[0], DataReader):
+		data = DataReader(args[0])
+		args = (data, *args[1:])
+
+	return wrapped(*args, **kwargs)
 
 
 def decode_bytestring(b, encoding='iso-8859-1'):

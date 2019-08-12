@@ -31,19 +31,21 @@ from .tables import ID3PictureType, ID3v1Genres
 from ..exceptions import InvalidFrame
 from ..structures import DictMixin
 from ..utils import (
-	DataReader, decode_bytestring, decode_synchsafe_int,
-	determine_encoding, get_image_size, split_encoded
+	datareader,
+	decode_bytestring,
+	decode_synchsafe_int,
+	determine_encoding,
+	get_image_size,
+	split_encoded
 )
 
 _genre_re = re.compile(r"((?:\((?P<id>\d+|RX|CR)\))*)(?P<name>.+)?")
 
 
 class ID3v2Picture(Picture):
+	@datareader
 	@classmethod
 	def load(cls, data):
-		if not isinstance(data, DataReader):  # pragma: nocover
-			data = DataReader(data)
-
 		data = data.read()
 
 		encoding = determine_encoding(data[0:1])
@@ -325,11 +327,9 @@ class ID3v2Frame(ID3v2BaseFrame):
 		'WXXX': ID3v2UserURLLinkFrame
 	}
 
+	@datareader
 	@classmethod
 	def load(cls, data, struct_pattern, size_len, per_byte):
-		if not isinstance(data, DataReader):  # pragma: nocover
-			data = DataReader(data)
-
 		try:
 			frame = struct.unpack(struct_pattern, data.read(struct.calcsize(struct_pattern)))
 		except struct.error:

@@ -9,7 +9,7 @@ from bidict import frozenbidict
 from .id3v2 import ID3v2
 from .models import Format, StreamInfo, Tags
 from ..exceptions import InvalidFrame, InvalidHeader
-from ..utils import DataReader
+from ..utils import datareader
 
 
 class RIFFTags(Tags):
@@ -27,11 +27,9 @@ class RIFFTags(Tags):
 		'tracknumber': 'ITRK'
 	})
 
+	@datareader
 	@classmethod
 	def load(cls, data):
-		if not isinstance(data, DataReader):  # pragma: nocover
-			data = DataReader(data)
-
 		fields = {}
 
 		field = data.read(4)
