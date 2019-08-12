@@ -54,7 +54,7 @@ class LAMEReplayGain(DictMixin):
 		if peak_data == b'\x00\x00\x00\x00':
 			gain_peak = None
 		else:
-			gain_peak = (peak_data - 0.5) / 2 ** 23
+			gain_peak = peak_data / 2 ** 23
 
 		track_gain_type_, track_gain_origin_, track_gain_sign, track_gain_adjustment_ = bitstruct.unpack(
 			'u3 u3 u1 u9',
