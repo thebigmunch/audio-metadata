@@ -249,9 +249,6 @@ class LAMEHeader(DictMixin):
 class XingTOC(ListMixin):
 	item_label = 'entries'
 
-	def __init__(self, items):
-		super().__init__(items)
-
 
 @attrs(repr=False)
 class XingHeader(DictMixin):

@@ -243,9 +243,6 @@ class FLACSeekPoint(DictMixin):
 class FLACSeekTable(ListMixin):
 	item_label = 'seekpoints'
 
-	def __init__(self, items):
-		super().__init__(items)
-
 	@datareader
 	@classmethod
 	def load(cls, data):
