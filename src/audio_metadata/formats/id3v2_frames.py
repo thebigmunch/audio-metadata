@@ -61,8 +61,12 @@ class ID3v2Picture(Picture):
 		width, height = get_image_size(image_data)
 
 		return cls(
-			type=type_, mime_type=mime_type, description=description,
-			width=width, height=height, data=image_data
+			type=type_,
+			mime_type=mime_type,
+			description=description,
+			width=width,
+			height=height,
+			data=image_data
 		)
 
 

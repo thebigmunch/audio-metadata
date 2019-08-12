@@ -47,7 +47,12 @@ class VorbisPicture(Picture):
 		data = data.read(data_length)
 
 		return cls(
-			type=ID3PictureType(type_), mime_type=mime_type, description=description,
-			width=width, height=height, depth=depth, colors=colors,
+			type=ID3PictureType(type_),
+			mime_type=mime_type,
+			description=description,
+			width=width,
+			height=height,
+			depth=depth,
+			colors=colors,
 			data=data
 		)

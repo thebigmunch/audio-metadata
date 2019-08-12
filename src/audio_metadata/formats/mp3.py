@@ -1,5 +1,11 @@
 __all__ = [
-	'LAMEHeader', 'MP3', 'MP3StreamInfo', 'MPEGFrameHeader', 'XingHeader', 'XingTOC'
+	'LAMEHeader',
+	'LAMEReplayGain',
+	'MP3',
+	'MP3StreamInfo',
+	'MPEGFrameHeader',
+	'XingHeader',
+	'XingTOC'
 ]
 
 import os
@@ -14,8 +20,17 @@ from .id3v1 import ID3v1
 from .id3v2 import ID3v2, ID3v2Frames
 from .models import Format, StreamInfo
 from .tables import (
-	LAMEBitrateMode, LAMEChannelMode, LAMEPreset, LAMEReplayGainOrigin, LAMEReplayGainType, LAMESurroundInfo,
-	MP3BitrateMode, MP3Bitrates, MP3ChannelMode, MP3SampleRates, MP3SamplesPerFrame
+	LAMEBitrateMode,
+	LAMEChannelMode,
+	LAMEPreset,
+	LAMEReplayGainOrigin,
+	LAMEReplayGainType,
+	LAMESurroundInfo,
+	MP3BitrateMode,
+	MP3Bitrates,
+	MP3ChannelMode,
+	MP3SampleRates,
+	MP3SamplesPerFrame
 )
 from ..exceptions import InvalidFormat, InvalidFrame, InvalidHeader
 from ..structures import DictMixin, ListMixin
@@ -208,9 +223,26 @@ class LAMEHeader(DictMixin):
 		)
 
 		return cls(
-			lame_crc, version, revision, ath_type, audio_crc, audio_size, bitrate,
-			bitrate_mode, channel_mode, delay, encoding_flags, lowpass_filter, mp3_gain, noise_shaping,
-			padding, preset, replay_gain, source_sample_rate, surround_info, unwise_settings_used
+			lame_crc,
+			version,
+			revision,
+			ath_type,
+			audio_crc,
+			audio_size,
+			bitrate,
+			bitrate_mode,
+			channel_mode,
+			delay,
+			encoding_flags,
+			lowpass_filter,
+			mp3_gain,
+			noise_shaping,
+			padding,
+			preset,
+			replay_gain,
+			source_sample_rate,
+			surround_info,
+			unwise_settings_used
 		)
 
 
@@ -353,8 +385,17 @@ class MPEGFrameHeader(DictMixin):
 				xing_header = XingHeader.load(data.read(frame_size))
 
 		return cls(
-			frame_start, frame_size, xing_header, version, layer, protected,
-			padded, bitrate, channel_mode, channels, sample_rate
+			frame_start,
+			frame_size,
+			xing_header,
+			version,
+			layer,
+			protected,
+			padded,
+			bitrate,
+			channel_mode,
+			channels,
+			sample_rate
 		)
 
 
@@ -506,8 +547,19 @@ class MP3StreamInfo(StreamInfo):
 		channels = frames[0].channels
 
 		return cls(
-			audio_start, audio_end, audio_size, xing_header, version, layer, protected,
-			bitrate, bitrate_mode, channel_mode, channels, duration, sample_rate
+			audio_start,
+			audio_end,
+			audio_size,
+			xing_header,
+			version,
+			layer,
+			protected,
+			bitrate,
+			bitrate_mode,
+			channel_mode,
+			channels,
+			duration,
+			sample_rate
 		)
 
 

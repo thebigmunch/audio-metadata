@@ -1,7 +1,14 @@
 __all__ = [
-	'FLAC', 'FLACApplication', 'FLACCueSheet',
-	'FLACCueSheetIndex', 'FLACCueSheetTrack', 'FLACMetadataBlock',
-	'FLACPadding', 'FLACSeekPoint', 'FLACSeekTable', 'FLACStreamInfo',
+	'FLAC',
+	'FLACApplication',
+	'FLACCueSheet',
+	'FLACCueSheetIndex',
+	'FLACCueSheetTrack',
+	'FLACMetadataBlock',
+	'FLACPadding',
+	'FLACSeekPoint',
+	'FLACSeekTable',
+	'FLACStreamInfo',
 ]
 
 import binascii
@@ -136,7 +143,14 @@ class FLACCueSheetTrack(DictMixin):
 		for _ in range(num_indexes):
 			indexes.append(FLACCueSheetIndex.load(data))
 
-		return cls(track_number, offset, isrc, type_, pre_emphasis, indexes)
+		return cls(
+			track_number,
+			offset,
+			isrc,
+			type_,
+			pre_emphasis,
+			indexes
+		)
 
 
 class FLACCueSheet(ListMixin):
@@ -184,7 +198,12 @@ class FLACCueSheet(ListMixin):
 		for _ in range(num_tracks):
 			tracks.append(FLACCueSheetTrack.load(data))
 
-		return cls(tracks, catalog_number, lead_in_samples, compact_disc)
+		return cls(
+			tracks,
+			catalog_number,
+			lead_in_samples,
+			compact_disc
+		)
 
 
 @attrs(repr=False)
@@ -274,9 +293,18 @@ class FLACStreamInfo(StreamInfo):
 		duration = total_samples / sample_rate
 
 		return cls(
-			None, None, min_block_size, max_block_size,
-			min_frame_size, max_frame_size, bit_depth,
-			None, channels, duration, md5sum, sample_rate
+			None,
+			None,
+			min_block_size,
+			max_block_size,
+			min_frame_size,
+			max_frame_size,
+			bit_depth,
+			None,
+			channels,
+			duration,
+			md5sum,
+			sample_rate
 		)
 
 
