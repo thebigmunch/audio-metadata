@@ -37,15 +37,6 @@ class LAMEReplayGain(DictMixin):
 	album_origin = attrib()
 	album_adjustment = attrib()
 
-	def __repr__(self):
-		repr_dict = {}
-
-		for k, v in sorted(self.items()):
-			if not k.startswith('_'):
-				repr_dict[k] = v
-
-		return super().__repr__(repr_dict=repr_dict)
-
 	@datareader
 	@classmethod
 	def load(cls, data):
@@ -195,15 +186,10 @@ class LAMEHeader(DictMixin):
 		)
 		channel_mode = LAMEChannelMode(channel_mode_)
 
-		# lame_header_data = struct.unpack('>IHH', data.read(36))
-
 		mp3_gain = bitstruct.unpack(
 			's8',
 			data.read(1)
 		)[0]
-		# mp3_gain = lame_header_data[12] & 127
-		# if lame_header_data[12] & 1:
-		# 	mp3_gain *= -1
 
 		surround_info_, preset_used_ = bitstruct.unpack(
 			'p2 u3 u11',
@@ -308,7 +294,6 @@ class MPEGFrameHeader(DictMixin):
 			'u11 u2 u2 b1',
 			data.read(2)
 		)
-		# sync, flags, indexes, remainder = struct.unpack('BBBB', data.read(4))
 
 		if sync != 2047:
 			raise InvalidFrame('Not a valid MPEG audio frame.')
