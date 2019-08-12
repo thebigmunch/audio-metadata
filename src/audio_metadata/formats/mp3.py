@@ -29,10 +29,13 @@ from ..utils import (
 
 @attrs(repr=False)
 class LAMEReplayGain(DictMixin):
-	type = attrib()  # noqa
-	origin = attrib()
-	adjustment = attrib()
 	peak = attrib()
+	track_type = attrib()
+	track_origin = attrib()
+	track_adjustment = attrib()
+	album_type = attrib()
+	album_origin = attrib()
+	album_adjustment = attrib()
 
 	def __repr__(self):
 		repr_dict = {}
@@ -53,22 +56,39 @@ class LAMEReplayGain(DictMixin):
 		else:
 			gain_peak = (peak_data - 0.5) / 2 ** 23
 
-		gain_type_, gain_origin_, gain_sign, gain_adjustment_ = bitstruct.unpack(
+		track_gain_type_, track_gain_origin_, track_gain_sign, track_gain_adjustment_ = bitstruct.unpack(
 			'u3 u3 u1 u9',
 			data.read(2)
 		)
 
-		gain_type = LAMEReplayGainType(gain_type_)
-		gain_origin = LAMEReplayGainOrigin(gain_origin_)
-		gain_adjustment = gain_adjustment_ / 10.0
+		track_gain_type = LAMEReplayGainType(track_gain_type_)
+		track_gain_origin = LAMEReplayGainOrigin(track_gain_origin_)
+		track_gain_adjustment = track_gain_adjustment_ / 10.0
 
-		if gain_sign:
-			gain_adjustment *= -1
+		if track_gain_sign:
+			track_gain_adjustment *= -1
 
-		if not gain_type:
-			return None
+		album_gain_type_, album_gain_origin_, album_gain_sign, album_gain_adjustment_ = bitstruct.unpack(
+			'u3 u3 u1 u9',
+			data.read(2)
+		)
 
-		return cls(gain_type, gain_origin, gain_adjustment, gain_peak)
+		album_gain_type = LAMEReplayGainType(album_gain_type_)
+		album_gain_origin = LAMEReplayGainOrigin(album_gain_origin_)
+		album_gain_adjustment = album_gain_adjustment_ / 10.0
+
+		if album_gain_sign:
+			album_gain_adjustment *= -1
+
+		return cls(
+			gain_peak,
+			track_gain_type,
+			track_gain_origin,
+			track_gain_adjustment,
+			album_gain_type,
+			album_gain_origin,
+			album_gain_adjustment
+		)
 
 
 @attrs(repr=False)
@@ -76,7 +96,6 @@ class LAMEHeader(DictMixin):
 	_crc = attrib()
 	version = attrib()
 	revision = attrib()
-	album_gain = attrib()
 	ath_type = attrib()
 	audio_crc = attrib()
 	audio_size = attrib()
@@ -90,9 +109,9 @@ class LAMEHeader(DictMixin):
 	noise_shaping = attrib()
 	padding = attrib()
 	preset = attrib()
+	replay_gain = attrib()
 	source_sample_rate = attrib()
 	surround_info = attrib()
-	track_gain = attrib()
 	unwise_settings_used = attrib()
 
 	def __repr__(self):
@@ -136,12 +155,7 @@ class LAMEHeader(DictMixin):
 			data.read(1)
 		)[0] * 100
 
-		gain_data = struct.unpack(
-			'4s2s2s',
-			data.read(8)
-		)
-		track_gain = LAMEReplayGain.load(gain_data[0] + gain_data[1])
-		album_gain = LAMEReplayGain.load(gain_data[0] + gain_data[2])
+		replay_gain = LAMEReplayGain.load(data)
 
 		flags_ath = bitstruct.unpack_dict(
 			'b1 b1 b1 b1 u4',
@@ -208,9 +222,9 @@ class LAMEHeader(DictMixin):
 		)
 
 		return cls(
-			lame_crc, version, revision, album_gain, ath_type, audio_crc, audio_size, bitrate,
+			lame_crc, version, revision, ath_type, audio_crc, audio_size, bitrate,
 			bitrate_mode, channel_mode, delay, encoding_flags, lowpass_filter, mp3_gain, noise_shaping,
-			padding, preset, source_sample_rate, surround_info, track_gain, unwise_settings_used
+			padding, preset, replay_gain, source_sample_rate, surround_info, unwise_settings_used
 		)
 
 

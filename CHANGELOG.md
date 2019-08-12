@@ -14,6 +14,12 @@ This project adheres to [Semantic Versioning](https://semver.org).
 	various inputs better, especially file-like objects.
 * Support 0-duration FLAC files.
 * Raise proper exception if WAV stream info not found.
+* Make LAMEReplayGain contain both track and album gains.
+	* Attributes are now: 
+		``peak, track_type, track_origin, track_adjustment,
+		album_type, album_origin, album_adjustment``
+	* LAMEHeader attributes from ``album_gain, track_gain`` to
+		``replay_gain``.
 
 ### Removed
 
