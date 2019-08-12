@@ -57,7 +57,7 @@ class LAMEReplayGain(DictMixin):
 	def load(cls, data):
 		peak_data = struct.unpack('>I', data.read(4))[0]
 
-		if peak_data == b'\x00\x00\x00\x00':
+		if peak_data == 0:
 			gain_peak = None
 		else:
 			gain_peak = peak_data / 2 ** 23
