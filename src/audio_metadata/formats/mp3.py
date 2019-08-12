@@ -63,7 +63,7 @@ class LAMEReplayGain(DictMixin):
 			gain_peak = peak_data / 2 ** 23
 
 		track_gain_type_, track_gain_origin_, track_gain_sign, track_gain_adjustment_ = bitstruct.unpack(
-			'u3 u3 u1 u9',
+			'u3 u3 b1 u9',
 			data.read(2)
 		)
 
@@ -75,7 +75,7 @@ class LAMEReplayGain(DictMixin):
 			track_gain_adjustment *= -1
 
 		album_gain_type_, album_gain_origin_, album_gain_sign, album_gain_adjustment_ = bitstruct.unpack(
-			'u3 u3 u1 u9',
+			'u3 u3 b1 u9',
 			data.read(2)
 		)
 
