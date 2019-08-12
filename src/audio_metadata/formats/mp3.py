@@ -260,7 +260,7 @@ class XingHeader(DictMixin):
 			num_bytes = struct.unpack('>I', data.read(4))[0]
 
 		if flags & 4:
-			toc = XingTOC(list(bytearray(data.read(100))))
+			toc = XingTOC(bytearray(data.read(100)))
 
 		if flags & 8:
 			quality = struct.unpack('>I', data.read(4))[0]
