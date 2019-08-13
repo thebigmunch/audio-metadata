@@ -16,11 +16,6 @@ from audio_metadata import (
 )
 
 
-def test_FLAC():
-	for flac in (Path(__file__).parent / 'files' / 'audio').glob('*.flac'):
-		FLAC.load(flac.read_bytes())
-
-
 def test_FLAC_invalid_header():
 	with pytest.raises(InvalidHeader, match="Valid FLAC header not found"):
 		FLAC.load(b'TEST')

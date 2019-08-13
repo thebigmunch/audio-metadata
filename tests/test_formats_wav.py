@@ -1,15 +1,8 @@
-from pathlib import Path
-
 import pytest
 from audio_metadata import (
 	WAV,
 	InvalidHeader
 )
-
-
-def test_WAV():
-	for wav in (Path(__file__).parent / 'files' / 'audio').glob('*.wav'):
-		WAV.load(wav.read_bytes())
 
 
 def test_WAV_invalid_header():
