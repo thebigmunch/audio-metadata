@@ -37,11 +37,8 @@ install:
 script:
   - nox --non-interactive --session "$NOXSESSION"
 
-before_install:
-  - pip install codecov
-
 after_success:
-  - nox -s combine
+  - pip install codecov
   - codecov
 
 notifications:

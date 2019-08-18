@@ -33,18 +33,19 @@ def doc(session):
 @nox.session(python=[py36, py37, py38])
 def test(session):
 	session.install('.[test]')
-	session.run('coverage', 'run', '--parallel', '-m', 'pytest')
+	session.run('coverage', 'run', '-p', '-m', 'pytest')
+	session.notify('report')
 
 
 @nox.session()
 def coverage(session):
 	session.install('.[test]')
 	session.run('coverage', 'run', '-m', 'pytest')
-	session.run('coverage', 'report', '-m')
+	session.notify('report')
 
 
 @nox.session()
-def combine(session):
+def report(session):
 	session.install('coverage')
-	session.run('coverage', 'combine')
 	session.run('coverage', 'report', '-m')
+	session.run('coverage', 'erase')
