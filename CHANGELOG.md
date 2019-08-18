@@ -20,6 +20,7 @@ This project adheres to [Semantic Versioning](https://semver.org).
 		album_type, album_origin, album_adjustment``
 	* LAMEHeader attributes from ``album_gain, track_gain`` to
 		``replay_gain``.
+* Use MusicBrainz Picard tag mappings.
 
 ### Removed
 
