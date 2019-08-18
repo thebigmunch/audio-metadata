@@ -2,12 +2,6 @@
 branch = True
 source = audio_metadata
 
-[paths]
-source =
-	src/audio_metadata
-	.nox/*/lib/python*/site-packages/audio_metadata
-	.nox/pypy/site-packages/audio_metadata
-
 [report]
 precision = 2
 show_missing = True
