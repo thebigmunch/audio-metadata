@@ -43,7 +43,7 @@ def coverage(session):
 	session.run('coverage', 'report', '-m')
 
 
-@nox.session(python=py37)
+@nox.session()
 def combine(session):
 	session.install('coverage')
 	session.run('coverage', 'combine')
