@@ -50,8 +50,9 @@ def coverage(session):
 def report(session):
 	session.install('coverage')
 	session.run('coverage', 'report', '-m')
-	session.run('coverage', 'erase')
 
 	if ON_TRAVIS:
 		session.install('codecov')
 		session.run('codecov')
+
+	session.run('coverage', 'erase')
