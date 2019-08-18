@@ -5,8 +5,8 @@ source = audio_metadata
 [paths]
 source =
 	src/audio_metadata
-	.tox/*/lib/python*/site-packages/audio_metadata
-	.tox/pypy/site-packages/audio_metadata
+	.nox/*/lib/python*/site-packages/audio_metadata
+	.nox/pypy/site-packages/audio_metadata
 
 [report]
 precision = 2
