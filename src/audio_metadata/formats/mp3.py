@@ -280,8 +280,7 @@ class XingHeader(DictMixin):
 		if flags & 8:
 			quality = struct.unpack('>I', data.read(4))[0]
 
-		if data.read(4) == b'LAME':
-			data.seek(-4, os.SEEK_CUR)
+		if data.peek(4) == b'LAME':
 			lame_header = LAMEHeader.load(data, quality)
 
 		return cls(lame_header, num_frames, num_bytes, toc, quality)
@@ -376,9 +375,7 @@ class MPEGFrameHeader(DictMixin):
 
 			data.seek(frame_start + xing_header_start, os.SEEK_SET)
 
-			t = data.read(4)
-			if t in [b'Xing', b'Info']:
-				data.seek(-4, os.SEEK_CUR)
+			if data.peek(4) in [b'Xing', b'Info']:
 				xing_header = XingHeader.load(data.read(frame_size))
 
 		return cls(
