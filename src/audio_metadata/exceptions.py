@@ -1,5 +1,6 @@
 __all__ = [
 	'AudioMetadataException',
+	'InvalidChunk',
 	'InvalidFormat',
 	'InvalidFrame',
 	'InvalidHeader',
@@ -9,6 +10,12 @@ __all__ = [
 
 class AudioMetadataException(Exception):
 	"""Base exception class."""
+
+	pass
+
+
+class InvalidChunk(AudioMetadataException):
+	"""Exception raised when a WAV chunk is invalid."""
 
 	pass
 

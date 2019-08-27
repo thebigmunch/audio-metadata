@@ -1,8 +1,15 @@
 import pytest
 from audio_metadata import (
 	WAV,
-	InvalidHeader
+	InvalidChunk,
+	InvalidHeader,
+	RIFFTags
 )
+
+
+def test_RIFFTags_invalid():
+	with pytest.raises(InvalidChunk):
+		RIFFTags.load(b'NOTINFO')
 
 
 def test_WAV_invalid_header():

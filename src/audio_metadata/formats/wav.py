@@ -8,7 +8,7 @@ from bidict import frozenbidict
 
 from .id3v2 import ID3v2
 from .models import Format, StreamInfo, Tags
-from ..exceptions import InvalidFrame, InvalidHeader
+from ..exceptions import InvalidChunk, InvalidFrame, InvalidHeader
 from ..utils import datareader
 
 
@@ -32,6 +32,9 @@ class RIFFTags(Tags):
 	@datareader
 	@classmethod
 	def load(cls, data):
+		if data.read(4) != b'INFO':
+			raise InvalidChunk('Valid RIFF INFO chunk not found.')
+
 		fields = {}
 
 		field = data.read(4)
@@ -114,11 +117,11 @@ class WAV(Format):
 				audio_start = self._obj.tell()
 				audio_size = subchunk_size
 				self._obj.seek(subchunk_size, os.SEEK_CUR)
-			elif subchunk_id == b'LIST':
-				if self._obj.read(4) != b'INFO':
-					self._obj.seek(subchunk_size - 4, os.SEEK_CUR)
-				else:
-					self._riff = RIFFTags.load(self._obj.read(subchunk_size - 4))
+			elif (
+				subchunk_id == b'LIST'
+				and self._obj.peek(4) == b'INFO'
+			):
+				self._riff = RIFFTags.load(self._obj.read(subchunk_size))
 			elif subchunk_id.lower() == b'id3 ':
 				try:
 					id3 = ID3v2.load(self._obj)

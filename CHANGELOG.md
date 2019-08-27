@@ -8,6 +8,10 @@ This project adheres to [Semantic Versioning](https://semver.org).
 
 [Commits](https://github.com/thebigmunch/audio-metadata/compare/0.5.0...master)
 
+### Added
+
+* InvalidChunk exception.
+
 ### Changed
 
 * Refactor high-level API functions and ``DataReader`` to handle
@@ -21,6 +25,8 @@ This project adheres to [Semantic Versioning](https://semver.org).
 	* LAMEHeader attributes from ``album_gain, track_gain`` to
 		``replay_gain``.
 * Use MusicBrainz Picard tag mappings.
+* RIFFTags loading.
+	It now expects ``INFO`` at start and raises an exception if not.
 
 ### Removed
 
