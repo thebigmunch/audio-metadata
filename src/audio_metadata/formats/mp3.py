@@ -584,7 +584,6 @@ class MP3(Format):
 
 			end_buffer = self._obj.read()
 
-			id3v1_data = None
 			while True:
 				id3v1_index = end_buffer.find(b'TAG')
 
@@ -592,13 +591,11 @@ class MP3(Format):
 					end_buffer = end_buffer[id3v1_index + 5 :]
 					continue
 				else:
-					id3v1_data = end_buffer[id3v1_index:id3v1_index + 128]
-					break
+					id3v1 = ID3v1.load(end_buffer[id3v1_index : id3v1_index + 128])
+					self._id3 = id3v1
+					self.tags = self._id3.tags
 
-			if id3v1_data:
-				id3v1 = ID3v1.load(id3v1_data)
-				self._id3 = id3v1
-				self.tags = self._id3.tags
+					break
 
 		self._obj.close()
 
