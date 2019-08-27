@@ -6,6 +6,7 @@ __all__ = [
 from .models import Tags
 from .tables import ID3v1Genres
 from ..exceptions import InvalidHeader
+from ..structures import DictMixin
 from ..utils import datareader
 
 
@@ -47,7 +48,7 @@ class ID3v1Fields(Tags):
 		return self
 
 
-class ID3v1:
+class ID3v1(DictMixin):
 	@datareader
 	@classmethod
 	def load(cls, data):
