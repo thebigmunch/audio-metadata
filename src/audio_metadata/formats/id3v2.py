@@ -235,6 +235,15 @@ class ID3v2Header(DictMixin):
 	version = attrib()
 	flags = attrib(default=Factory(DictMixin))
 
+	def __repr__(self):
+		repr_dict = {}
+
+		for k, v in sorted(self.items()):
+			if not k.startswith('_'):
+				repr_dict[k] = v
+
+		return super().__repr__(repr_dict=repr_dict)
+
 	@datareader
 	@classmethod
 	def load(cls, data):
@@ -261,6 +270,15 @@ class ID3v2Header(DictMixin):
 
 
 class ID3v2(DictMixin):
+	def __repr__(self):
+		repr_dict = {}
+
+		for k, v in sorted(self.items()):
+			if not k.startswith('_'):
+				repr_dict[k] = v
+
+		return super().__repr__(repr_dict=repr_dict)
+
 	@datareader
 	@classmethod
 	def load(cls, data):
