@@ -35,36 +35,31 @@ def doc(session):
 
 @nox.session(python=[py36, py37, py38])
 def test(session):
-	session.notify('coverage')
+	session.install('.[test]')
+	session.run('coverage', 'run', '-m', 'pytest', *session.posargs)
 	session.notify('report')
 
 
 @nox.session(python=[py36, py37, py38])
 def integration(session):
-	session.run('coverage', 'run', '-m', 'pytest', '-m', 'integration')
+	session.install('.[test]')
+	session.run('coverage', 'run', '-m', 'pytest', '-m', 'integration', *session.posargs)
 	session.notify('report')
 
 
 @nox.session(python=[py36, py37, py38])
 def unit(session):
-	session.run('coverage', 'run', '-m', 'pytest', '-m', 'not integration')
-	session.notify('report')
-
-
-@nox.session
-def coverage(session):
 	session.install('.[test]')
-	session.run('coverage', 'run', '-m', 'pytest')
+	session.run('coverage', 'run', '-m', 'pytest', '-m', 'not integration', *session.posargs)
 	session.notify('report')
 
 
 @nox.session
 def report(session):
-	session.install('coverage')
-	session.run('coverage', 'report', '-m')
-
 	if ON_TRAVIS:
 		session.install('codecov')
 		session.run('codecov')
 
+	session.install('coverage')
+	session.run('coverage', 'report', '-m')
 	session.run('coverage', 'erase')
