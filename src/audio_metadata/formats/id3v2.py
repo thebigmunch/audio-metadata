@@ -20,126 +20,132 @@ from ..utils import datareader, decode_synchsafe_int
 
 # Mappings used: https://picard.musicbrainz.org/docs/mappings/
 class ID3v2Frames(Tags):
-	_v22_FIELD_MAP = frozenbidict({
-		'album': 'TAL',
-		'albumartist': 'TP2',
-		'artist': 'TP1',
-		'audiodelay': 'TDY',
-		'audiolength': 'TLE',
-		'audiosize': 'TSI',
-		'bpm': 'TBP',
-		'comment': 'COM',
-		'composer': 'TCM',
-		'conductor': 'TP3',
-		'copyright': 'TCR',
-		'date': 'TYE',
-		'discnumber': 'TPA',
-		'encodedby': 'TEN',
-		'encodersettings': 'TSS',
-		'genre': 'TCO',
-		'grouping': 'TT1',
-		'isrc': 'TRC',
-		'label': 'TPB',
-		'language': 'TLA',
-		'lyricist': 'TXT',
-		'lyrics': 'ULT',
-		'media': 'TMT',
-		'originalalbum': 'TOT',
-		'originalartist': 'TOA',
-		'originalauthor': 'TOL',
-		'originaldate': 'TOR',
-		'pictures': 'PIC',
-		'playcount': 'CNT',
-		'remixer': 'TP4',
-		'subtitle': 'TT3',
-		'title': 'TT2',
-		'tracknumber': 'TRK'
-	})
+	_v22_FIELD_MAP = frozenbidict(
+		{
+			'album': 'TAL',
+			'albumartist': 'TP2',
+			'artist': 'TP1',
+			'audiodelay': 'TDY',
+			'audiolength': 'TLE',
+			'audiosize': 'TSI',
+			'bpm': 'TBP',
+			'comment': 'COM',
+			'composer': 'TCM',
+			'conductor': 'TP3',
+			'copyright': 'TCR',
+			'date': 'TYE',
+			'discnumber': 'TPA',
+			'encodedby': 'TEN',
+			'encodersettings': 'TSS',
+			'genre': 'TCO',
+			'grouping': 'TT1',
+			'isrc': 'TRC',
+			'label': 'TPB',
+			'language': 'TLA',
+			'lyricist': 'TXT',
+			'lyrics': 'ULT',
+			'media': 'TMT',
+			'originalalbum': 'TOT',
+			'originalartist': 'TOA',
+			'originalauthor': 'TOL',
+			'originaldate': 'TOR',
+			'pictures': 'PIC',
+			'playcount': 'CNT',
+			'remixer': 'TP4',
+			'subtitle': 'TT3',
+			'title': 'TT2',
+			'tracknumber': 'TRK'
+		}
+	)
 
-	_v23_FIELD_MAP = frozenbidict({
-		'album': 'TALB',
-		'albumsort': 'TSOA',
-		'albumartist': 'TPE2',
-		'albumartistsort': 'TSO2',
-		'artist': 'TPE1',
-		'artistsort': 'TSOP',
-		'audiodelay': 'TDLY',
-		'audiolength': 'TLEN',
-		'audiosize': 'TSIZ',
-		'bpm': 'TBPM',
-		'comment': 'COMM',
-		'compilation': 'TCMP',
-		'composer': 'TCOM',
-		'composersort': 'TSOC',
-		'conductor': 'TPE3',
-		'copyright': 'TCOP',
-		'date': 'TYER',
-		'discnumber': 'TPOS',
-		'encodedby': 'TENC',
-		'encodersettings': 'TSSE',
-		'genre': 'TCON',
-		'grouping': 'TIT1',
-		'isrc': 'TSRC',
-		'label': 'TPUB',
-		'language': 'TLAN',
-		'lyricist': 'TEXT',
-		'lyrics': 'USLT',
-		'media': 'TMED',
-		'originalalbum': 'TOAL',
-		'originalartist': 'TOPE',
-		'originalauthor': 'TOLY',
-		'originaldate': 'TORY',
-		'pictures': 'APIC',
-		'playcount': 'PCNT',
-		'remixer': 'TPE4',
-		'subtitle': 'TIT3',
-		'title': 'TIT2',
-		'titlesort': 'TSOT',
-		'tracknumber': 'TRCK'
-	})
+	_v23_FIELD_MAP = frozenbidict(
+		{
+			'album': 'TALB',
+			'albumsort': 'TSOA',
+			'albumartist': 'TPE2',
+			'albumartistsort': 'TSO2',
+			'artist': 'TPE1',
+			'artistsort': 'TSOP',
+			'audiodelay': 'TDLY',
+			'audiolength': 'TLEN',
+			'audiosize': 'TSIZ',
+			'bpm': 'TBPM',
+			'comment': 'COMM',
+			'compilation': 'TCMP',
+			'composer': 'TCOM',
+			'composersort': 'TSOC',
+			'conductor': 'TPE3',
+			'copyright': 'TCOP',
+			'date': 'TYER',
+			'discnumber': 'TPOS',
+			'encodedby': 'TENC',
+			'encodersettings': 'TSSE',
+			'genre': 'TCON',
+			'grouping': 'TIT1',
+			'isrc': 'TSRC',
+			'label': 'TPUB',
+			'language': 'TLAN',
+			'lyricist': 'TEXT',
+			'lyrics': 'USLT',
+			'media': 'TMED',
+			'originalalbum': 'TOAL',
+			'originalartist': 'TOPE',
+			'originalauthor': 'TOLY',
+			'originaldate': 'TORY',
+			'pictures': 'APIC',
+			'playcount': 'PCNT',
+			'remixer': 'TPE4',
+			'subtitle': 'TIT3',
+			'title': 'TIT2',
+			'titlesort': 'TSOT',
+			'tracknumber': 'TRCK'
+		}
+	)
 
-	_v24_FIELD_MAP = frozenbidict({
-		'album': 'TALB',
-		'albumsort': 'TSOA',
-		'albumartist': 'TPE2',
-		'albumartistsort': 'TSO2',
-		'artist': 'TPE1',
-		'artistsort': 'TSOP',
-		'audiodelay': 'TDLY',
-		'audiolength': 'TLEN',
-		'audiosize': 'TSIZ',
-		'bpm': 'TBPM',
-		'comment': 'COMM',
-		'compilation': 'TCMP',
-		'composer': 'TCOM',
-		'composersort': 'TSOC',
-		'conductor': 'TPE3',
-		'copyright': 'TCOP',
-		'date': 'TDRC',
-		'discnumber': 'TPOS',
-		'encodedby': 'TENC',
-		'encodersettings': 'TSSE',
-		'genre': 'TCON',
-		'grouping': 'TIT1',
-		'isrc': 'TSRC',
-		'label': 'TPUB',
-		'language': 'TLAN',
-		'lyricist': 'TEXT',
-		'lyrics': 'USLT',
-		'media': 'TMED',
-		'mood': 'TMOO',
-		'originalalbum': 'TOAL',
-		'originalartist': 'TOPE',
-		'originalauthor': 'TOLY',
-		'originaldate': 'TDOR',
-		'pictures': 'APIC',
-		'playcount': 'PCNT',
-		'remixer': 'TPE4',
-		'subtitle': 'TIT3',
-		'title': 'TIT2',
-		'titlesort': 'TSOT',
-		'tracknumber': 'TRCK'
-	})
+	_v24_FIELD_MAP = frozenbidict(
+		{
+			'album': 'TALB',
+			'albumsort': 'TSOA',
+			'albumartist': 'TPE2',
+			'albumartistsort': 'TSO2',
+			'artist': 'TPE1',
+			'artistsort': 'TSOP',
+			'audiodelay': 'TDLY',
+			'audiolength': 'TLEN',
+			'audiosize': 'TSIZ',
+			'bpm': 'TBPM',
+			'comment': 'COMM',
+			'compilation': 'TCMP',
+			'composer': 'TCOM',
+			'composersort': 'TSOC',
+			'conductor': 'TPE3',
+			'copyright': 'TCOP',
+			'date': 'TDRC',
+			'discnumber': 'TPOS',
+			'encodedby': 'TENC',
+			'encodersettings': 'TSSE',
+			'genre': 'TCON',
+			'grouping': 'TIT1',
+			'isrc': 'TSRC',
+			'label': 'TPUB',
+			'language': 'TLAN',
+			'lyricist': 'TEXT',
+			'lyrics': 'USLT',
+			'media': 'TMED',
+			'mood': 'TMOO',
+			'originalalbum': 'TOAL',
+			'originalartist': 'TOPE',
+			'originalauthor': 'TOLY',
+			'originaldate': 'TDOR',
+			'pictures': 'APIC',
+			'playcount': 'PCNT',
+			'remixer': 'TPE4',
+			'subtitle': 'TIT3',
+			'title': 'TIT2',
+			'titlesort': 'TSOT',
+			'tracknumber': 'TRCK'
+		}
+	)
 
 	@datareader
 	@classmethod
@@ -180,22 +186,41 @@ class ID3v2Frames(Tags):
 			# TODO: Move representation into frame classes?
 			if isinstance(
 				frame,
-				(ID3v2CommentFrame, ID3v2SynchronizedLyricsFrame, ID3v2UnsynchronizedLyricsFrame)
+				(
+					ID3v2CommentFrame,
+					ID3v2SynchronizedLyricsFrame,
+					ID3v2UnsynchronizedLyricsFrame
+				)
 			):
 				frames[f'{frame.id}:{frame.description}:{frame.language}'].append(frame.value)
 			elif isinstance(frame, ID3v2GenreFrame):
 				frames['TCON'] = frame.value
 			elif isinstance(frame, ID3v2GEOBFrame):
-				frames[f'GEOB:{frame.description}'].append({
-					'filename': frame.filename, 'mime_type': frame.mime_type, 'value': frame.value
-				})
+				frames[f'GEOB:{frame.description}'].append(
+					{
+
+						'filename': frame.filename,
+						'mime_type': frame.mime_type,
+						'value': frame.value
+					}
+				)
 			elif isinstance(frame, ID3v2PrivateFrame):
 				frames[f'PRIV:{frame.owner}'].append(frame.value)
-			elif isinstance(frame, (ID3v2UserTextFrame, ID3v2UserURLLinkFrame)):
+			elif isinstance(
+				frame,
+				(
+					ID3v2UserTextFrame,
+					ID3v2UserURLLinkFrame
+				)
+			):
 				frames[f'{frame.id}:{frame.description}'].append(frame.value)
 			elif isinstance(
 				frame,
-				(ID3v2NumericTextFrame, ID3v2TextFrame, ID3v2TimestampFrame)
+				(
+					ID3v2NumericTextFrame,
+					ID3v2TextFrame,
+					ID3v2TimestampFrame
+				)
 			):
 				frames[frame.id] = frame.value
 			else:
@@ -248,7 +273,10 @@ class ID3v2(DictMixin):
 		self._size = 10 + self._header._size
 
 		if self._header.flags.extended:
-			ext_size = decode_synchsafe_int(struct.unpack('4B', data.read(4))[0:4], 7)
+			ext_size = decode_synchsafe_int(
+				struct.unpack('4B', data.read(4))[0:4],
+				7
+			)
 			self._size += ext_size
 
 			if self._header is ID3Version.v24:
@@ -260,7 +288,10 @@ class ID3v2(DictMixin):
 			self._size += 10
 			data.read(10)
 
-		self.tags = ID3v2Frames.load(data.read(self._header._size), self._header.version)
+		self.tags = ID3v2Frames.load(
+			data.read(self._header._size),
+			self._header.version
+		)
 		self.pictures = self.tags.pop('pictures', [])
 
 		return self

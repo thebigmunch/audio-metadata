@@ -13,19 +13,21 @@ from ..utils import datareader
 
 
 class RIFFTags(Tags):
-	FIELD_MAP = frozenbidict({
-		'album': 'IPRD',
-		'artist': 'IART',
-		'comment': 'ICMT',
-		'copyright': 'ICOP',
-		'date': 'ICRD',
-		'encodedby': 'IENC',
-		'genre': 'IGNR',
-		'language': 'ILNG',
-		'rating': 'IRTD',
-		'title': 'INAM',
-		'tracknumber': 'ITRK'
-	})
+	FIELD_MAP = frozenbidict(
+		{
+			'album': 'IPRD',
+			'artist': 'IART',
+			'comment': 'ICMT',
+			'copyright': 'ICOP',
+			'date': 'ICRD',
+			'encodedby': 'IENC',
+			'genre': 'IGNR',
+			'language': 'ILNG',
+			'rating': 'IRTD',
+			'title': 'INAM',
+			'tracknumber': 'ITRK'
+		}
+	)
 
 	@datareader
 	@classmethod
@@ -149,7 +151,7 @@ class WAV(Format):
 				sample_rate
 			)
 		except UnboundLocalError:
-			raise InvalidHeader("Valid WAV stream info not found.")
+			raise InvalidHeader("Valid WAVE stream info not found.")
 
 		self._obj.close()
 

@@ -53,7 +53,7 @@ class ID3v2Picture(Picture):
 		mime_end = data.index(b'\x00', 1)
 		mime_type = decode_bytestring(data[mime_start:mime_end])
 
-		type_ = ID3PictureType(data[mime_end + 1])  # noqa
+		type_ = ID3PictureType(data[mime_end + 1])
 
 		desc_start = mime_end + 2
 		description, image_data = split_encoded(data[desc_start:], encoding)
@@ -128,9 +128,7 @@ class ID3v2NumericTextFrame(ID3v2BaseFrame):
 	def validate_value(self, attribute, value):
 		for v in value:
 			if not v.isdigit():
-				raise ValueError(
-					"Numeric text frame values must consist only of digits."
-				)
+				raise ValueError("Numeric text frame values must consist only of digits.")
 
 
 @attrs(repr=False)
@@ -254,11 +252,14 @@ class ID3v2Frame(ID3v2BaseFrame):
 
 	_FRAME_TYPES = {
 		# Complex Text Frames
-		'COM': ID3v2CommentFrame, 'GEO': ID3v2GEOBFrame,
+		'COM': ID3v2CommentFrame,
+		'GEO': ID3v2GEOBFrame,
 		'TXX': ID3v2UserTextFrame,
 
-		'COMM': ID3v2CommentFrame, 'GEOB': ID3v2GEOBFrame,
-		'PRIV': ID3v2PrivateFrame, 'TXXX': ID3v2UserTextFrame,
+		'COMM': ID3v2CommentFrame,
+		'GEOB': ID3v2GEOBFrame,
+		'PRIV': ID3v2PrivateFrame,
+		'TXXX': ID3v2UserTextFrame,
 
 		# Genre Frame
 		'TCO': ID3v2GenreFrame,
@@ -266,25 +267,37 @@ class ID3v2Frame(ID3v2BaseFrame):
 		'TCON': ID3v2GenreFrame,
 
 		# Lyrics Frames
-		'SLT': ID3v2SynchronizedLyricsFrame, 'ULT': ID3v2UnsynchronizedLyricsFrame,
+		'SLT': ID3v2SynchronizedLyricsFrame,
+		'ULT': ID3v2UnsynchronizedLyricsFrame,
 
-		'SYLT': ID3v2SynchronizedLyricsFrame, 'USLT': ID3v2UnsynchronizedLyricsFrame,
+		'SYLT': ID3v2SynchronizedLyricsFrame,
+		'USLT': ID3v2UnsynchronizedLyricsFrame,
 
 		# Number Frames
-		'TPA': ID3v2NumberFrame, 'TRK': ID3v2NumberFrame,
+		'TPA': ID3v2NumberFrame,
+		'TRK': ID3v2NumberFrame,
 
-		'TPOS': ID3v2NumberFrame, 'TRCK': ID3v2NumberFrame,
+		'TPOS': ID3v2NumberFrame,
+		'TRCK': ID3v2NumberFrame,
 
 		# Numeric Text Frames
-		'TBP': ID3v2NumericTextFrame, 'TDA': ID3v2TDATFrame,
-		'TDY': ID3v2NumericTextFrame, 'TIM': ID3v2TIMEFrame,
-		'TLE': ID3v2NumericTextFrame, 'TOR': ID3v2YearFrame,
-		'TSI': ID3v2NumericTextFrame, 'TYE': ID3v2YearFrame,
+		'TBP': ID3v2NumericTextFrame,
+		'TDA': ID3v2TDATFrame,
+		'TDY': ID3v2NumericTextFrame,
+		'TIM': ID3v2TIMEFrame,
+		'TLE': ID3v2NumericTextFrame,
+		'TOR': ID3v2YearFrame,
+		'TSI': ID3v2NumericTextFrame,
+		'TYE': ID3v2YearFrame,
 
-		'TBPM': ID3v2NumericTextFrame, 'TDAT': ID3v2TDATFrame,
-		'TDLY': ID3v2NumericTextFrame, 'TIME': ID3v2TIMEFrame,
-		'TLEN': ID3v2NumericTextFrame, 'TORY': ID3v2YearFrame,
-		'TSIZ': ID3v2NumericTextFrame, 'TYER': ID3v2YearFrame,
+		'TBPM': ID3v2NumericTextFrame,
+		'TDAT': ID3v2TDATFrame,
+		'TDLY': ID3v2NumericTextFrame,
+		'TIME': ID3v2TIMEFrame,
+		'TLEN': ID3v2NumericTextFrame,
+		'TORY': ID3v2YearFrame,
+		'TSIZ': ID3v2NumericTextFrame,
+		'TYER': ID3v2YearFrame,
 
 		# Picture Frames
 		'PIC': ID3v2PictureFrame,
@@ -292,42 +305,89 @@ class ID3v2Frame(ID3v2BaseFrame):
 		'APIC': ID3v2PictureFrame,
 
 		# Text Frames
-		'TAL': ID3v2TextFrame, 'TCM': ID3v2TextFrame, 'TCR': ID3v2TextFrame,
-		'TEN': ID3v2TextFrame, 'TFT': ID3v2TextFrame, 'TKE': ID3v2TextFrame,
-		'TLA': ID3v2TextFrame, 'TMT': ID3v2TextFrame, 'TOA': ID3v2TextFrame,
-		'TOF': ID3v2TextFrame, 'TOL': ID3v2TextFrame, 'TOT': ID3v2TextFrame,
-		'TP1': ID3v2TextFrame, 'TP2': ID3v2TextFrame, 'TP3': ID3v2TextFrame,
-		'TP4': ID3v2TextFrame, 'TPB': ID3v2TextFrame, 'TRC': ID3v2TextFrame,
-		'TRD': ID3v2TextFrame, 'TSS': ID3v2TextFrame, 'TT1': ID3v2TextFrame,
-		'TT2': ID3v2TextFrame, 'TT3': ID3v2TextFrame, 'TXT': ID3v2TextFrame,
+		'TAL': ID3v2TextFrame,
+		'TCM': ID3v2TextFrame,
+		'TCR': ID3v2TextFrame,
+		'TEN': ID3v2TextFrame,
+		'TFT': ID3v2TextFrame,
+		'TKE': ID3v2TextFrame,
+		'TLA': ID3v2TextFrame,
+		'TMT': ID3v2TextFrame,
+		'TOA': ID3v2TextFrame,
+		'TOF': ID3v2TextFrame,
+		'TOL': ID3v2TextFrame,
+		'TOT': ID3v2TextFrame,
+		'TP1': ID3v2TextFrame,
+		'TP2': ID3v2TextFrame,
+		'TP3': ID3v2TextFrame,
+		'TP4': ID3v2TextFrame,
+		'TPB': ID3v2TextFrame,
+		'TRC': ID3v2TextFrame,
+		'TRD': ID3v2TextFrame,
+		'TSS': ID3v2TextFrame,
+		'TT1': ID3v2TextFrame,
+		'TT2': ID3v2TextFrame,
+		'TT3': ID3v2TextFrame,
+		'TXT': ID3v2TextFrame,
 
-		'TALB': ID3v2TextFrame, 'TCMP': ID3v2TextFrame, 'TCOM': ID3v2TextFrame,
-		'TCOP': ID3v2TextFrame, 'TENC': ID3v2TextFrame, 'TEXT': ID3v2TextFrame,
-		'TFLT': ID3v2TextFrame, 'TIT1': ID3v2TextFrame, 'TIT2': ID3v2TextFrame,
-		'TIT3': ID3v2TextFrame, 'TKEY': ID3v2TextFrame, 'TLAN': ID3v2TextFrame,
-		'TMED': ID3v2TextFrame, 'TMOO': ID3v2TextFrame, 'TOAL': ID3v2TextFrame,
-		'TOFN': ID3v2TextFrame, 'TOLY': ID3v2TextFrame, 'TOPE': ID3v2TextFrame,
-		'TOWN': ID3v2TextFrame, 'TPE1': ID3v2TextFrame, 'TPE2': ID3v2TextFrame,
-		'TPE3': ID3v2TextFrame, 'TPE4': ID3v2TextFrame, 'TPUB': ID3v2TextFrame,
-		'TRDA': ID3v2TextFrame, 'TRSN': ID3v2TextFrame, 'TRSO': ID3v2TextFrame,
-		'TSO2': ID3v2TextFrame, 'TSOA': ID3v2TextFrame, 'TSOC': ID3v2TextFrame,
-		'TSOP': ID3v2TextFrame, 'TSOT': ID3v2TextFrame, 'TSRC': ID3v2TextFrame,
-		'TSSE': ID3v2TextFrame, 'TSST': ID3v2TextFrame,
+		'TALB': ID3v2TextFrame,
+		'TCMP': ID3v2TextFrame,
+		'TCOM': ID3v2TextFrame,
+		'TCOP': ID3v2TextFrame,
+		'TENC': ID3v2TextFrame,
+		'TEXT': ID3v2TextFrame,
+		'TFLT': ID3v2TextFrame,
+		'TIT1': ID3v2TextFrame,
+		'TIT2': ID3v2TextFrame,
+		'TIT3': ID3v2TextFrame,
+		'TKEY': ID3v2TextFrame,
+		'TLAN': ID3v2TextFrame,
+		'TMED': ID3v2TextFrame,
+		'TMOO': ID3v2TextFrame,
+		'TOAL': ID3v2TextFrame,
+		'TOFN': ID3v2TextFrame,
+		'TOLY': ID3v2TextFrame,
+		'TOPE': ID3v2TextFrame,
+		'TOWN': ID3v2TextFrame,
+		'TPE1': ID3v2TextFrame,
+		'TPE2': ID3v2TextFrame,
+		'TPE3': ID3v2TextFrame,
+		'TPE4': ID3v2TextFrame,
+		'TPUB': ID3v2TextFrame,
+		'TRDA': ID3v2TextFrame,
+		'TRSN': ID3v2TextFrame,
+		'TRSO': ID3v2TextFrame,
+		'TSO2': ID3v2TextFrame,
+		'TSOA': ID3v2TextFrame,
+		'TSOC': ID3v2TextFrame,
+		'TSOP': ID3v2TextFrame,
+		'TSOT': ID3v2TextFrame,
+		'TSRC': ID3v2TextFrame,
+		'TSSE': ID3v2TextFrame,
+		'TSST': ID3v2TextFrame,
 
 		# Timestamp Frames
 		# TODO: Proper.
-		'TDRC': ID3v2TimestampFrame, 'TDRL': ID3v2TimestampFrame,
+		'TDRC': ID3v2TimestampFrame,
+		'TDRL': ID3v2TimestampFrame,
 
 		# URL Link Frames
-		'WAF': ID3v2URLLinkFrame, 'WAR': ID3v2URLLinkFrame,
-		'WAS': ID3v2URLLinkFrame, 'WCM': ID3v2URLLinkFrame,
-		'WCP': ID3v2URLLinkFrame, 'WPB': ID3v2URLLinkFrame,
+		'WAF': ID3v2URLLinkFrame,
+		'WAR': ID3v2URLLinkFrame,
+		'WAS': ID3v2URLLinkFrame,
+		'WCM': ID3v2URLLinkFrame,
+		'WCP': ID3v2URLLinkFrame,
+		'WPB': ID3v2URLLinkFrame,
 		'WXX': ID3v2UserURLLinkFrame,
 
-		'WCOM': ID3v2URLLinkFrame, 'WCOP': ID3v2URLLinkFrame,
-		'WOAF': ID3v2URLLinkFrame, 'WOAR': ID3v2URLLinkFrame,
-		'WOAS': ID3v2URLLinkFrame, 'WORS': ID3v2URLLinkFrame,
-		'WPAY': ID3v2URLLinkFrame, 'WPUB': ID3v2URLLinkFrame,
+		'WCOM': ID3v2URLLinkFrame,
+		'WCOP': ID3v2URLLinkFrame,
+		'WOAF': ID3v2URLLinkFrame,
+		'WOAR': ID3v2URLLinkFrame,
+		'WOAS': ID3v2URLLinkFrame,
+		'WORS': ID3v2URLLinkFrame,
+		'WPAY': ID3v2URLLinkFrame,
+		'WPUB': ID3v2URLLinkFrame,
 		'WXXX': ID3v2UserURLLinkFrame
 	}
 
@@ -430,13 +490,20 @@ class ID3v2Frame(ID3v2BaseFrame):
 			args.append(unquote(decode_bytestring(url)))
 		elif issubclass(
 			frame_type,
-			(ID3v2NumberFrame, ID3v2UserTextFrame)
+			(
+				ID3v2NumberFrame,
+				ID3v2UserTextFrame
+			)
 		):
 			encoding = determine_encoding(frame_data[0:1])
 			args.append(decode_bytestring(frame_data[1:], encoding))
 		elif issubclass(
 			frame_type,
-			(ID3v2NumericTextFrame, ID3v2TextFrame, ID3v2TimestampFrame)
+			(
+				ID3v2NumericTextFrame,
+				ID3v2TextFrame,
+				ID3v2TimestampFrame
+			)
 		):
 			encoding = determine_encoding(frame_data[0:1])
 			values = [

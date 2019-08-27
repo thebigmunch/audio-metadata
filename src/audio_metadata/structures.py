@@ -38,7 +38,7 @@ class DictMixin(MutableMapping):
 		self.__dict__[key] = value
 
 	def __delitem__(self, key):
-		del(self.__dict__[key])
+		del self.__dict__[key]
 
 	def __iter__(self):
 		return iter(self.__dict__)

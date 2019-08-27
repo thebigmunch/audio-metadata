@@ -346,12 +346,7 @@ class MPEGFrameHeader(DictMixin):
 		):
 			raise InvalidFrame('Not a valid MPEG audio frame.')
 
-		channel_mode = MP3ChannelMode(
-			bitstruct.unpack(
-				'u2',
-				data.read(1)
-			)[0]
-		)
+		channel_mode = MP3ChannelMode(bitstruct.unpack('u2', data.read(1))[0])
 		channels = 1 if channel_mode == 3 else 2
 
 		bitrate = MP3Bitrates[(version, layer)][bitrate_index] * 1000
@@ -472,7 +467,7 @@ class MP3StreamInfo(StreamInfo):
 		# Starting low so as not to add unnecessary processing time.
 		chunk_size = 64 * 1024
 		if end_pos > chunk_size:
-			data.seek(-(chunk_size), os.SEEK_END)
+			data.seek(-chunk_size, os.SEEK_END)
 		else:
 			data.seek(0, os.SEEK_SET)
 
@@ -593,8 +588,8 @@ class MP3(Format):
 			while True:
 				id3v1_index = end_buffer.find(b'TAG')
 
-				if end_buffer[id3v1_index:id3v1_index + 5] == b'TAGEX':
-					end_buffer = end_buffer[id3v1_index + 3:]
+				if end_buffer[id3v1_index : id3v1_index + 5] == b'TAGEX':
+					end_buffer = end_buffer[id3v1_index + 5 :]
 					continue
 				else:
 					id3v1_data = end_buffer[id3v1_index:id3v1_index + 128]
