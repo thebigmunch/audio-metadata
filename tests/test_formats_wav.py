@@ -19,5 +19,5 @@ def test_WAV_ID3_invalid_header():
 
 
 def test_WAV_invalid_stream_info():
-	with pytest.raises(InvalidHeader, match="Valid WAV stream info not found"):
+	with pytest.raises(InvalidHeader, match="Valid WAVE stream info not found"):
 		WAV.load(b'RIFF0000WAVE')
