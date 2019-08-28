@@ -7,8 +7,6 @@ __all__ = [
 import os
 from io import BufferedReader, FileIO
 
-import bitstruct
-
 from .exceptions import InvalidFormat, UnsupportedFormat
 from .formats import (
 	FLAC,
