@@ -49,9 +49,6 @@ def determine_format(data, extension=None):
 	data.seek(0, os.SEEK_SET)
 	d = data.peek(4)
 
-	if bitstruct.unpack('u11', d[0:2])[0] == 2047:
-		return MP3 if _verify_mp3(data) else None
-
 	if d.startswith(b'fLaC'):
 		return FLAC
 
@@ -67,7 +64,7 @@ def determine_format(data, extension=None):
 		else:
 			return MP3 if _verify_mp3(data) else None
 
-	return None
+	return MP3 if _verify_mp3(data) else None
 
 
 def load(f):
