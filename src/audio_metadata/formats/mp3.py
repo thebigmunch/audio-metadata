@@ -4,8 +4,10 @@ __all__ = [
 	'MP3',
 	'MP3StreamInfo',
 	'MPEGFrameHeader',
+	'VBRIHeader',
+	'VBRIToC',
 	'XingHeader',
-	'XingTOC'
+	'XingToC'
 ]
 
 import os
@@ -246,7 +248,7 @@ class LAMEHeader(DictMixin):
 		)
 
 
-class XingTOC(ListMixin):
+class XingToC(ListMixin):
 	item_label = 'entries'
 
 
@@ -275,7 +277,7 @@ class XingHeader(DictMixin):
 			num_bytes = struct.unpack('>I', data.read(4))[0]
 
 		if flags & 4:
-			toc = XingTOC(bytearray(data.read(100)))
+			toc = XingToC(bytearray(data.read(100)))
 
 		if flags & 8:
 			quality = struct.unpack('>I', data.read(4))[0]
@@ -286,10 +288,73 @@ class XingHeader(DictMixin):
 		return cls(lame_header, num_frames, num_bytes, toc, quality)
 
 
+class VBRIToC(ListMixin):
+	item_label = 'entries'
+
+
+@attrs(repr=False)
+class VBRIHeader(DictMixin):
+	version = attrib()
+	delay = attrib()
+	quality = attrib()
+	num_bytes = attrib()
+	num_frames = attrib()
+	num_toc_entries = attrib()
+	toc_scale_factor = attrib()
+	toc_entry_num_bytes = attrib()
+	toc_entry_num_frames = attrib()
+	toc = attrib()
+
+	@datareader
+	@classmethod
+	def load(cls, data):
+		if data.read(4) not in [b'VBRI']:
+			raise InvalidHeader('Valid VBRI header not found.')
+
+		version = struct.unpack('>H', data.read(2))[0]
+		delay = struct.unpack('>e', data.read(2))[0]
+		quality = struct.unpack('>H', data.read(2))[0]
+		num_bytes = struct.unpack('>I', data.read(4))[0]
+		num_frames = struct.unpack('>I', data.read(4))[0]
+		num_toc_entries = struct.unpack('>H', data.read(2))[0]
+		toc_scale_factor = struct.unpack('>H', data.read(2))[0]
+		toc_entry_num_bytes = struct.unpack('>H', data.read(2))[0]
+		toc_entry_num_frames = struct.unpack('>H', data.read(2))[0]
+
+		toc_size = num_toc_entries * toc_entry_num_bytes
+
+		if toc_entry_num_bytes not in [2, 4]:
+			raise InvalidHeader('Invalid VBRI TOC entry size.')
+
+		if toc_entry_num_bytes == 2:
+			pattern = '>H'
+		else:
+			pattern = '>I'
+
+		toc = VBRIToC(
+			struct.unpack(pattern, data.read(toc_entry_num_bytes))[0]
+			for _ in range(toc_size // toc_entry_num_bytes)
+		)
+
+		return cls(
+			version,
+			delay,
+			quality,
+			num_bytes,
+			num_frames,
+			num_toc_entries,
+			toc_scale_factor,
+			toc_entry_num_bytes,
+			toc_entry_num_frames,
+			toc
+		)
+
+
 @attrs(repr=False)
 class MPEGFrameHeader(DictMixin):
 	_start = attrib()
 	_size = attrib()
+	_vbri = attrib()
 	_xing = attrib()
 	version = attrib()
 	layer = attrib()
@@ -356,6 +421,7 @@ class MPEGFrameHeader(DictMixin):
 
 		frame_size = (((samples_per_frame // 8 * bitrate) // sample_rate) + padded) * slot_size
 
+		vbri_header = None
 		xing_header = None
 		if layer == 3:
 			if version == 1:
@@ -373,9 +439,15 @@ class MPEGFrameHeader(DictMixin):
 			if data.peek(4) in [b'Xing', b'Info']:
 				xing_header = XingHeader.load(data.read(frame_size))
 
+			data.seek(frame_start + 36, os.SEEK_SET)
+
+			if data.peek(4) == b'VBRI':
+				vbri_header = VBRIHeader.load(data)
+
 		return cls(
 			frame_start,
 			frame_size,
+			vbri_header,
 			xing_header,
 			version,
 			layer,
@@ -393,6 +465,7 @@ class MP3StreamInfo(StreamInfo):
 	_start = attrib()
 	_end = attrib()
 	_size = attrib()
+	_vbri = attrib()
 	_xing = attrib()
 	version = attrib()
 	layer = attrib()
@@ -489,6 +562,7 @@ class MP3StreamInfo(StreamInfo):
 
 		bitrate_mode = MP3BitrateMode.UNKNOWN
 
+		vbri_header = frames[0]._vbri
 		xing_header = frames[0]._xing
 		if xing_header:
 			num_samples = samples_per_frame * xing_header.num_frames
@@ -511,13 +585,16 @@ class MP3StreamInfo(StreamInfo):
 					bitrate_mode = MP3BitrateMode.ABR
 				elif xing_header._lame.bitrate_mode in [3, 4, 5, 6]:
 					bitrate_mode = MP3BitrateMode.VBR
+		elif vbri_header:
+			num_samples = samples_per_frame * vbri_header.num_frames
+			bitrate_mode = MP3BitrateMode.VBR
 		else:
 			if more_itertools.all_equal([frame['bitrate'] for frame in frames]):
 				bitrate_mode = MP3BitrateMode.CBR
 
 			num_samples = samples_per_frame * (audio_size / frames[0]._size)
 
-		if bitrate_mode == MP3BitrateMode.CBR:
+		if bitrate_mode is MP3BitrateMode.CBR:
 			bitrate = frames[0].bitrate
 		else:
 			# Subtract Xing/LAME frame size from audio_size for bitrate calculation accuracy.
@@ -539,6 +616,7 @@ class MP3StreamInfo(StreamInfo):
 			audio_start,
 			audio_end,
 			audio_size,
+			vbri_header,
 			xing_header,
 			version,
 			layer,

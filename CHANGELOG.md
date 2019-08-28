@@ -11,6 +11,7 @@ This project adheres to [Semantic Versioning](https://semver.org).
 ### Added
 
 * InvalidChunk exception.
+* Support for VBRI headers in MP3.
 
 ### Changed
 
@@ -30,6 +31,7 @@ This project adheres to [Semantic Versioning](https://semver.org).
 * Use find_mp3_frames for all possible MP3 inputs in determine_format.
 	This prevents some misidentification, specifically
 	in the case of little-endian BOM of UTF-16-encoded text.
+* Rename ``XingTOC`` to ``XingToC``.
 
 ### Removed
 
