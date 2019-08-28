@@ -33,6 +33,10 @@ This project adheres to [Semantic Versioning](https://semver.org).
 * ``extension`` parameter from ``determine_format``.
 	The purpose it served is no longer necessary.
 
+### Fixed
+
+* APEv2/ID3v1 searching for MP3 causing load failures in some cases.
+
 
 ## [0.5.0](https://github.com/thebigmunch/audio-metadata/releases/tag/0.5.0) (2019-07-22)
 

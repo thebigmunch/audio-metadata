@@ -584,18 +584,15 @@ class MP3(Format):
 
 			end_buffer = self._obj.read()
 
-			while True:
-				id3v1_index = end_buffer.find(b'TAG')
+			apev2_index = end_buffer.find(b'APETAGEX')
+			if apev2_index != -1:
+				end_buffer = end_buffer[apev2_index + 8:]
 
-				if end_buffer[id3v1_index : id3v1_index + 5] == b'TAGEX':
-					end_buffer = end_buffer[id3v1_index + 5 :]
-					continue
-				else:
-					id3v1 = ID3v1.load(end_buffer[id3v1_index : id3v1_index + 128])
-					self._id3 = id3v1
-					self.tags = self._id3.tags
-
-					break
+			id3v1_index = end_buffer.find(b'TAG')
+			if id3v1_index != -1:
+				id3v1 = ID3v1.load(end_buffer[id3v1_index : id3v1_index + 128])
+				self._id3 = id3v1
+				self.tags = self._id3.tags
 
 		self._obj.close()
 
