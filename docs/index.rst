@@ -12,7 +12,7 @@ Install audio-metadata with `pip <https://pip.pypa.io/en/stable/>`_.
 
 .. code-block:: console
 
-	$ pip install audio-metadata
+	$ pip install -U audio-metadata
 
 
 Overview
