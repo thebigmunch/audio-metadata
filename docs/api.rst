@@ -20,6 +20,7 @@ Exceptions
 ----------
 
 .. autoexception:: AudioMetadataException
+.. autoexception:: InvalidChunk
 .. autoexception:: InvalidFrame
 .. autoexception:: InvalidHeader
 .. autoexception:: UnsupportedFormat
@@ -75,8 +76,10 @@ MP3
 .. autoclass:: LAMEHeader
 .. autoclass:: MP3StreamInfo
 .. autoclass:: MPEGFrameHeader
+.. autoclass:: VBRIHeader
+.. autoclass:: VBRIToC
 .. autoclass:: XingHeader
-.. autoclass:: XingTOC
+.. autoclass:: XingToC
 
 
 Vorbis
