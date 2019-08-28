@@ -10,7 +10,13 @@ from io import BufferedReader, FileIO
 import bitstruct
 
 from .exceptions import InvalidFormat, UnsupportedFormat
-from .formats import FLAC, MP3, WAV, ID3v2, MP3StreamInfo
+from .formats import (
+	FLAC,
+	MP3,
+	WAV,
+	ID3v2,
+	MP3StreamInfo
+)
 from .utils import DataReader
 
 
@@ -26,6 +32,14 @@ def determine_format(data, extension=None):
 		Format: An audio format class if supported, else None.
 	"""
 
+	def _verify_mp3(data):
+		try:
+			MP3StreamInfo.find_mp3_frames(data)
+		except InvalidFormat:
+			return False
+		else:
+			return True
+
 	if not isinstance(data, DataReader):
 		try:
 			data = DataReader(data)
@@ -36,7 +50,7 @@ def determine_format(data, extension=None):
 	d = data.peek(4)
 
 	if bitstruct.unpack('u11', d[0:2])[0] == 2047:
-		return MP3
+		return MP3 if _verify_mp3(data) else None
 
 	if d.startswith(b'fLaC'):
 		return FLAC
@@ -50,15 +64,8 @@ def determine_format(data, extension=None):
 
 		if d == b'fLaC':
 			return FLAC
-		elif bitstruct.unpack('u11', d[0:2])[0] == 2047:
-			return MP3
 		else:
-			try:
-				frames = MP3StreamInfo.find_mp3_frames(data)
-			except InvalidFormat:
-				return None
-			else:
-				return MP3 if frames else None
+			return MP3 if _verify_mp3(data) else None
 
 	return None
 

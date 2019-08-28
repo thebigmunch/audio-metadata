@@ -27,6 +27,9 @@ This project adheres to [Semantic Versioning](https://semver.org).
 * Use MusicBrainz Picard tag mappings.
 * RIFFTags loading.
 	It now expects ``INFO`` at start and raises an exception if not.
+* Use find_mp3_frames for all possible MP3 inputs in determine_format.
+	This prevents some misidentification, specifically
+	in the case of little-endian BOM of UTF-16-encoded text.
 
 ### Removed
 

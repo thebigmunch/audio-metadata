@@ -8,6 +8,13 @@ test_filepaths = list((Path(__file__).parent / 'files' / 'audio').iterdir())
 
 
 @pytest.mark.integration
+def test_determine_format_id3v2_no_mp3_frames():
+	assert audio_metadata.determine_format(
+		b'ID3\x04\x00\x80\x00\x00\x00\x00\x00\xff\xfb'
+	) is None
+
+
+@pytest.mark.integration
 def test_determine_format_invalid_value():
 	assert audio_metadata.determine_format([__file__]) is None
 
