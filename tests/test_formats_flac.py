@@ -29,8 +29,8 @@ def test_FLAC_invalid_block_type():
 def test_FLAC_reserved_block_type():
 	orig = (Path(__file__).parent / 'files' / 'audio' / 'test-flac-vorbis.flac').read_bytes()
 	flac_data = orig[0:4] + bitstruct.pack('b1 u7 u24', False, 10, 0) + orig[4:]
-
 	flac = FLAC.load(flac_data)
+
 	assert flac._blocks[0] == FLACMetadataBlock(10, b'')
 
 
