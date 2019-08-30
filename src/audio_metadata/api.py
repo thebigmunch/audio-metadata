@@ -18,7 +18,7 @@ from .formats import (
 from .utils import DataReader
 
 
-def determine_format(data, extension=None):
+def determine_format(data):
 	"""Determine the format of an audio file.
 
 	Parameters:
@@ -91,7 +91,7 @@ def load(f):
 
 	data = DataReader(f)
 
-	parser_cls = determine_format(data, os.path.splitext(data.name)[1])
+	parser_cls = determine_format(data)
 
 	if parser_cls is None:
 		raise UnsupportedFormat("Supported format signature not found.")
