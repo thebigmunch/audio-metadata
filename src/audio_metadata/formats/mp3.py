@@ -508,7 +508,7 @@ class MP3StreamInfo(StreamInfo):
 						if frame._xing:
 							break
 						data.seek(frame._start + frame._size, os.SEEK_SET)
-					except InvalidFrame:
+					except (InvalidFrame, bitstruct.Error):
 						data.seek(1, os.SEEK_CUR)
 						break
 			else:
