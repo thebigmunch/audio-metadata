@@ -7,7 +7,8 @@ __all__ = [
 import struct
 from collections import defaultdict
 
-from attr import Factory, attrib, attrs
+import bitstruct
+from attr import attrib, attrs
 from bidict import frozenbidict
 
 from .id3v2_frames import *
@@ -230,10 +231,18 @@ class ID3v2Frames(Tags):
 
 
 @attrs(repr=False)
+class ID3v2Flags(DictMixin):
+	unsync = attrib(converter=bool)
+	extended = attrib(converter=bool)
+	experimental = attrib(converter=bool)
+	footer = attrib(converter=bool)
+
+
+@attrs(repr=False)
 class ID3v2Header(DictMixin):
 	_size = attrib()
 	version = attrib()
-	flags = attrib(default=Factory(DictMixin))
+	flags = attrib(converter=ID3v2Flags.from_mapping)
 
 	def __repr__(self):
 		repr_dict = {}
@@ -250,19 +259,24 @@ class ID3v2Header(DictMixin):
 		if data.read(3) != b"ID3":
 			raise InvalidHeader("Valid ID3v2 header not found.")
 
-		major, revision, _flags, sync_size = struct.unpack('BBB4s', data.read(7))
+		major, revision, flags_, sync_size = struct.unpack('BBs4s', data.read(7))
 
 		try:
 			version = ID3Version((2, major))
 		except ValueError:
 			raise ValueError(f"Unsupported ID3 version (2.{major}).")
 
-		flags = DictMixin()
-
-		flags.unsync = bool((_flags & 128))
-		flags.extended = bool((_flags & 64))
-		flags.experimental = bool((_flags & 32))
-		flags.footer = bool((_flags & 16))
+		flags = bitstruct.unpack_dict(
+			'b1 b1 b1 b1',
+			[
+				'unsync',
+				'extended',
+				'experimental',
+				'footer',
+				'ath_type'
+			],
+			flags_
+		)
 
 		size = decode_synchsafe_int(sync_size, 7)
 

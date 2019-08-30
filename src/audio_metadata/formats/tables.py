@@ -292,27 +292,31 @@ class LAMEChannelMode(_BaseIntEnum):
 	UNDEFINED = 7
 
 
-# 8 through 320 are reserved for ABR bitrates.
-class LAMEPreset(_BaseIntEnum):
-	Unknown = 0
-	V9 = 410
-	V8 = 420
-	V7 = 430
-	V6 = 440
-	V5 = 450
-	V4 = 460
-	V3 = 470
-	V2 = 480
-	V1 = 490
-	V0 = 500
-	r3mix = 1000
-	standard = 1001
-	extreme = 1002
-	insane = 1003
-	standard_fast = 1004
-	extreme_fast = 1005
-	medium = 1006
-	medium_fast = 1007
+LAMEPreset = _BaseIntEnum(
+	'LAMEPreset',
+	[
+		('Unknown', 0),
+		*[(f'ABR{x}', x) for x in range(8, 321)],
+		('V9', 410),
+		('V8', 420),
+		('V7', 430),
+		('V6', 440),
+		('V5', 450),
+		('V4', 460),
+		('V3', 470),
+		('V2', 480),
+		('V1', 490),
+		('V0', 500),
+		('r3mix', 1000),
+		('standard', 1001),
+		('extreme', 1002),
+		('insane', 1003),
+		('standard_fast', 1004),
+		('extreme_fast', 1005),
+		('medium', 1006),
+		('medium_fast', 1007)
+	]
+)
 
 
 class LAMEReplayGainOrigin(_BaseIntEnum):

@@ -65,6 +65,7 @@ ID3v2
 .. autoclass:: ID3v2
 
 .. autoclass:: ID3v2Frames
+.. autoclass:: ID3v2Flags
 .. autoclass:: ID3v2Header
 
 
@@ -73,6 +74,7 @@ MP3
 
 .. autoclass:: MP3
 
+.. autoclass:: LAMEEncodingFlags
 .. autoclass:: LAMEHeader
 .. autoclass:: MP3StreamInfo
 .. autoclass:: MPEGFrameHeader

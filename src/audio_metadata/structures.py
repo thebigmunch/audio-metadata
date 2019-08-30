@@ -59,6 +59,10 @@ class DictMixin(MutableMapping):
 	def values(self):
 		return self.__dict__.values()
 
+	@classmethod
+	def from_mapping(cls, mapping):
+		return cls(**mapping)
+
 
 class ListMixin(UserList):
 	item_label = 'items'

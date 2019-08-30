@@ -1,4 +1,5 @@
 __all__ = [
+	'LAMEEncodingFlags',
 	'LAMEHeader',
 	'LAMEReplayGain',
 	'MP3',
@@ -47,11 +48,11 @@ from ..utils import (
 @attrs(repr=False)
 class LAMEReplayGain(DictMixin):
 	peak = attrib()
-	track_type = attrib()
-	track_origin = attrib()
+	track_type = attrib(converter=LAMEReplayGainType)
+	track_origin = attrib(converter=LAMEReplayGainOrigin)
 	track_adjustment = attrib()
-	album_type = attrib()
-	album_origin = attrib()
+	album_type = attrib(converter=LAMEReplayGainType)
+	album_origin = attrib(converter=LAMEReplayGainOrigin)
 	album_adjustment = attrib()
 
 	@datareader
@@ -100,6 +101,14 @@ class LAMEReplayGain(DictMixin):
 
 
 @attrs(repr=False)
+class LAMEEncodingFlags(DictMixin):
+	nogap_continuation = attrib(converter=bool)
+	nogap_continued = attrib(converter=bool)
+	nssafejoint = attrib(converter=bool)
+	nspsytune = attrib(converter=bool)
+
+
+@attrs(repr=False)
 class LAMEHeader(DictMixin):
 	_crc = attrib()
 	version = attrib()
@@ -108,18 +117,18 @@ class LAMEHeader(DictMixin):
 	audio_crc = attrib()
 	audio_size = attrib()
 	bitrate = attrib()
-	bitrate_mode = attrib()
-	channel_mode = attrib()
+	bitrate_mode = attrib(converter=LAMEBitrateMode)
+	channel_mode = attrib(converter=LAMEChannelMode)
 	delay = attrib()
-	encoding_flags = attrib()
+	encoding_flags = attrib(converter=LAMEEncodingFlags.from_mapping)
 	lowpass_filter = attrib()
 	mp3_gain = attrib()
 	noise_shaping = attrib()
 	padding = attrib()
-	preset = attrib()
+	preset = attrib(converter=LAMEPreset)
 	replay_gain = attrib()
 	source_sample_rate = attrib()
-	surround_info = attrib()
+	surround_info = attrib(converter=LAMESurroundInfo)
 	unwise_settings_used = attrib()
 
 	def __repr__(self):
@@ -177,13 +186,13 @@ class LAMEHeader(DictMixin):
 			data.read(1)
 		)
 
-		encoding_flags = {
-			k: v
-			for k, v in flags_ath.items()
-			if k != 'ath_type'
-		}
-
-		ath_type = flags_ath['ath_type']
+		ath_type = flags_ath.pop('ath_type')
+		encoding_flags = LAMEEncodingFlags(
+			flags_ath['nogap_continuation'],
+			flags_ath['nogap_continued'],
+			flags_ath['nssafejoint'],
+			flags_ath['nspsytune']
+		)
 
 		# TODO: Different representation for VBR minimum bitrate vs CBR/ABR specified bitrate?
 		# Can only go up to 255.
@@ -214,10 +223,7 @@ class LAMEHeader(DictMixin):
 		)
 		surround_info = LAMESurroundInfo(surround_info_)
 
-		try:
-			preset = LAMEPreset(preset_used_)
-		except ValueError:  # 8-320 are used for bitrates and aren't defined in LAMEPreset.
-			preset = f"{preset_used_} Kbps"
+		preset = LAMEPreset(preset_used_)
 
 		audio_size, audio_crc, lame_crc = struct.unpack(
 			'>I2s2s',
@@ -257,7 +263,7 @@ class XingHeader(DictMixin):
 	_lame = attrib()
 	num_frames = attrib()
 	num_bytes = attrib()
-	toc = attrib()
+	toc = attrib(converter=XingToC)
 	quality = attrib()
 
 	@datareader
@@ -303,7 +309,7 @@ class VBRIHeader(DictMixin):
 	toc_scale_factor = attrib()
 	toc_entry_num_bytes = attrib()
 	toc_entry_num_frames = attrib()
-	toc = attrib()
+	toc = attrib(converter=VBRIToC)
 
 	@datareader
 	@classmethod
@@ -361,7 +367,7 @@ class MPEGFrameHeader(DictMixin):
 	protected = attrib()
 	padded = attrib()
 	bitrate = attrib()
-	channel_mode = attrib()
+	channel_mode = attrib(converter=MP3ChannelMode)
 	channels = attrib()
 	sample_rate = attrib()
 
@@ -471,8 +477,8 @@ class MP3StreamInfo(StreamInfo):
 	layer = attrib()
 	protected = attrib()
 	bitrate = attrib()
-	bitrate_mode = attrib()
-	channel_mode = attrib()
+	bitrate_mode = attrib(converter=MP3BitrateMode)
+	channel_mode = attrib(converter=MP3ChannelMode)
 	channels = attrib()
 	duration = attrib()
 	sample_rate = attrib()
