@@ -1,5 +1,6 @@
 __all__ = [
 	'ID3v2',
+	'ID3v2Flags',
 	'ID3v2Frames',
 	'ID3v2Header'
 ]
