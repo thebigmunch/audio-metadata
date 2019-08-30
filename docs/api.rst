@@ -40,11 +40,11 @@ FLAC
 
 .. autoclass:: FLAC
 
-.. autoclass:: FLACMetadataBlock
 .. autoclass:: FLACApplication
 .. autoclass:: FLACCueSheet
-.. autoclass:: FLACCueSheetTrack
 .. autoclass:: FLACCueSheetIndex
+.. autoclass:: FLACCueSheetTrack
+.. autoclass:: FLACMetadataBlock
 .. autoclass:: FLACPadding
 .. autoclass:: FLACSeekPoint
 .. autoclass:: FLACSeekTable
@@ -64,8 +64,8 @@ ID3v2
 
 .. autoclass:: ID3v2
 
-.. autoclass:: ID3v2Frames
 .. autoclass:: ID3v2Flags
+.. autoclass:: ID3v2Frames
 .. autoclass:: ID3v2Header
 
 
@@ -76,6 +76,7 @@ MP3
 
 .. autoclass:: LAMEEncodingFlags
 .. autoclass:: LAMEHeader
+.. autoclass:: LAMEReplayGain
 .. autoclass:: MP3StreamInfo
 .. autoclass:: MPEGFrameHeader
 .. autoclass:: VBRIHeader
