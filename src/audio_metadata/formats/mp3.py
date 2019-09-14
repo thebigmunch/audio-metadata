@@ -484,7 +484,7 @@ class MP3StreamInfo(StreamInfo):
 	sample_rate = attrib()
 
 	@staticmethod
-	def find_mp3_frames(data):
+	def find_mpeg_frames(data):
 		frames = []
 		cached_frames = None
 		buffer_size = 128
@@ -535,7 +535,7 @@ class MP3StreamInfo(StreamInfo):
 	@datareader
 	@classmethod
 	def load(cls, data):
-		frames = cls.find_mp3_frames(data)
+		frames = cls.find_mpeg_frames(data)
 
 		samples_per_frame, _ = MP3SamplesPerFrame[(frames[0].version, frames[0].layer)]
 

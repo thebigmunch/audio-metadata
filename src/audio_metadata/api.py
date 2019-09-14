@@ -32,7 +32,7 @@ def determine_format(data):
 
 	def _verify_mp3(data):
 		try:
-			MP3StreamInfo.find_mp3_frames(data)
+			MP3StreamInfo.find_mpeg_frames(data)
 		except InvalidFormat:
 			return False
 		else:
