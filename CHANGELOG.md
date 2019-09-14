@@ -10,11 +10,12 @@ This project adheres to [Semantic Versioning](https://semver.org).
 
 ### Added
 
-* InvalidChunk exception.
+* ``InvalidChunk`` exception.
 * Support for VBRI headers in MP3.
 * ``LAMEEncodingFlags``.
 * ``ID3v2Flags``.
 * ABR presets to ``LAMEPreset`` enum.
+* ``InvalidBlock`` exception.
 
 ### Changed
 

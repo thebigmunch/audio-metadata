@@ -12,6 +12,7 @@ from audio_metadata import (
 	FLACPadding,
 	FLACSeekPoint,
 	FLACSeekTable,
+	InvalidBlock,
 	InvalidHeader
 )
 
@@ -22,7 +23,7 @@ def test_FLAC_invalid_header():
 
 
 def test_FLAC_invalid_block_type():
-	with pytest.raises(InvalidHeader, match="FLAC header contains invalid block type"):
+	with pytest.raises(InvalidBlock, match="127 is not a valid FLAC metadata block type"):
 		FLAC.load(b'fLaC\xff\x00\x00\x00')
 
 

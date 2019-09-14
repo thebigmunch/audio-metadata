@@ -21,7 +21,7 @@ from .id3v2 import ID3v2
 from .models import Format, StreamInfo
 from .tables import FLACMetadataBlockType
 from .vorbis import VorbisComments, VorbisPicture
-from ..exceptions import InvalidHeader
+from ..exceptions import InvalidBlock, InvalidHeader
 from ..structures import DictMixin, ListMixin
 from ..utils import datareader
 
@@ -375,7 +375,7 @@ class FLAC(Format):
 				self.pictures.append(picture)
 				self._blocks.append(picture)
 			elif block_type >= 127:
-				raise InvalidHeader("FLAC header contains invalid block type.")
+				raise InvalidBlock(f"{block_type} is not a valid FLAC metadata block type.")
 			else:
 				self._blocks.append(FLACMetadataBlock(block_type, metadata_block_data))
 
