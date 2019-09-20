@@ -16,13 +16,13 @@ nox.options.sessions = [
 ]
 
 
-@nox.session(python=py37)
+@nox.session(reuse_venv=True)
 def lint(session):
 	session.install('.[lint]')
 	session.run('flake8', 'src/', 'tests/')
 
 
-@nox.session(python=py37)
+@nox.session(reuse_venv=True)
 def doc(session):
 	shutil.rmtree('docs/_build', ignore_errors=True)
 	session.install('.[doc]')
@@ -60,7 +60,7 @@ def unit(session):
 	session.notify('report')
 
 
-@nox.session
+@nox.session(reuse_venv=True)
 def report(session):
 	if ON_TRAVIS:
 		session.install('codecov')
