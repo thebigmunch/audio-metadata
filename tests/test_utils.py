@@ -3,6 +3,7 @@ from io import DEFAULT_BUFFER_SIZE, BytesIO, FileIO
 from pathlib import Path
 
 import pytest
+
 from audio_metadata.utils import (
 	DataReader,
 	decode_bytestring,

@@ -1,4 +1,5 @@
 import pytest
+
 from audio_metadata import (
 	InvalidHeader,
 	LAMEReplayGain,

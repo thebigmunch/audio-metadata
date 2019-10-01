@@ -1,7 +1,8 @@
 from pathlib import Path
 
-import audio_metadata
 import pytest
+
+import audio_metadata
 from audio_metadata import UnsupportedFormat
 
 test_filepaths = list((Path(__file__).parent / 'files' / 'audio').iterdir())

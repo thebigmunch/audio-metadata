@@ -2,6 +2,7 @@ from pathlib import Path
 
 import bitstruct
 import pytest
+
 from audio_metadata import (
 	FLAC,
 	FLACApplication,

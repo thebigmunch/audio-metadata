@@ -1,5 +1,7 @@
 from pathlib import Path
 
+from bidict import frozenbidict
+
 from audio_metadata.formats.models import (
 	Format,
 	Picture,
@@ -7,8 +9,6 @@ from audio_metadata.formats.models import (
 	Tags
 )
 from audio_metadata.utils import DataReader
-from bidict import frozenbidict
-
 from .utils import strip_repr
 
 

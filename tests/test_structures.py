@@ -1,4 +1,5 @@
 import pytest
+
 from audio_metadata.structures import DictMixin, ListMixin
 
 
