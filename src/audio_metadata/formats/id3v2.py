@@ -273,8 +273,7 @@ class ID3v2Header(DictMixin):
 				'unsync',
 				'extended',
 				'experimental',
-				'footer',
-				'ath_type'
+				'footer'
 			],
 			flags_
 		)
