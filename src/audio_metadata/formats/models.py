@@ -8,8 +8,8 @@ __all__ = [
 import os
 
 from bidict import frozenbidict
+from tbm_utils import AttrMapping
 
-from ..structures import DictMixin
 from ..utils import (
 	datareader,
 	humanize_bitrate,
@@ -19,7 +19,7 @@ from ..utils import (
 )
 
 
-class Tags(DictMixin):
+class Tags(AttrMapping):
 	FIELD_MAP = frozenbidict()
 
 	def __getitem__(self, key):
@@ -54,7 +54,7 @@ class Tags(DictMixin):
 		return super().__repr__(repr_dict=repr_dict)
 
 
-class Format(DictMixin):
+class Format(AttrMapping):
 	"""Base class for audio format objects.
 
 	Attributes:
@@ -99,7 +99,7 @@ class Format(DictMixin):
 		return self
 
 
-class Picture(DictMixin):
+class Picture(AttrMapping):
 	def __repr__(self):
 		repr_dict = {}
 
@@ -112,7 +112,7 @@ class Picture(DictMixin):
 		return super().__repr__(repr_dict=repr_dict)
 
 
-class StreamInfo(DictMixin):
+class StreamInfo(AttrMapping):
 	def __repr__(self):
 		repr_dict = {}
 

@@ -10,12 +10,12 @@ from collections import defaultdict
 
 from attr import attrib, attrs
 from bidict import frozenbidict
+from tbm_utils import AttrMapping
 
 from .id3v2_frames import *
 from .models import Tags
 from .tables import ID3Version
 from ..exceptions import InvalidFrame, InvalidHeader
-from ..structures import DictMixin
 from ..utils import datareader, decode_synchsafe_int
 
 try:  # pragma: nocover
@@ -236,7 +236,7 @@ class ID3v2Frames(Tags):
 
 
 @attrs(repr=False)
-class ID3v2Flags(DictMixin):
+class ID3v2Flags(AttrMapping):
 	unsync = attrib(converter=bool)
 	extended = attrib(converter=bool)
 	experimental = attrib(converter=bool)
@@ -244,7 +244,7 @@ class ID3v2Flags(DictMixin):
 
 
 @attrs(repr=False)
-class ID3v2Header(DictMixin):
+class ID3v2Header(AttrMapping):
 	_size = attrib()
 	version = attrib()
 	flags = attrib(converter=ID3v2Flags.from_mapping)
@@ -287,7 +287,7 @@ class ID3v2Header(DictMixin):
 		return cls(size, version, flags)
 
 
-class ID3v2(DictMixin):
+class ID3v2(AttrMapping):
 	def __repr__(self):
 		repr_dict = {}
 

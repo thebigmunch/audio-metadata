@@ -15,13 +15,13 @@ import binascii
 import struct
 
 from attr import Factory, attrib, attrs
+from tbm_utils import AttrMapping, LabelList
 
 from .id3v2 import ID3v2
 from .models import Format, StreamInfo
 from .tables import FLACMetadataBlockType
 from .vorbis import VorbisComments, VorbisPicture
 from ..exceptions import InvalidBlock, InvalidHeader
-from ..structures import DictMixin, ListMixin
 from ..utils import datareader
 
 try:  # pragma: nocover
@@ -31,7 +31,7 @@ except ImportError:  # pragma: nocover
 
 
 @attrs(repr=False)
-class FLACApplication(DictMixin):
+class FLACApplication(AttrMapping):
 	"""Application metadata block.
 
 	Attributes:
@@ -55,7 +55,7 @@ class FLACApplication(DictMixin):
 
 
 @attrs(repr=False)
-class FLACCueSheetIndex(DictMixin):
+class FLACCueSheetIndex(AttrMapping):
 	"""A cue sheet track index point.
 
 	Attributes:
@@ -92,7 +92,7 @@ class FLACCueSheetIndex(DictMixin):
 
 
 @attrs(repr=False)
-class FLACCueSheetTrack(DictMixin):
+class FLACCueSheetTrack(AttrMapping):
 	"""A FLAC cue sheet track.
 
 	Attributes:
@@ -157,7 +157,7 @@ class FLACCueSheetTrack(DictMixin):
 		)
 
 
-class FLACCueSheet(ListMixin):
+class FLACCueSheet(LabelList):
 	"""The cue sheet metadata block.
 
 	A list-like structure of :class:`FLACCueSheetTrack` objects
@@ -211,7 +211,7 @@ class FLACCueSheet(ListMixin):
 
 
 @attrs(repr=False)
-class FLACMetadataBlock(DictMixin):
+class FLACMetadataBlock(AttrMapping):
 	type = attrib()  # noqa
 	data = attrib()
 
@@ -220,7 +220,7 @@ class FLACMetadataBlock(DictMixin):
 
 
 @attrs(repr=False)
-class FLACPadding(DictMixin):
+class FLACPadding(AttrMapping):
 	size = attrib()
 
 	def __repr__(self):
@@ -233,7 +233,7 @@ class FLACPadding(DictMixin):
 
 
 @attrs(repr=False)
-class FLACSeekPoint(DictMixin):
+class FLACSeekPoint(AttrMapping):
 	first_sample = attrib()
 	offset = attrib()
 	num_samples = attrib()
@@ -244,7 +244,7 @@ class FLACSeekPoint(DictMixin):
 		return cls(*struct.unpack('>QQH', data.read()))
 
 
-class FLACSeekTable(ListMixin):
+class FLACSeekTable(LabelList):
 	item_label = 'seekpoints'
 
 	@datareader

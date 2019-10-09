@@ -17,6 +17,7 @@ import struct
 
 import more_itertools
 from attr import attrib, attrs
+from tbm_utils import AttrMapping, LabelList
 
 from .id3v1 import ID3v1
 from .id3v2 import ID3v2, ID3v2Frames
@@ -35,7 +36,6 @@ from .tables import (
 	MP3SamplesPerFrame
 )
 from ..exceptions import InvalidFormat, InvalidFrame, InvalidHeader
-from ..structures import DictMixin, ListMixin
 from ..utils import (
 	datareader,
 	humanize_bitrate,
@@ -51,7 +51,7 @@ except ImportError:  # pragma: nocover
 
 
 @attrs(repr=False)
-class LAMEReplayGain(DictMixin):
+class LAMEReplayGain(AttrMapping):
 	peak = attrib()
 	track_type = attrib(converter=LAMEReplayGainType)
 	track_origin = attrib(converter=LAMEReplayGainOrigin)
@@ -106,7 +106,7 @@ class LAMEReplayGain(DictMixin):
 
 
 @attrs(repr=False)
-class LAMEEncodingFlags(DictMixin):
+class LAMEEncodingFlags(AttrMapping):
 	nogap_continuation = attrib(converter=bool)
 	nogap_continued = attrib(converter=bool)
 	nssafejoint = attrib(converter=bool)
@@ -114,7 +114,7 @@ class LAMEEncodingFlags(DictMixin):
 
 
 @attrs(repr=False)
-class LAMEHeader(DictMixin):
+class LAMEHeader(AttrMapping):
 	_crc = attrib()
 	version = attrib()
 	revision = attrib()
@@ -259,12 +259,12 @@ class LAMEHeader(DictMixin):
 		)
 
 
-class XingToC(ListMixin):
+class XingToC(LabelList):
 	item_label = 'entries'
 
 
 @attrs(repr=False)
-class XingHeader(DictMixin):
+class XingHeader(AttrMapping):
 	_lame = attrib()
 	num_frames = attrib()
 	num_bytes = attrib()
@@ -299,12 +299,12 @@ class XingHeader(DictMixin):
 		return cls(lame_header, num_frames, num_bytes, toc, quality)
 
 
-class VBRIToC(ListMixin):
+class VBRIToC(LabelList):
 	item_label = 'entries'
 
 
 @attrs(repr=False)
-class VBRIHeader(DictMixin):
+class VBRIHeader(AttrMapping):
 	version = attrib()
 	delay = attrib()
 	quality = attrib()
@@ -362,7 +362,7 @@ class VBRIHeader(DictMixin):
 
 
 @attrs(repr=False)
-class MPEGFrameHeader(DictMixin):
+class MPEGFrameHeader(AttrMapping):
 	_start = attrib()
 	_size = attrib()
 	_vbri = attrib()
