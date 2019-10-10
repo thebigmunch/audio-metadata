@@ -14,7 +14,6 @@ __all__ = [
 import binascii
 import struct
 
-import bitstruct
 from attr import Factory, attrib, attrs
 
 from .id3v2 import ID3v2
@@ -24,6 +23,11 @@ from .vorbis import VorbisComments, VorbisPicture
 from ..exceptions import InvalidBlock, InvalidHeader
 from ..structures import DictMixin, ListMixin
 from ..utils import datareader
+
+try:  # pragma: nocover
+	import bitstruct.c as bitstruct
+except ImportError:  # pragma: nocover
+	import bitstruct
 
 
 @attrs(repr=False)

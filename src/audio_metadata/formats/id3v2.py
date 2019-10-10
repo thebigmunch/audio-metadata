@@ -8,7 +8,6 @@ __all__ = [
 import struct
 from collections import defaultdict
 
-import bitstruct
 from attr import attrib, attrs
 from bidict import frozenbidict
 
@@ -18,6 +17,11 @@ from .tables import ID3Version
 from ..exceptions import InvalidFrame, InvalidHeader
 from ..structures import DictMixin
 from ..utils import datareader, decode_synchsafe_int
+
+try:  # pragma: nocover
+	import bitstruct.c as bitstruct
+except ImportError:  # pragma: nocover
+	import bitstruct
 
 
 # Mappings used: https://picard.musicbrainz.org/docs/mappings/

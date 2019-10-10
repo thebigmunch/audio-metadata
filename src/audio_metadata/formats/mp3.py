@@ -15,7 +15,6 @@ import os
 import re
 import struct
 
-import bitstruct
 import more_itertools
 from attr import attrib, attrs
 
@@ -43,6 +42,12 @@ from ..utils import (
 	humanize_filesize,
 	humanize_sample_rate
 )
+
+try:  # pragma: nocover
+	import bitstruct.c as bitstruct
+	bitstruct.Error = TypeError
+except ImportError:  # pragma: nocover
+	import bitstruct
 
 
 @attrs(repr=False)
