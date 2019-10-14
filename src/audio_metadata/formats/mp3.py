@@ -14,6 +14,7 @@ __all__ = [
 import os
 import re
 import struct
+from functools import lru_cache
 
 import more_itertools
 from attr import attrib, attrs
@@ -490,6 +491,7 @@ class MP3StreamInfo(StreamInfo):
 	sample_rate = attrib()
 
 	@staticmethod
+	@lru_cache()
 	def find_mpeg_frames(data):
 		frames = []
 		cached_frames = None
