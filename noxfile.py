@@ -9,6 +9,7 @@ py36 = '3.6'
 py37 = '3.7'
 py38 = '3.8'
 
+nox.options.reuse_existing_virtualenvs = True
 nox.options.sessions = [
 	'lint',
 	'doc',
@@ -16,13 +17,13 @@ nox.options.sessions = [
 ]
 
 
-@nox.session(reuse_venv=True)
+@nox.session
 def lint(session):
 	session.install('-U', '.[lint]')
 	session.run('flake8', 'src/', 'tests/')
 
 
-@nox.session(reuse_venv=True)
+@nox.session
 def doc(session):
 	shutil.rmtree('docs/_build', ignore_errors=True)
 	session.install('-U', '.[doc]')
@@ -60,7 +61,7 @@ def unit(session):
 	session.notify('report')
 
 
-@nox.session(reuse_venv=True)
+@nox.session
 def report(session):
 	if ON_TRAVIS:
 		session.install('-U', 'codecov')
