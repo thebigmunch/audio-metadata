@@ -45,9 +45,10 @@ from ..utils import (
 
 try:  # pragma: nocover
 	import bitstruct.c as bitstruct
-	bitstruct.Error = TypeError
+	bitstruct.Error = (TypeError, ValueError)
 except ImportError:  # pragma: nocover
 	import bitstruct
+	bitstruct.Error = (bitstruct.Error,)
 
 
 @attrs(repr=False)
@@ -513,7 +514,7 @@ class MP3StreamInfo(StreamInfo):
 						if frame._xing:
 							break
 						data.seek(frame._start + frame._size, os.SEEK_SET)
-					except (InvalidFrame, bitstruct.Error):
+					except (InvalidFrame, *bitstruct.Error):
 						data.seek(1, os.SEEK_CUR)
 						break
 			else:
