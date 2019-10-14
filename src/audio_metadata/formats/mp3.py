@@ -530,11 +530,28 @@ class MP3StreamInfo(StreamInfo):
 
 			buffer = data.peek(buffer_size)
 
+		# I actually found a PNG file that had multiple
+		# consecutive MPEG frames parsed. The all_equal
+		# check combats this false positive by making
+		# sure certain attributes don't change
+		# between frames.
 		if not frames:
-			if not cached_frames:
-				raise InvalidFormat("Missing XING header and insufficient MPEG frames.")
-			else:
+			if (
+				cached_frames
+				and more_itertools.all_equal(
+					[
+						frame.channel_mode,
+						frame.channels,
+						frame.layer,
+						frame.sample_rate,
+						frame.version
+					]
+					for frame in cached_frames
+				)
+			):
 				frames = cached_frames
+			else:
+				raise InvalidFormat("No XING header and insufficient MPEG frames.")
 
 		return frames
 
