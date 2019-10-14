@@ -22,13 +22,10 @@ matrix:
       env: NOXSESSION="test-3.7"
 
     # Prevent breakage on new releases
-    - python: "3.7-dev"
-      env: NOXSESSION="test-3.7"
     - python: "3.8-dev"
       env: NOXSESSION="test-3.8"
 
 allow_failures:
-  - python: "3.7-dev"
   - python: "3.8-dev"
 
 install:
