@@ -18,14 +18,14 @@ nox.options.sessions = [
 
 @nox.session(reuse_venv=True)
 def lint(session):
-	session.install('.[lint]')
+	session.install('-U', '.[lint]')
 	session.run('flake8', 'src/', 'tests/')
 
 
 @nox.session(reuse_venv=True)
 def doc(session):
 	shutil.rmtree('docs/_build', ignore_errors=True)
-	session.install('.[doc]')
+	session.install('-U', '.[doc]')
 	session.cd('docs')
 	session.run(
 		'sphinx-build',
@@ -41,21 +41,21 @@ def doc(session):
 
 @nox.session(python=[py36, py37, py38])
 def test(session):
-	session.install('.[test]')
+	session.install('-U', '.[test]')
 	session.run('coverage', 'run', '-m', 'pytest', *session.posargs)
 	session.notify('report')
 
 
 @nox.session(python=[py36, py37, py38])
 def integration(session):
-	session.install('.[test]')
+	session.install('-U', '.[test]')
 	session.run('coverage', 'run', '-m', 'pytest', '-m', 'integration', *session.posargs)
 	session.notify('report')
 
 
 @nox.session(python=[py36, py37, py38])
 def unit(session):
-	session.install('.[test]')
+	session.install('-U', '.[test]')
 	session.run('coverage', 'run', '-m', 'pytest', '-m', 'not integration', *session.posargs)
 	session.notify('report')
 
@@ -63,9 +63,9 @@ def unit(session):
 @nox.session(reuse_venv=True)
 def report(session):
 	if ON_TRAVIS:
-		session.install('codecov')
+		session.install('-U', 'codecov')
 		session.run('codecov')
 
-	session.install('coverage')
+	session.install('-U', 'coverage')
 	session.run('coverage', 'report', '-m')
 	session.run('coverage', 'erase')
