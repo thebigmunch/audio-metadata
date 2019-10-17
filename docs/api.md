@@ -92,7 +92,22 @@ The main methods of interacting with audio metadata are :func:`load` and :func:`
 ```
 
 
+MP4
+---
+
+.. autoclass:: MP4
+
+.. autoclass:: MP4Atom
+.. autoclass:: MP4Atoms
+.. autoclass:: MP4StreamInfo
+.. autoclass:: MP4Tags
+
+
+
 ## Ogg
+
+Ogg
+---
 
 ```{eval-rst}
 .. autoclass:: Ogg

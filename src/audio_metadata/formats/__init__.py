@@ -3,6 +3,7 @@ from .id3v1 import *
 from .id3v2 import *
 from .id3v2frames import *
 from .mp3 import *
+from .mp4 import *
 from .ogg import *
 from .oggopus import *
 from .oggvorbis import *
@@ -17,6 +18,7 @@ __all__ = [
 	*id3v2.__all__,
 	*id3v2frames.__all__,
 	*mp3.__all__,
+	*mp4.__all__,
 	*ogg.__all__,
 	*oggopus.__all__,
 	*oggvorbis.__all__,

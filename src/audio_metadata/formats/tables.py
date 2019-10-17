@@ -20,6 +20,10 @@ __all__ = [
 	'MP3SampleRates',
 	'MP3SamplesPerFrame',
 	'WAVEAudioFormat',
+	'MP4AtomDataType',
+	'MP4AudioObjectTypes',
+	'MP4CoverFormat',
+	'MP4SamplingFrequencies'
 ]
 
 from enum import (
@@ -775,3 +779,113 @@ class WAVEAudioFormat(_BaseIntEnum):
 	FLAC = 61868
 	EXTENSIBLE = 65534
 	DEVELOPMENT = 65535
+
+
+MP4AudioObjectTypes = [
+	None,
+	"AAC MAIN",
+	"AAC LC",
+	"AAC SSR",
+	"AAC LTP",
+	"SBR",
+	"AAC Scalable",
+	"TwinVQ",
+	"CELP",
+	"HVXC",
+	None,
+	None,
+	"TTSI",
+	"Main synthetic",
+	"Wavetable sample-based synthesis",
+	"General MIDI",
+	"Algorithmic Synthesis and Audio Effects",
+	"ER AAC LC",
+	None,
+	"ER AAC LTP",
+	"ER AAC Scalable",
+	"ER Twin VQ",
+	"ER BSAC",
+	"ER AAC LD",
+	"ER CELP",
+	"ER HVXC",
+	"ER HILN",
+	"ER Parametric",
+	"SSC",
+	"PS",
+	"MPEG Surround",
+	None,
+	"MPEG-1/2 Layer-1",
+	"MPEG-1/2 Layer-2",
+	"MPEG-1/2 Layer-3",
+	"DST",
+	"ALS",
+	"SLS",
+	"SLS non-core",
+	"ER AAC ELD",
+	"SMR Simple",
+	"SMR Main",
+	"USAC",
+	"SAOC",
+	"LD MPEG Surround",
+	"USAC"
+]
+
+
+class MP4AtomDataType(_BaseIntEnum):
+	IMPLICIT = 0
+	UTF8 = 1
+	UTF16 = 2
+	SJIS = 3
+	HTML = 6
+	XML = 7
+	UUID = 8
+	ISRC = 9
+	MI3P = 10
+	GIF = 12
+	JPEG = 13
+	PNG = 14
+	URL = 15
+	DURATION = 16
+	DATETIME = 17
+	GENRES = 18
+	SIGNED_INT_BE = 21
+	UNSIGNED_INT_BE = 22
+	FLOAT_BE_32 = 23
+	FLOAT_BE_64 = 23
+	RIAA_PA = 24
+	UPC = 25
+	BMP = 27
+	SIGNED_INT = 65
+	SIGNED_INT_BE_16 = 66
+	SIGNED_INT_BE_32 = 67
+	SIGNED_INT_BE_64 = 74
+	UNSIGNED_INT = 75
+	UNSIGNED_INT_BE_16 = 76
+	UNSIGNED_INT_BE_32 = 77
+	UNSIGNED_INT_BE_64 = 78
+	UNDEFINED = 255
+
+
+class MP4CoverFormat(_BaseIntEnum):
+	UNKNOWN = 0
+	GIF = 12
+	JPEG = 13
+	PNG = 14
+	BMP = 27
+
+
+MP4SamplingFrequencies = [
+	96000,
+	88200,
+	64000,
+	48000,
+	44100,
+	32000,
+	24000,
+	22050,
+	16000,
+	12000,
+	11025,
+	8000,
+	7350
+]
