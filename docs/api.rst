@@ -87,6 +87,17 @@ MP3
 .. autoclass:: XingToC
 
 
+MP4
+---
+
+.. autoclass:: MP4
+
+.. autoclass:: MP4Atom
+.. autoclass:: MP4Atoms
+.. autoclass:: MP4StreamInfo
+.. autoclass:: MP4Tags
+
+
 Ogg
 ---
 
