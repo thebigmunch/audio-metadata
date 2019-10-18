@@ -6,7 +6,12 @@ This project adheres to [Semantic Versioning](https://semver.org).
 
 ## [Unreleased](https://github.com/thebigmunch/audio-metadata/tree/master)
 
-[Commits](https://github.com/thebigmunch/audio-metadata/compare/0.5.0...master)
+[Commits](https://github.com/thebigmunch/audio-metadata/compare/0.6.0...master)
+
+
+## [0.6.0](https://github.com/thebigmunch/audio-metadata/releases/tag/0.6.0) (2019-10-18)
+
+[Commits](https://github.com/thebigmunch/audio-metadata/compare/0.5.0...0.6.0)
 
 ### Added
 
@@ -36,6 +41,12 @@ This project adheres to [Semantic Versioning](https://semver.org).
 	This prevents some misidentification, specifically
 	in the case of little-endian BOM of UTF-16-encoded text.
 * Rename ``XingTOC`` to ``XingToC``.
+* Improve load(s) performance:
+		* Use ``functools.lru_cache`` to remove penalty
+			of calling ``MP3Streaminfo.find_mpeg_frames``
+			once when determining format of MP3s and
+			again when loading the MP3.
+		* Use ``bitstruct`` C extension when available.
 
 ### Removed
 
