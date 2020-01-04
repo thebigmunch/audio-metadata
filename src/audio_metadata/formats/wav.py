@@ -104,7 +104,7 @@ class WAV(Format):
 				audio_format, channels, sample_rate = struct.unpack(
 					'HHI',
 					self._obj.read(8),
-    )
+				)
 
 				byte_rate, block_align, bit_depth = struct.unpack(
 					'<IHH',
