@@ -2,7 +2,7 @@
 audio-metadata
 ==============
 
-audio-metadata is a library for reading and, in the future, writing metadata from audio files.
+audio-metadata is a library for reading and, in the future, writing audio metadata.
 
 
 Getting Started

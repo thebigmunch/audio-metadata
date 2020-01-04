@@ -2,7 +2,7 @@ __all__ = [
 	'Format',
 	'Picture',
 	'StreamInfo',
-	'Tags'
+	'Tags',
 ]
 
 import os
@@ -15,7 +15,7 @@ from ..utils import (
 	humanize_bitrate,
 	humanize_duration,
 	humanize_filesize,
-	humanize_sample_rate
+	humanize_sample_rate,
 )
 
 

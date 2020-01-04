@@ -2,7 +2,7 @@ __all__ = [
 	'ID3v2',
 	'ID3v2Flags',
 	'ID3v2Frames',
-	'ID3v2Header'
+	'ID3v2Header',
 ]
 
 import struct
@@ -60,8 +60,8 @@ class ID3v2Frames(Tags):
 			'remixer': 'TP4',
 			'subtitle': 'TT3',
 			'title': 'TT2',
-			'tracknumber': 'TRK'
-		}
+			'tracknumber': 'TRK',
+		},
 	)
 
 	_v23_FIELD_MAP = frozenbidict(
@@ -104,8 +104,8 @@ class ID3v2Frames(Tags):
 			'subtitle': 'TIT3',
 			'title': 'TIT2',
 			'titlesort': 'TSOT',
-			'tracknumber': 'TRCK'
-		}
+			'tracknumber': 'TRCK',
+		},
 	)
 
 	_v24_FIELD_MAP = frozenbidict(
@@ -149,8 +149,8 @@ class ID3v2Frames(Tags):
 			'subtitle': 'TIT3',
 			'title': 'TIT2',
 			'titlesort': 'TSOT',
-			'tracknumber': 'TRCK'
-		}
+			'tracknumber': 'TRCK',
+		},
 	)
 
 	@datareader
@@ -195,8 +195,8 @@ class ID3v2Frames(Tags):
 				(
 					ID3v2CommentFrame,
 					ID3v2SynchronizedLyricsFrame,
-					ID3v2UnsynchronizedLyricsFrame
-				)
+					ID3v2UnsynchronizedLyricsFrame,
+				),
 			):
 				frames[f'{frame.id}:{frame.description}:{frame.language}'].append(frame.value)
 			elif isinstance(frame, ID3v2GenreFrame):
@@ -207,8 +207,8 @@ class ID3v2Frames(Tags):
 
 						'filename': frame.filename,
 						'mime_type': frame.mime_type,
-						'value': frame.value
-					}
+						'value': frame.value,
+					},
 				)
 			elif isinstance(frame, ID3v2PrivateFrame):
 				frames[f'PRIV:{frame.owner}'].append(frame.value)
@@ -216,8 +216,8 @@ class ID3v2Frames(Tags):
 				frame,
 				(
 					ID3v2UserTextFrame,
-					ID3v2UserURLLinkFrame
-				)
+					ID3v2UserURLLinkFrame,
+				),
 			):
 				frames[f'{frame.id}:{frame.description}'].append(frame.value)
 			elif isinstance(
@@ -225,8 +225,8 @@ class ID3v2Frames(Tags):
 				(
 					ID3v2NumericTextFrame,
 					ID3v2TextFrame,
-					ID3v2TimestampFrame
-				)
+					ID3v2TimestampFrame,
+				),
 			):
 				frames[frame.id] = frame.value
 			else:
@@ -277,9 +277,9 @@ class ID3v2Header(AttrMapping):
 				'unsync',
 				'extended',
 				'experimental',
-				'footer'
+				'footer',
 			],
-			flags_
+			flags_,
 		)
 
 		size = decode_synchsafe_int(sync_size, 7)
@@ -311,7 +311,7 @@ class ID3v2(AttrMapping):
 		if self._header.flags.extended:
 			ext_size = decode_synchsafe_int(
 				struct.unpack('4B', data.read(4))[0:4],
-				7
+				7,
 			)
 			self._size += ext_size
 
@@ -326,7 +326,7 @@ class ID3v2(AttrMapping):
 
 		self.tags = ID3v2Frames.load(
 			data.read(self._header._size),
-			self._header.version
+			self._header.version,
 		)
 		self.pictures = self.tags.pop('pictures', [])
 

@@ -5,7 +5,7 @@ __all__ = [
 	'InvalidFormat',
 	'InvalidFrame',
 	'InvalidHeader',
-	'UnsupportedFormat'
+	'UnsupportedFormat',
 ]
 
 

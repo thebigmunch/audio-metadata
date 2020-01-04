@@ -7,5 +7,5 @@ __all__ = [
 	*__about__.__all__,
 	*api.__all__,
 	*exceptions.__all__,
-	*formats.__all__
+	*formats.__all__,
 ]

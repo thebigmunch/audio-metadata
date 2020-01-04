@@ -25,8 +25,8 @@ class RIFFTags(Tags):
 			'language': 'ILNG',
 			'rating': 'IRTD',
 			'title': 'INAM',
-			'tracknumber': 'ITRK'
-		}
+			'tracknumber': 'ITRK',
+		},
 	)
 
 	@datareader
@@ -97,17 +97,18 @@ class WAV(Format):
 		while len(subchunk_header) == 8:
 			subchunk_id, subchunk_size = struct.unpack(
 				'4sI',
-				subchunk_header
+				subchunk_header,
 			)
 
 			if subchunk_id == b'fmt ':
 				audio_format, channels, sample_rate = struct.unpack(
 					'HHI',
-					self._obj.read(8))
+					self._obj.read(8),
+    )
 
 				byte_rate, block_align, bit_depth = struct.unpack(
 					'<IHH',
-					self._obj.read(8)
+					self._obj.read(8),
 				)
 
 				bitrate = byte_rate * 8
@@ -151,7 +152,7 @@ class WAV(Format):
 				bitrate,
 				channels,
 				duration,
-				sample_rate
+				sample_rate,
 			)
 		except UnboundLocalError:
 			raise InvalidHeader("Valid WAVE stream info not found.")

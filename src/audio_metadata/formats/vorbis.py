@@ -54,5 +54,5 @@ class VorbisPicture(Picture):
 			height=height,
 			depth=depth,
 			colors=colors,
-			data=data
+			data=data,
 		)

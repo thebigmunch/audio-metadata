@@ -1,6 +1,6 @@
 __all__ = [
 	'ID3v1',
-	'ID3v1Fields'
+	'ID3v1Fields',
 ]
 
 from tbm_utils import AttrMapping

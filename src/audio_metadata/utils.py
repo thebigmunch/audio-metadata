@@ -5,7 +5,7 @@ __all__ = [
 	'humanize_bitrate',
 	'humanize_duration',
 	'humanize_filesize',
-	'humanize_sample_rate'
+	'humanize_sample_rate',
 ]
 
 import os
@@ -16,7 +16,7 @@ from io import (
 	DEFAULT_BUFFER_SIZE,
 	BufferedReader,
 	BytesIO,
-	FileIO
+	FileIO,
 )
 
 import wrapt

@@ -78,12 +78,12 @@ class FLACCueSheetIndex(AttrMapping):
 	def load(cls, data):
 		offset = struct.unpack(
 			'>Q',
-			data.read(8)
+			data.read(8),
 		)[0]
 
 		number = struct.unpack(
 			'>B',
-			data.read(1)
+			data.read(1),
 		)[0]
 
 		data.read(3)
@@ -124,23 +124,23 @@ class FLACCueSheetTrack(AttrMapping):
 	def load(cls, data):
 		offset = struct.unpack(
 			'>Q',
-			data.read(8)
+			data.read(8),
 		)[0]
 		track_number = struct.unpack(
 			'>B',
-			data.read(1)
+			data.read(1),
 		)[0]
 		isrc = data.read(12).rstrip(b'\x00').decode('ascii', 'replace')
 
 		type_, pre_emphasis = bitstruct.unpack(
 			'u1 b1',
-			data.read(1)
+			data.read(1),
 		)
 
 		data.read(13)
 		num_indexes = struct.unpack(
 			'>B',
-			data.read(1)
+			data.read(1),
 		)[0]
 
 		indexes = []
@@ -153,7 +153,7 @@ class FLACCueSheetTrack(AttrMapping):
 			isrc,
 			type_,
 			pre_emphasis,
-			indexes
+			indexes,
 		)
 
 
@@ -185,17 +185,17 @@ class FLACCueSheet(LabelList):
 		catalog_number = data.read(128).rstrip(b'\0').decode('ascii', 'replace')
 		lead_in_samples = struct.unpack(
 			'>Q',
-			data.read(8)
+			data.read(8),
 		)[0]
 		compact_disc = bitstruct.unpack(
 			'b1',
-			data.read(1)
+			data.read(1),
 		)[0]
 
 		data.read(258)
 		num_tracks = struct.unpack(
 			'B',
-			data.read(1)
+			data.read(1),
 		)[0]
 
 		tracks = []
@@ -206,7 +206,7 @@ class FLACCueSheet(LabelList):
 			tracks,
 			catalog_number,
 			lead_in_samples,
-			compact_disc
+			compact_disc,
 		)
 
 
@@ -279,7 +279,7 @@ class FLACStreamInfo(StreamInfo):
 	def load(cls, data):
 		stream_info_block_data = bitstruct.unpack(
 			'u16 u16 u24 u24 u20 u3 u5 u36 r128',
-			data.read(34)
+			data.read(34),
 		)
 
 		min_block_size = stream_info_block_data[0]
@@ -305,7 +305,7 @@ class FLACStreamInfo(StreamInfo):
 			channels,
 			duration,
 			md5sum,
-			sample_rate
+			sample_rate,
 		)
 
 
@@ -344,7 +344,7 @@ class FLAC(Format):
 		while True:
 			is_last_block, block_type, block_size = bitstruct.unpack(
 				'b1 u7 u24',
-				header_data
+				header_data,
 			)
 
 			# There are examples of tools writing incorrect block sizes.

@@ -16,7 +16,7 @@ __all__ = [
 	'ID3v2URLLinkFrame',
 	'ID3v2UserTextFrame',
 	'ID3v2UserURLLinkFrame',
-	'ID3v2YearFrame'
+	'ID3v2YearFrame',
 ]
 
 import re
@@ -36,7 +36,7 @@ from ..utils import (
 	decode_synchsafe_int,
 	determine_encoding,
 	get_image_size,
-	split_encoded
+	split_encoded,
 )
 
 _genre_re = re.compile(r"((?:\((?P<id>\d+|RX|CR)\))*)(?P<name>.+)?")
@@ -66,7 +66,7 @@ class ID3v2Picture(Picture):
 			description=description,
 			width=width,
 			height=height,
-			data=image_data
+			data=image_data,
 		)
 
 
@@ -103,7 +103,7 @@ class ID3v2NumberFrame(ID3v2BaseFrame):
 	def validate_value(self, attribute, value):
 		if not all(char in [*string.digits, '/'] for char in value):
 			raise ValueError(
-				"Number frame values must consist only of digits and '/'."
+				"Number frame values must consist only of digits and '/'.",
 			)
 
 	@property
@@ -212,7 +212,7 @@ class ID3v2TDATFrame(ID3v2NumericTextFrame):
 				or int(v[2:4]) not in range(1, 13)
 			):
 				raise ValueError(
-					"TDAT frame values must be a 4-character number string in the DDMM format."
+					"TDAT frame values must be a 4-character number string in the DDMM format.",
 				)
 
 
@@ -230,7 +230,7 @@ class ID3v2TIMEFrame(ID3v2NumericTextFrame):
 				or int(v[2:4]) not in range(0, 60)
 			):
 				raise ValueError(
-					"TIME frame values must be a 4-character number string in the HHMM format."
+					"TIME frame values must be a 4-character number string in the HHMM format.",
 				)
 
 
@@ -388,7 +388,7 @@ class ID3v2Frame(ID3v2BaseFrame):
 		'WORS': ID3v2URLLinkFrame,
 		'WPAY': ID3v2URLLinkFrame,
 		'WPUB': ID3v2URLLinkFrame,
-		'WXXX': ID3v2UserURLLinkFrame
+		'WXXX': ID3v2UserURLLinkFrame,
 	}
 
 	@datareader
@@ -492,8 +492,8 @@ class ID3v2Frame(ID3v2BaseFrame):
 			frame_type,
 			(
 				ID3v2NumberFrame,
-				ID3v2UserTextFrame
-			)
+				ID3v2UserTextFrame,
+			),
 		):
 			encoding = determine_encoding(frame_data[0:1])
 			args.append(decode_bytestring(frame_data[1:], encoding))
@@ -502,8 +502,8 @@ class ID3v2Frame(ID3v2BaseFrame):
 			(
 				ID3v2NumericTextFrame,
 				ID3v2TextFrame,
-				ID3v2TimestampFrame
-			)
+				ID3v2TimestampFrame,
+			),
 		):
 			encoding = determine_encoding(frame_data[0:1])
 			values = [

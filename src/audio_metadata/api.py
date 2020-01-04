@@ -1,7 +1,7 @@
 __all__ = [
 	'determine_format',
 	'load',
-	'loads'
+	'loads',
 ]
 
 import os
@@ -13,7 +13,7 @@ from .formats import (
 	MP3,
 	WAV,
 	ID3v2,
-	MP3StreamInfo
+	MP3StreamInfo,
 )
 from .utils import DataReader
 

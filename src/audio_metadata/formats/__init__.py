@@ -18,5 +18,5 @@ __all__ = [
 	*mp3.__all__,
 	*tables.__all__,
 	*vorbis.__all__,
-	*wav.__all__
+	*wav.__all__,
 ]

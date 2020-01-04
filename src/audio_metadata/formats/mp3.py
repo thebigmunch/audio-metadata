@@ -8,7 +8,7 @@ __all__ = [
 	'VBRIHeader',
 	'VBRIToC',
 	'XingHeader',
-	'XingToC'
+	'XingToC',
 ]
 
 import os
@@ -34,14 +34,14 @@ from .tables import (
 	MP3Bitrates,
 	MP3ChannelMode,
 	MP3SampleRates,
-	MP3SamplesPerFrame
+	MP3SamplesPerFrame,
 )
 from ..exceptions import InvalidFormat, InvalidFrame, InvalidHeader
 from ..utils import (
 	datareader,
 	humanize_bitrate,
 	humanize_filesize,
-	humanize_sample_rate
+	humanize_sample_rate,
 )
 
 try:  # pragma: nocover
@@ -74,7 +74,7 @@ class LAMEReplayGain(AttrMapping):
 
 		track_gain_type_, track_gain_origin_, track_gain_sign, track_gain_adjustment_ = bitstruct.unpack(
 			'u3 u3 b1 u9',
-			data.read(2)
+			data.read(2),
 		)
 
 		track_gain_type = LAMEReplayGainType(track_gain_type_)
@@ -86,7 +86,7 @@ class LAMEReplayGain(AttrMapping):
 
 		album_gain_type_, album_gain_origin_, album_gain_sign, album_gain_adjustment_ = bitstruct.unpack(
 			'u3 u3 b1 u9',
-			data.read(2)
+			data.read(2),
 		)
 
 		album_gain_type = LAMEReplayGainType(album_gain_type_)
@@ -103,7 +103,7 @@ class LAMEReplayGain(AttrMapping):
 			track_gain_adjustment,
 			album_gain_type,
 			album_gain_origin,
-			album_gain_adjustment
+			album_gain_adjustment,
 		)
 
 
@@ -166,7 +166,7 @@ class LAMEHeader(AttrMapping):
 
 		revision, bitrate_mode_ = bitstruct.unpack(
 			'u4 u4',
-			data.read(1)
+			data.read(1),
 		)
 		bitrate_mode = LAMEBitrateMode(bitrate_mode_)
 
@@ -176,7 +176,7 @@ class LAMEHeader(AttrMapping):
 
 		lowpass_filter = struct.unpack(
 			'B',
-			data.read(1)
+			data.read(1),
 		)[0] * 100
 
 		replay_gain = LAMEReplayGain.load(data)
@@ -188,9 +188,9 @@ class LAMEHeader(AttrMapping):
 				'nogap_continued',
 				'nssafejoint',
 				'nspsytune',
-				'ath_type'
+				'ath_type',
 			],
-			data.read(1)
+			data.read(1),
 		)
 
 		ath_type = flags_ath.pop('ath_type')
@@ -198,35 +198,35 @@ class LAMEHeader(AttrMapping):
 			flags_ath['nogap_continuation'],
 			flags_ath['nogap_continued'],
 			flags_ath['nssafejoint'],
-			flags_ath['nspsytune']
+			flags_ath['nspsytune'],
 		)
 
 		# TODO: Different representation for VBR minimum bitrate vs CBR/ABR specified bitrate?
 		# Can only go up to 255.
 		bitrate = struct.unpack(
 			'B',
-			data.read(1)
+			data.read(1),
 		)[0] * 1000
 
 		delay, padding = bitstruct.unpack(
 			'u12 u12',
-			data.read(3)
+			data.read(3),
 		)
 
 		source_sample_rate, unwise_settings_used, channel_mode_, noise_shaping = bitstruct.unpack(
 			'u2 u1 u3 u2',
-			data.read(1)
+			data.read(1),
 		)
 		channel_mode = LAMEChannelMode(channel_mode_)
 
 		mp3_gain = bitstruct.unpack(
 			's8',
-			data.read(1)
+			data.read(1),
 		)[0]
 
 		surround_info_, preset_used_ = bitstruct.unpack(
 			'p2 u3 u11',
-			data.read(2)
+			data.read(2),
 		)
 		surround_info = LAMESurroundInfo(surround_info_)
 
@@ -234,7 +234,7 @@ class LAMEHeader(AttrMapping):
 
 		audio_size, audio_crc, lame_crc = struct.unpack(
 			'>I2s2s',
-			data.read(8)
+			data.read(8),
 		)
 
 		return cls(
@@ -257,7 +257,7 @@ class LAMEHeader(AttrMapping):
 			replay_gain,
 			source_sample_rate,
 			surround_info,
-			unwise_settings_used
+			unwise_settings_used,
 		)
 
 
@@ -359,7 +359,7 @@ class VBRIHeader(AttrMapping):
 			toc_scale_factor,
 			toc_entry_num_bytes,
 			toc_entry_num_frames,
-			toc
+			toc,
 		)
 
 
@@ -398,7 +398,7 @@ class MPEGFrameHeader(AttrMapping):
 
 		sync, version_id, layer_index, protection = bitstruct.unpack(
 			'u11 u2 u2 b1',
-			data.read(2)
+			data.read(2),
 		)
 
 		if sync != 2047:
@@ -412,7 +412,7 @@ class MPEGFrameHeader(AttrMapping):
 
 		bitrate_index, sample_rate_index, padded = bitstruct.unpack(
 			'u4 u2 u1',
-			data.read(1)
+			data.read(1),
 		)
 
 		if (
@@ -469,7 +469,7 @@ class MPEGFrameHeader(AttrMapping):
 			bitrate,
 			channel_mode,
 			channels,
-			sample_rate
+			sample_rate,
 		)
 
 
@@ -546,7 +546,7 @@ class MP3StreamInfo(StreamInfo):
 						frame.channels,
 						frame.layer,
 						frame.sample_rate,
-						frame.version
+						frame.version,
 					]
 					for frame in cached_frames
 				)
@@ -657,7 +657,7 @@ class MP3StreamInfo(StreamInfo):
 			channel_mode,
 			channels,
 			duration,
-			sample_rate
+			sample_rate,
 		)
 
 

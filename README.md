@@ -7,7 +7,7 @@
 [![Docs - Stable](https://img.shields.io/readthedocs/audio-metadata/stable.svg?label=Docs%20%28Stable%29)](https://audio-metadata.readthedocs.io/en/stable/)
 [![Docs - Latest](https://img.shields.io/readthedocs/audio-metadata/latest.svg?label=Docs%20%28Latest%29)](https://audio-metadata.readthedocs.io/en/latest/)
 
-[audio-metadata](https://github.com/thebigmunch/audio-metadata) is a library for reading and, in the future, writing metadata from audio files.
+[audio-metadata](https://github.com/thebigmunch/audio-metadata) is a library for reading and, in the future, writing audio metadata.
 
 ### Why another audio metadata library? / Why not just use mutagen et al?
 

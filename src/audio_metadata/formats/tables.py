@@ -13,7 +13,7 @@ __all__ = [
 	'MP3Bitrates',
 	'MP3ChannelMode',
 	'MP3SampleRates',
-	'MP3SamplesPerFrame'
+	'MP3SamplesPerFrame',
 ]
 
 from enum import Enum, IntEnum
@@ -264,7 +264,7 @@ ID3v1Genres = [
 	'G-Funk',
 	'Dubstep',
 	'Garage Rock',
-	'Psybient'
+	'Psybient',
 ]
 
 
@@ -314,8 +314,8 @@ LAMEPreset = _BaseIntEnum(
 		('standard_fast', 1004),
 		('extreme_fast', 1005),
 		('medium', 1006),
-		('medium_fast', 1007)
-	]
+		('medium_fast', 1007),
+	],
 )
 
 
@@ -350,7 +350,7 @@ MP3Bitrates = {
 	(2, 3): [0, 8, 16, 24, 32, 40, 48, 56, 64, 80, 96, 112, 128, 144, 160],
 	(2.5, 1): [0, 32, 48, 56, 64, 80, 96, 112, 128, 144, 160, 176, 192, 224, 256],
 	(2.5, 2): [0, 8, 16, 24, 32, 40, 48, 56, 64, 80, 96, 112, 128, 144, 160],
-	(2.5, 3): [0, 8, 16, 24, 32, 40, 48, 56, 64, 80, 96, 112, 128, 144, 160]
+	(2.5, 3): [0, 8, 16, 24, 32, 40, 48, 56, 64, 80, 96, 112, 128, 144, 160],
 }
 
 
@@ -372,7 +372,7 @@ class MP3ChannelMode(_BaseIntEnum):
 MP3SampleRates = {
 	1: [44100, 48000, 32000],
 	2: [22050, 24000, 16000],
-	2.5: [11025, 12000, 8000]
+	2.5: [11025, 12000, 8000],
 }
 
 
