@@ -532,11 +532,9 @@ class MP3StreamInfo(StreamInfo):
 
 			buffer = data.peek(buffer_size)
 
-		# I actually found a PNG file that had multiple
-		# consecutive MPEG frames parsed. The all_equal
-		# check combats this false positive by making
-		# sure certain attributes don't change
-		# between frames.
+		# I actually found a PNG file that had multiple consecutive MPEG frames parsed.
+		# The all_equal check combats this false positive by
+		# making sure certain attributes don't change between frames.
 		if not frames:
 			if (
 				cached_frames
@@ -603,8 +601,8 @@ class MP3StreamInfo(StreamInfo):
 			# Haven't tested in too many other scenarios.
 			# But, there should be enough low-level info for people to calculate this if desired.
 			if xing_header._lame:
-				# Old versions of LAME wrote invalid delay/padding for
-				# short MP3s with low bitrate.
+				# Old versions of LAME wrote invalid delay/padding
+				# for short MP3s with low bitrate.
 				# Subtract them only them if there would be samples left.
 				lame_padding = xing_header._lame.delay + xing_header._lame.padding
 				if lame_padding < num_samples:
