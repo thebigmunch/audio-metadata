@@ -491,6 +491,32 @@ class MP3StreamInfo(StreamInfo):
 	sample_rate = attrib()
 
 	@staticmethod
+	def count_mpeg_frames(data):
+		num_frames = 0
+
+		buffer_size = 128
+		buffer = data.peek(buffer_size)
+
+		while len(buffer) >= buffer_size:
+			sync_start = buffer.find(b'\xFF')
+
+			if sync_start >= 0:
+				data.seek(sync_start, os.SEEK_CUR)
+
+				try:
+					frame = MPEGFrameHeader.load(data)
+					num_frames += 1
+					data.seek(frame._start + frame._size, os.SEEK_SET)
+				except (InvalidFrame, *bitstruct.Error):
+					data.seek(1, os.SEEK_CUR)
+			else:
+				data.seek(buffer_size, os.SEEK_CUR)
+
+			buffer = data.peek(buffer_size)
+
+		return num_frames
+
+	@staticmethod
 	@lru_cache()
 	def find_mpeg_frames(data):
 		frames = []
@@ -592,7 +618,14 @@ class MP3StreamInfo(StreamInfo):
 		vbri_header = frames[0]._vbri
 		xing_header = frames[0]._xing
 		if xing_header:
-			num_samples = samples_per_frame * xing_header.num_frames
+			if xing_header.num_frames:
+				num_samples = samples_per_frame * xing_header.num_frames
+			else:
+				# Some XING headers have num_frames==0.
+				# Manually count all the MPEG frames for bitrate/duration calculations.
+				# Remove XING frame from frame count for bitrate calculation accuracy.
+				data.seek(frames[0]._start, os.SEEK_SET)
+				num_samples = samples_per_frame * (cls.count_mpeg_frames(data) - 1)
 
 			# I prefer to include the Xing/LAME header as part of the audio.
 			# Google Music seems to do so for calculating client ID.
