@@ -501,34 +501,32 @@ class MP3StreamInfo(StreamInfo):
 		while len(buffer) >= buffer_size:
 			sync_start = buffer.find(b'\xFF')
 
-			if sync_start == -1:
-				data.seek(buffer_size, os.SEEK_CUR)
-				buffer = data.peek(buffer_size)
-				continue
-			else:
+			if sync_start >= 0:
 				data.seek(sync_start, os.SEEK_CUR)
 
-			if bitstruct.unpack('u11', data.peek(2))[0] == 2047:
-				for _ in range(4):
-					try:
-						frame = MPEGFrameHeader.load(data)
-						frames.append(frame)
-						if frame._xing:
+				if bitstruct.unpack('u11', data.peek(2))[0] == 2047:
+					for _ in range(4):
+						try:
+							frame = MPEGFrameHeader.load(data)
+							frames.append(frame)
+							if frame._xing and frame._xing.num_frames:
+								break
+							data.seek(frame._start + frame._size, os.SEEK_SET)
+						except (InvalidFrame, *bitstruct.Error):
+							data.seek(1, os.SEEK_CUR)
 							break
-						data.seek(frame._start + frame._size, os.SEEK_SET)
-					except (InvalidFrame, *bitstruct.Error):
-						data.seek(1, os.SEEK_CUR)
-						break
+				else:
+					data.seek(sync_start + 1, os.SEEK_CUR)
+
+				if frames and (len(frames) >= 4 or frames[0]._xing):
+					break
+
+				if len(frames) >= 2 and cached_frames is None:
+					cached_frames = frames.copy()
+
+				del frames[:]
 			else:
-				data.seek(sync_start + 1, os.SEEK_CUR)
-
-			if frames and (len(frames) >= 4 or frames[0]._xing):
-				break
-
-			if len(frames) >= 2 and cached_frames is None:
-				cached_frames = frames.copy()
-
-			del frames[:]
+				data.seek(buffer_size, os.SEEK_CUR)
 
 			buffer = data.peek(buffer_size)
 
