@@ -106,7 +106,7 @@ Please don't submit issues regarding the following:
 * Add write support.
 
 If you're willing to [contribute](https://github.com/thebigmunch/audio-metadata/blob/master/.github/CONTRIBUTING.md)
-your time to work on them, post on the **Development** category on the [Discourse forum](https://forum.thebigmunch.me/).
+your time to work on them, post in the **Development** category on the [Discourse forum](https://forum.thebigmunch.me/).
 
 
 ## Appreciation
