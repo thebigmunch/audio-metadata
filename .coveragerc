@@ -1,7 +1,0 @@
-[run]
-branch = True
-source = audio_metadata
-
-[report]
-precision = 2
-show_missing = True

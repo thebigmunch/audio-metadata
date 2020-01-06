@@ -2,6 +2,7 @@
 requires = [ "poetry>=1.0.0" ]
 build-backend = "poetry.masonry.api"
 
+
 [tool.poetry]
 name = "audio-metadata"
 description = "A library for reading and, in the future, writing metadata from audio files."
@@ -27,7 +28,7 @@ pprintpp = "0.*"
 tbm-utils = "^1.0"
 wrapt = "^1.0"
 
-coverage = { version = ">=4.5,<6.0", optional = true }
+coverage = { version = ">=5.0,<6.0", optional = true, extras = [ "toml" ] }
 flake8 = { version = "^3.5", optional = true }
 flake8-builtins = { version = "^1.0", optional = true }
 flake8-comprehensions = { version = ">=2.0,<=4.0", optional = true }
@@ -62,3 +63,12 @@ test = [
 	"nox",
 	"pytest"
 ]
+
+
+[tool.coverage.run]
+branch = true
+source = [ "audio_metadata" ]
+
+[tool.coverage.report]
+precision = 2
+show_missing = true

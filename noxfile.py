@@ -67,6 +67,6 @@ def report(session):
 		session.install('-U', 'codecov')
 		session.run('codecov')
 
-	session.install('-U', 'coverage')
+	session.install('-U', 'coverage[toml]')
 	session.run('coverage', 'report', '-m')
 	session.run('coverage', 'erase')
