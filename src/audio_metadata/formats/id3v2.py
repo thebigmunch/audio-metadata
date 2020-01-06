@@ -175,7 +175,7 @@ class ID3v2Frames(Tags):
 			size_len = 4
 			per_byte = 7
 		else:
-			raise ValueError(f"Unsupported ID3 version: {id3_version}")
+			raise ValueError(f"Unsupported ID3 version: {id3_version}")  # pragma: nocover
 
 		frames = defaultdict(list)
 		while True:
@@ -268,7 +268,7 @@ class ID3v2Header(AttrMapping):
 
 		try:
 			version = ID3Version((2, major))
-		except ValueError:
+		except ValueError:  # pragma: nocover
 			raise ValueError(f"Unsupported ID3 version (2.{major}).")
 
 		flags = bitstruct.unpack_dict(

@@ -132,7 +132,7 @@ class WAV(Format):
 					self._id3 = id3
 			else:
 				# TODO
-				self._obj.seek(subchunk_size, os.SEEK_CUR)
+				self._obj.seek(subchunk_size, os.SEEK_CUR)  # pragma: nocover
 
 			subchunk_header = self._obj.read(8)
 

@@ -158,11 +158,10 @@ class LAMEHeader(AttrMapping):
 		if not encoder.startswith(b'LAME'):
 			raise InvalidHeader('Valid LAME header not found.')
 
+		version = None
 		version_match = re.search(rb'LAME(\d+)\.(\d+)', encoder)
 		if version_match:
 			version = tuple(int(part) for part in version_match.groups())
-		else:
-			version = None
 
 		revision, bitrate_mode_ = bitstruct.unpack(
 			'u4 u4',
@@ -283,16 +282,16 @@ class XingHeader(AttrMapping):
 
 		num_frames = num_bytes = toc = quality = lame_header = None
 
-		if flags & 1:
+		if flags & 1:  # pragma: nobranch
 			num_frames = struct.unpack('>I', data.read(4))[0]
 
-		if flags & 2:
+		if flags & 2:  # pragma: nobranch
 			num_bytes = struct.unpack('>I', data.read(4))[0]
 
-		if flags & 4:
+		if flags & 4:  # pragma: nobranch
 			toc = XingToC(bytearray(data.read(100)))
 
-		if flags & 8:
+		if flags & 8:  # pragma: nobranch
 			quality = struct.unpack('>I', data.read(4))[0]
 
 		if data.peek(4) == b'LAME':
@@ -436,7 +435,7 @@ class MPEGFrameHeader(AttrMapping):
 
 		vbri_header = None
 		xing_header = None
-		if layer == 3:
+		if layer == 3:  # pragma: nobranch
 			if version == 1:
 				if channel_mode != 3:
 					xing_header_start = 36
@@ -500,16 +499,16 @@ class MP3StreamInfo(StreamInfo):
 		while len(buffer) >= buffer_size:
 			sync_start = buffer.find(b'\xFF')
 
-			if sync_start >= 0:
+			if sync_start >= 0:  # pragma: nobranch
 				data.seek(sync_start, os.SEEK_CUR)
 
 				try:
 					frame = MPEGFrameHeader.load(data)
 					num_frames += 1
 					data.seek(frame._start + frame._size, os.SEEK_SET)
-				except (InvalidFrame, *bitstruct.Error):
+				except (InvalidFrame, *bitstruct.Error):  # pragma: nocover
 					data.seek(1, os.SEEK_CUR)
-			else:
+			else:  # pragma: nocover
 				data.seek(buffer_size, os.SEEK_CUR)
 
 			buffer = data.peek(buffer_size)
@@ -649,7 +648,7 @@ class MP3StreamInfo(StreamInfo):
 			num_samples = samples_per_frame * vbri_header.num_frames
 			bitrate_mode = MP3BitrateMode.VBR
 		else:
-			if more_itertools.all_equal([frame['bitrate'] for frame in frames]):
+			if more_itertools.all_equal([frame['bitrate'] for frame in frames]):  # pragma: nobranch
 				bitrate_mode = MP3BitrateMode.CBR
 
 			num_samples = samples_per_frame * (audio_size / frames[0]._size)
