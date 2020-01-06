@@ -126,9 +126,8 @@ class ID3v2NumericTextFrame(ID3v2BaseFrame):
 
 	@value.validator
 	def validate_value(self, attribute, value):
-		for v in value:
-			if not v.isdigit():
-				raise ValueError("Numeric text frame values must consist only of digits.")
+		if not all(v.isdigit() for v in value):
+			raise ValueError("Numeric text frame values must consist only of digits.")
 
 
 @attrs(repr=False)
@@ -190,12 +189,14 @@ class ID3v2YearFrame(ID3v2NumericTextFrame):
 
 	@value.validator
 	def validate_value(self, attribute, value):
-		for v in value:
-			if (
-				not v.isdigit()
-				or len(v) != 4
-			):
-				raise ValueError("Year frame values must be 4-character number strings.")
+		if not all(
+			(
+				v.isdigit()
+				and len(v) == 4
+			)
+			for v in value
+		):
+			raise ValueError("Year frame values must be 4-character number strings.")
 
 
 @attrs(repr=False)
@@ -204,16 +205,18 @@ class ID3v2TDATFrame(ID3v2NumericTextFrame):
 
 	@value.validator
 	def validate_value(self, attribute, value):
-		for v in value:
-			if (
-				not v.isdigit()
-				or len(v) != 4
-				or int(v[0:2]) not in range(1, 32)
-				or int(v[2:4]) not in range(1, 13)
-			):
-				raise ValueError(
-					"TDAT frame values must be a 4-character number string in the DDMM format.",
-				)
+		if not all(
+			(
+				v.isdigit()
+				and len(v) == 4
+				and int(v[0:2]) in range(1, 32)
+				and int(v[2:4]) in range(1, 13)
+			)
+			for v in value
+		):
+			raise ValueError(
+				"TDAT frame values must be a 4-character number string in the DDMM format.",
+			)
 
 
 @attrs(repr=False)
@@ -222,16 +225,18 @@ class ID3v2TIMEFrame(ID3v2NumericTextFrame):
 
 	@value.validator
 	def validate_value(self, attribute, value):
-		for v in value:
-			if (
-				not v.isdigit()
-				or len(v) != 4
-				or int(v[0:2]) not in range(0, 24)
-				or int(v[2:4]) not in range(0, 60)
-			):
-				raise ValueError(
-					"TIME frame values must be a 4-character number string in the HHMM format.",
-				)
+		if not all(
+			(
+				v.isdigit()
+				and len(v) == 4
+				and int(v[0:2]) in range(0, 24)
+				and int(v[2:4]) in range(0, 60)
+			)
+			for v in value
+		):
+			raise ValueError(
+				"TIME frame values must be a 4-character number string in the HHMM format.",
+			)
 
 
 @attrs(repr=False)
