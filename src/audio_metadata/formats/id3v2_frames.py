@@ -24,11 +24,17 @@ import string
 import struct
 from urllib.parse import unquote
 
-from attr import attrib, attrs
+from attr import (
+	attrib,
+	attrs,
+)
 from tbm_utils import AttrMapping
 
 from .models import Picture
-from .tables import ID3PictureType, ID3v1Genres
+from .tables import (
+	ID3PictureType,
+	ID3v1Genres,
+)
 from ..exceptions import InvalidFrame
 from ..utils import (
 	datareader,

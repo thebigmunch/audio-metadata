@@ -5,9 +5,15 @@ __all__ = [
 ]
 
 import os
-from io import BufferedReader, FileIO
+from io import (
+	BufferedReader,
+	FileIO,
+)
 
-from .exceptions import InvalidFormat, UnsupportedFormat
+from .exceptions import (
+	InvalidFormat,
+	UnsupportedFormat,
+)
 from .formats import (
 	FLAC,
 	MP3,

@@ -10,7 +10,10 @@ __all__ = [
 
 import os
 import struct
-from codecs import BOM_UTF16_BE, BOM_UTF16_LE
+from codecs import (
+	BOM_UTF16_BE,
+	BOM_UTF16_LE,
+)
 from functools import reduce
 from io import (
 	DEFAULT_BUFFER_SIZE,

@@ -1,14 +1,29 @@
-__all__ = ['RIFFTags', 'WAV', 'WAVStreamInfo']
+__all__ = [
+	'RIFFTags',
+	'WAV',
+	'WAVStreamInfo',
+]
 
 import os
 import struct
 
-from attr import attrib, attrs
+from attr import (
+	attrib,
+	attrs,
+)
 from bidict import frozenbidict
 
 from .id3v2 import ID3v2
-from .models import Format, StreamInfo, Tags
-from ..exceptions import InvalidChunk, InvalidFrame, InvalidHeader
+from .models import (
+	Format,
+	StreamInfo,
+	Tags,
+)
+from ..exceptions import (
+	InvalidChunk,
+	InvalidFrame,
+	InvalidHeader,
+)
 from ..utils import datareader
 
 

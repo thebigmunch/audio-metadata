@@ -8,15 +8,24 @@ __all__ = [
 import struct
 from collections import defaultdict
 
-from attr import attrib, attrs
+from attr import (
+	attrib,
+	attrs,
+)
 from bidict import frozenbidict
 from tbm_utils import AttrMapping
 
 from .id3v2_frames import *
 from .models import Tags
 from .tables import ID3Version
-from ..exceptions import InvalidFrame, InvalidHeader
-from ..utils import datareader, decode_synchsafe_int
+from ..exceptions import (
+	InvalidFrame,
+	InvalidHeader,
+)
+from ..utils import (
+	datareader,
+	decode_synchsafe_int,
+)
 
 try:  # pragma: nocover
 	import bitstruct.c as bitstruct

@@ -14,14 +14,30 @@ __all__ = [
 import binascii
 import struct
 
-from attr import Factory, attrib, attrs
-from tbm_utils import AttrMapping, LabelList
+from attr import (
+	Factory,
+	attrib,
+	attrs,
+)
+from tbm_utils import (
+	AttrMapping,
+	LabelList,
+)
 
 from .id3v2 import ID3v2
-from .models import Format, StreamInfo
+from .models import (
+	Format,
+	StreamInfo,
+)
 from .tables import FLACMetadataBlockType
-from .vorbis import VorbisComments, VorbisPicture
-from ..exceptions import InvalidBlock, InvalidHeader
+from .vorbis import (
+	VorbisComments,
+	VorbisPicture,
+)
+from ..exceptions import (
+	InvalidBlock,
+	InvalidHeader,
+)
 from ..utils import datareader
 
 try:  # pragma: nocover

@@ -17,12 +17,24 @@ import struct
 from functools import lru_cache
 
 import more_itertools
-from attr import attrib, attrs
-from tbm_utils import AttrMapping, LabelList
+from attr import (
+	attrib,
+	attrs,
+)
+from tbm_utils import (
+	AttrMapping,
+	LabelList,
+)
 
 from .id3v1 import ID3v1
-from .id3v2 import ID3v2, ID3v2Frames
-from .models import Format, StreamInfo
+from .id3v2 import (
+	ID3v2,
+	ID3v2Frames,
+)
+from .models import (
+	Format,
+	StreamInfo,
+)
 from .tables import (
 	LAMEBitrateMode,
 	LAMEChannelMode,
@@ -36,7 +48,11 @@ from .tables import (
 	MP3SampleRates,
 	MP3SamplesPerFrame,
 )
-from ..exceptions import InvalidFormat, InvalidFrame, InvalidHeader
+from ..exceptions import (
+	InvalidFormat,
+	InvalidFrame,
+	InvalidHeader,
+)
 from ..utils import (
 	datareader,
 	humanize_bitrate,

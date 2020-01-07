@@ -1,9 +1,15 @@
-__all__ = ['VorbisComments', 'VorbisPicture']
+__all__ = [
+	'VorbisComments',
+	'VorbisPicture',
+]
 
 import struct
 from collections import defaultdict
 
-from .models import Picture, Tags
+from .models import (
+	Picture,
+	Tags,
+)
 from .tables import ID3PictureType
 from ..utils import datareader
 

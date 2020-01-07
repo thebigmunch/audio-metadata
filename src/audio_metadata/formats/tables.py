@@ -16,7 +16,10 @@ __all__ = [
 	'MP3SamplesPerFrame',
 ]
 
-from enum import Enum, IntEnum
+from enum import (
+	Enum,
+	IntEnum,
+)
 
 
 class _BaseEnum(Enum):  # pragma: nocover
