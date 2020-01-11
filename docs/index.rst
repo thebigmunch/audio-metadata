@@ -1,4 +1,3 @@
-==============
 audio-metadata
 ==============
 
@@ -88,5 +87,4 @@ See the full :doc:`api`.
 .. toctree::
 	:hidden:
 
-	self
 	api

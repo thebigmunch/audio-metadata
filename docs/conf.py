@@ -3,6 +3,8 @@
 import os
 import sys
 
+import sphinx_material
+
 project_dir = os.path.abspath(os.pardir)
 sys.path.insert(0, os.path.join(project_dir, 'src'))
 
@@ -18,7 +20,8 @@ extensions = [
 	'sphinx.ext.extlinks',
 	'sphinx.ext.intersphinx',
 	'sphinx.ext.napoleon',
-	'sphinx.ext.viewcode'
+	'sphinx.ext.viewcode',
+	'sphinx_material',
 ]
 
 # Add any paths that contain templates here, relative to this directory.
@@ -81,18 +84,26 @@ intersphinx_mapping = {
 
 # -- Options for HTML output ----------------------------------------------
 
-html_theme = 'alabaster'
+html_theme = 'sphinx_material'
 
 # Theme options are theme-specific and customize the look and feel of a theme
 # further.  For a list of options available for each theme, see the
 # documentation.
 #
 html_theme_options = {
-	'github_user': 'thebigmunch',
-	'github_repo': 'audio-metadata',
-	'github_type': 'star',
-	'show_powered_by': False
+	'nav_title': 'audio-metadata',
+	'color_primary': 'blue',
+	'color_accent': 'deep-orange',
+	'repo_url': 'https://github.com/thebigmunch/audio-metadata',
+	'repo_name': 'audio-metadata',
+	'globaltoc_includehidden': True,
+	'master_doc': False,
 }
+
+# Get the them path
+html_theme_path = sphinx_material.html_theme_path()
+# Register the required helpers for the html context
+html_context = sphinx_material.get_html_context()
 
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
@@ -107,10 +118,8 @@ html_show_sphinx = False
 
 html_sidebars = {
 	'**': [
-		'about.html',
+		'globaltoc.html',
 		'localtoc.html',
-		'relations.html',
 		'searchbox.html',
-		'donate.html',
 	]
 }
