@@ -78,7 +78,10 @@ class Format(AttrMapping):
 		repr_dict = {}
 
 		for k, v in sorted(self.items()):
-			if k == 'filesize':
+			if (
+				k == 'filesize'
+				and v is not None
+			):
 				repr_dict[k] = humanize_filesize(v, precision=2)
 			elif not k.startswith('_'):
 				repr_dict[k] = v
