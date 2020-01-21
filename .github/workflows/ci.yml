@@ -1,0 +1,58 @@
+---
+name: CI
+
+on: [push, pull_request]
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v1
+      - uses: excitedleigh/setup-nox@0.1.0
+        with:
+          python-version: 3.8
+      - run: nox -s lint
+
+  doc:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v1
+      - uses: excitedleigh/setup-nox@0.1.0
+        with:
+          python-version: 3.8
+      - run: nox -s doc
+
+  Linux:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v1
+      - uses: excitedleigh/setup-nox@0.1.0
+      - run: nox -s test
+      - uses: codecov/codecov-action@v1
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+
+  macOS:
+    runs-on: macos-latest
+
+    steps:
+      - uses: actions/checkout@v1
+      - uses: excitedleigh/setup-nox@0.1.0
+      - run: nox -s test
+      - uses: codecov/codecov-action@v1
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+
+  Windows:
+    runs-on: windows-latest
+
+    steps:
+      - uses: actions/checkout@v1
+      - uses: excitedleigh/setup-nox@0.1.0
+      - run: nox -s test
+      - uses: codecov/codecov-action@v1
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}

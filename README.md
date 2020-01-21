@@ -2,7 +2,7 @@
 
 [![PyPI](https://img.shields.io/pypi/v/audio-metadata.svg?label=PyPI)](https://pypi.org/project/audio-metadata/)
 ![](https://img.shields.io/badge/Python-3.6%2B-blue.svg)  
-[![Travis](https://img.shields.io/travis/thebigmunch/audio-metadata.svg?label=Travis)](https://travis-ci.org/thebigmunch/audio-metadata)
+[![GitHub CI](https://img.shields.io/github/workflow/status/thebigmunch/audio-metadata/CI?label=GitHub%20CI)](https://github.com/thebigmunch/audio-metadata/actions?query=workflow%3ACI)
 [![Codecov](https://img.shields.io/codecov/c/github/thebigmunch/audio-metadata.svg?label=Codecov)](https://codecov.io/gh/thebigmunch/audio-metadata)  
 [![Docs - Stable](https://img.shields.io/readthedocs/audio-metadata/stable.svg?label=Docs%20%28Stable%29)](https://audio-metadata.readthedocs.io/en/stable/)
 [![Docs - Latest](https://img.shields.io/readthedocs/audio-metadata/latest.svg?label=Docs%20%28Latest%29)](https://audio-metadata.readthedocs.io/en/latest/)
