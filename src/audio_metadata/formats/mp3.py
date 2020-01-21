@@ -24,6 +24,7 @@ from attr import (
 from tbm_utils import (
 	AttrMapping,
 	LabelList,
+	humanize_filesize,
 )
 
 from .id3v1 import ID3v1
@@ -56,7 +57,6 @@ from ..exceptions import (
 from ..utils import (
 	datareader,
 	humanize_bitrate,
-	humanize_filesize,
 	humanize_sample_rate,
 )
 

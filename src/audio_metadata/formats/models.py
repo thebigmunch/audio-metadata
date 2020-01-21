@@ -8,13 +8,15 @@ __all__ = [
 import os
 
 from bidict import frozenbidict
-from tbm_utils import AttrMapping
+from tbm_utils import (
+	AttrMapping,
+	humanize_duration,
+	humanize_filesize,
+)
 
 from ..utils import (
 	datareader,
 	humanize_bitrate,
-	humanize_duration,
-	humanize_filesize,
 	humanize_sample_rate,
 )
 

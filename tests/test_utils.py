@@ -11,8 +11,6 @@ from audio_metadata.utils import (
 	determine_encoding,
 	get_image_size,
 	humanize_bitrate,
-	humanize_duration,
-	humanize_filesize,
 	humanize_sample_rate,
 	split_encoded
 )
@@ -302,38 +300,6 @@ def test_get_image_size():
 )
 def test_humanize_bitrate(bitrate, humanized):
 	assert humanize_bitrate(bitrate) == humanized
-
-
-@pytest.mark.parametrize(
-	'duration,humanized',
-	[
-		(0, '00:00'),
-		(1, '00:01'),
-		(60, '01:00'),
-		(3600, '01:00:00')
-	]
-)
-def test_humanize_duration(duration, humanized):
-	assert humanize_duration(duration) == humanized
-
-
-@pytest.mark.parametrize(
-	'filesize,precision,humanized',
-	[
-		(0, 0, '0 B'),
-		(1, 0, '1 B'),
-		(1024, 0, '1 KiB'),
-		(1500, 2, '1.46 KiB'),
-		(1_048_576, 0, '1 MiB'),
-		(2_048_576, 2, '1.95 MiB'),
-		(1_073_741_824, 0, '1 GiB'),
-		(2_073_741_824, 2, '1.93 GiB'),
-		(1_099_511_627_776, 0, '1024 GiB'),
-		(2_099_511_627_776, 2, '1955.32 GiB')
-	]
-)
-def test_humanize_filesize(filesize, precision, humanized):
-	assert humanize_filesize(filesize, precision=precision) == humanized
 
 
 @pytest.mark.parametrize(

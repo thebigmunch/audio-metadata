@@ -3,8 +3,6 @@ __all__ = [
 	'decode_synchsafe_int',
 	'get_image_size',
 	'humanize_bitrate',
-	'humanize_duration',
-	'humanize_filesize',
 	'humanize_sample_rate',
 ]
 
@@ -139,30 +137,6 @@ def humanize_bitrate(bitrate):
 			break
 
 	return f'{round(bitrate / divisor)} {symbol}'
-
-
-def humanize_duration(duration):
-	if duration // 3600:
-		hours = int(duration // 3600)
-		minutes = int(duration % 3600 // 60)
-		seconds = round(duration % 3600 % 60)
-
-		return f'{hours:02d}:{minutes:02d}:{seconds:02d}'
-	elif duration // 60:
-		minutes = int(duration // 60)
-		seconds = round(duration % 60)
-
-		return f'{minutes:02d}:{seconds:02d}'
-	else:
-		return f'00:{round(duration):02d}'
-
-
-def humanize_filesize(filesize, *, precision=0):
-	for divisor, symbol in [(1024 ** 3, 'GiB'), (1024 ** 2, 'MiB'), (1024 ** 1, 'KiB'), (1, 'B')]:
-		if filesize >= divisor:
-			break
-
-	return f'{filesize / divisor:.{precision}f} {symbol}'
 
 
 def humanize_sample_rate(sample_rate):
