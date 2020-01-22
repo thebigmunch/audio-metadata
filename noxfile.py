@@ -1,6 +1,9 @@
+import os
 import shutil
 
 import nox
+
+ON_GITHUB = 'GITHUB_ACTIONS' in os.environ
 
 py36 = '3.6'
 py37 = '3.7'
@@ -41,7 +44,11 @@ def doc(session):
 def test(session):
 	session.install('-U', '.[test]')
 	session.run('coverage', 'run', '-m', 'pytest', *session.posargs)
-	session.notify('report')
+
+	if ON_GITHUB:
+		session.run('coverage', 'xml')
+	else:
+		session.notify('report')
 
 
 @nox.session(python=[py36, py37, py38])
