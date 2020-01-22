@@ -73,6 +73,12 @@ test = [
 [tool.coverage.run]
 branch = true
 source = [ "audio_metadata" ]
+omit = [
+	"**/__about__.py",
+	"**/__init__.py",
+	"**/exceptions.py",
+	"**/formats/tables.py",
+]
 
 [tool.coverage.report]
 precision = 2
