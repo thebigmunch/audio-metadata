@@ -10,8 +10,6 @@ jobs:
     steps:
       - uses: actions/checkout@v1
       - uses: excitedleigh/setup-nox@0.1.0
-        with:
-          python-version: 3.8
       - run: nox -s lint
 
   doc:
@@ -20,8 +18,6 @@ jobs:
     steps:
       - uses: actions/checkout@v1
       - uses: excitedleigh/setup-nox@0.1.0
-        with:
-          python-version: 3.8
       - run: nox -s doc
 
   Linux:
