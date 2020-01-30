@@ -38,7 +38,7 @@ def test_determine_format_bytes():
 def test_determine_format_filepath():
 	for fp in test_filepaths:
 		assert issubclass(
-			audio_metadata.determine_format(fp),
+			audio_metadata.determine_format(str(fp)),
 			audio_metadata.Format
 		)
 
@@ -76,7 +76,7 @@ def test_load_non_file():
 @pytest.mark.integration
 def test_load_filepath():
 	for fp in test_filepaths:
-		audio_metadata.load(fp)
+		audio_metadata.load(str(fp))
 
 
 @pytest.mark.integration
