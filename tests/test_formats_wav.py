@@ -1,4 +1,7 @@
-import pytest
+from ward import (
+	raises,
+	test,
+)
 
 from audio_metadata import (
 	WAV,
@@ -8,8 +11,12 @@ from audio_metadata import (
 )
 
 
-def test_RIFFTags():
-	with pytest.raises(InvalidChunk):
+@test(
+	"RIFFTags",
+	tags=['unit', 'wav', 'RIFFTags']
+)
+def _():
+	with raises(InvalidChunk):
 		RIFFTags.load(b'NOTINFO')
 
 	riff_tags_init = RIFFTags(
@@ -35,19 +42,33 @@ def test_RIFFTags():
 	assert riff_tags_init == riff_tags_load
 
 
-def test_WAV_invalid_header():
-	with pytest.raises(InvalidHeader, match="Valid WAVE header not found"):
+@test(
+	"Invalid header",
+	tags=['unit', 'wav', 'WAV']
+)
+def _():
+	with raises(InvalidHeader) as ctx:
 		WAV.load(b'TEST0000WAVE')
+	assert str(ctx.raised) == "Valid WAVE header not found."
 
-	with pytest.raises(InvalidHeader):
+	with raises(InvalidHeader):
 		WAV.load(b'RIFF0000TEST')
 
 
-def test_WAV_ID3_invalid_header():
-	with pytest.raises(InvalidHeader):
+@test(
+	"Invalid ID3",
+	tags=['unit', 'wav', 'WAV']
+)
+def _():
+	with raises(InvalidHeader):
 		WAV.load(b'RIFF0000WAVEid3 1234')
 
 
-def test_WAV_invalid_stream_info():
-	with pytest.raises(InvalidHeader, match="Valid WAVE stream info not found"):
+@test(
+	"Invalid stream info",
+	tags=['unit', 'wav', 'WAV']
+)
+def _():
+	with raises(InvalidHeader) as ctx:
 		WAV.load(b'RIFF0000WAVE')
+	assert str(ctx.raised) == "Valid WAVE stream info not found."

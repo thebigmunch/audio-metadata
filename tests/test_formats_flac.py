@@ -1,4 +1,7 @@
-import pytest
+from ward import (
+	raises,
+	test,
+)
 
 from audio_metadata import (
 	FLAC,
@@ -17,6 +20,10 @@ from audio_metadata import (
 )
 
 
+@test(
+	"Ignore ID3v2",
+	tags=['unit', 'flac', 'FLAC'],
+)
 def test_FLAC_load_ID3v2():
 	FLAC.load(
 		b'ID3\x04\x00\x80\x00\x00\x00\x00'
@@ -25,6 +32,10 @@ def test_FLAC_load_ID3v2():
 	)
 
 
+@test(
+	"Load padding block",
+	tags=['unit', 'flac', 'FLAC'],
+)
 def test_FLAC_load_padding():
 	FLAC.load(
 		b'fLaC\x00\x00\x00"\x10\x00\x10\x00\x00\x00\x0e\x00\x00\x10\n'
@@ -33,6 +44,10 @@ def test_FLAC_load_padding():
 	)
 
 
+@test(
+	"Load application block",
+	tags=['unit', 'flac', 'FLAC'],
+)
 def test_FLAC_load_application():
 	FLAC.load(
 		b'fLaC\x00\x00\x00"\x10\x00\x10\x00\x00\x00\x0e\x00\x00\x10\n'
@@ -41,6 +56,10 @@ def test_FLAC_load_application():
 	)
 
 
+@test(
+	"Load seektable block",
+	tags=['unit', 'flac', 'FLAC'],
+)
 def test_FLAC_load_seektable():
 	FLAC.load(
 		b'fLaC\x00\x00\x00"\x10\x00\x10\x00\x00\x00\x0e\x00\x00\x10\n'
@@ -53,6 +72,10 @@ def test_FLAC_load_seektable():
 	)
 
 
+@test(
+	"Load vorbis comment block",
+	tags=['unit', 'flac', 'FLAC'],
+)
 def test_FLAC_load_vorbis_comment():
 	FLAC.load(
 		b'fLaC\x00\x00\x00"\x10\x00\x10\x00\x00\x00\x0e\x00\x00\x10\n'
@@ -61,6 +84,10 @@ def test_FLAC_load_vorbis_comment():
 	)
 
 
+@test(
+	"Load cuesheet block",
+	tags=['unit', 'flac', 'FLAC'],
+)
 def test_FLAC_load_cuesheet():
 	FLAC.load(
 		b'fLaC\x00\x00\x00"\x10\x00\x10\x00\x00\x00\x0e\x00\x00\x10\n'
@@ -98,6 +125,10 @@ def test_FLAC_load_cuesheet():
 	)
 
 
+@test(
+	"Load picture block",
+	tags=['unit', 'flac', 'FLAC'],
+)
 def test_FLAC_load_picture():
 	FLAC.load(
 		b'fLaC\x00\x00\x00"\x10\x00\x10\x00\x00\x00\x0e\x00\x00\x10\n'
@@ -111,7 +142,11 @@ def test_FLAC_load_picture():
 	)
 
 
-def test_FLAC_load_reserved_block_type():
+@test(
+	"Reserved block type is a FLACMetadataBlock",
+	tags=['unit', 'flac', 'FLAC'],
+)
+def _():
 	flac = FLAC.load(
 		b'fLaC\n\x00\x00\x00\x80\x00\x00"\x10\x00\x10\x00\x00\x00\x0e\x00\x00\x10\n'
 		b'\xc4B\xf0\x00\x03]T\x9b\x1b\xe8|kW\x9f\xde#AQ_M\x82\xc0\x08'
@@ -123,24 +158,42 @@ def test_FLAC_load_reserved_block_type():
 	)
 
 
-def test_FLAC_load_no_duration():
+@test(
+	"Load 0 duration",
+	tags=['unit', 'flac', 'FLAC'],
+)
+def _():
 	FLAC.load(
 		b'fLaC\x80\x00\x00"\x12\x00\x12\x00\x00\x00\x00\x00JX\n\xc4B\xf0\x00\x00'
 		b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
 	)
 
 
-def test_FLAC_invalid_header():
-	with pytest.raises(InvalidHeader, match="Valid FLAC header not found"):
+@test(
+	"No FLAC header raises InvalidHeader",
+	tags=['unit', 'flac', 'FLAC'],
+)
+def _():
+	with raises(InvalidHeader) as ctx:
 		FLAC.load(b'TEST')
+	assert str(ctx.raised) == "Valid FLAC header not found."
 
 
-def test_FLAC_invalid_block_type():
-	with pytest.raises(InvalidBlock, match="127 is not a valid FLAC metadata block type"):
+@test(
+	"Invalid block type raises InvalidBlock",
+	tags=['unit', 'flac', 'FLAC'],
+)
+def _():
+	with raises(InvalidBlock) as ctx:
 		FLAC.load(b'fLaC\xff\x00\x00\x00')
+	assert str(ctx.raised) == "127 is not a valid FLAC metadata block type."
 
 
-def test_FLACApplication():
+@test(
+	"FLACApplication",
+	tags=['unit', 'flac', 'FLACApplication'],
+)
+def _():
 	application_init = FLACApplication(
 		id='aiff',
 		data=b'FORM\x02\xe0\x9b\x08AIFF'
@@ -155,7 +208,11 @@ def test_FLACApplication():
 	assert repr(application_init) == repr(application_load) == '<FLACApplication (aiff)>'
 
 
-def test_FLACCueSheetIndex():
+@test(
+	"FLACCueSheetIndex",
+	tags=['unit', 'flac', 'FLACCueSheetIndex'],
+)
+def _():
 	cuesheet_index_init = FLACCueSheetIndex(
 		number=1,
 		offset=0,
@@ -183,7 +240,11 @@ def test_FLACCueSheetIndex():
 	assert repr(cuesheet_index_init) == repr(cuesheet_index_load) == "<FLACCueSheetIndex ({'number': 2, 'offset': 588})>"
 
 
-def test_FLACCueSheetTrack():
+@test(
+	"FLACCueSheetTrack",
+	tags=['unit', 'flac', 'FLACCueSheetTrack'],
+)
+def _():
 	cuesheet_track_init = FLACCueSheetTrack(
 		track_number=1,
 		offset=0,
@@ -245,7 +306,11 @@ def test_FLACCueSheetTrack():
 	assert cuesheet_track_load.pre_emphasis is True
 
 
-def test_FLACCueSheet():
+@test(
+	"FLACCueSheet",
+	tags=['unit', 'flac', 'FLACCueSheet'],
+)
+def _():
 	cuesheet_init = FLACCueSheet(
 		[
 			FLACCueSheetTrack(
@@ -341,7 +406,11 @@ def test_FLACCueSheet():
 	assert repr(cuesheet_init) == repr(cuesheet_load) == '<FLACCueSheet (4 tracks)>'
 
 
-def test_FLACMetadataBlock():
+@test(
+	"FLACMetadataBlock",
+	tags=['unit', 'flac', 'FLACMetadataBlock'],
+)
+def _():
 	metadata_block = FLACMetadataBlock(
 		type=100,
 		data=b'\x00' * 10
@@ -352,7 +421,11 @@ def test_FLACMetadataBlock():
 	assert repr(metadata_block) == '<FLACMetadataBlock [100] (10 bytes)>'
 
 
-def test_FLACPadding():
+@test(
+	"FLACPadding",
+	tags=['unit', 'flac', 'FLACPadding'],
+)
+def _():
 	padding_init = FLACPadding(size=10)
 	padding_load = FLACPadding.load(b'\x00' * 10)
 
@@ -360,7 +433,11 @@ def test_FLACPadding():
 	assert repr(padding_init) == repr(padding_load) == '<FLACPadding (10 bytes)>'
 
 
-def test_FLACPicture():
+@test(
+	"FLACPicture",
+	tags=['unit', 'flac', 'FLACPicture'],
+)
+def _():
 	image_data = (
 		b'\x00\x00\x00\x03\x00\x00\x00\timage/png\x00\x00\x00\x00'
 		b'\x00\x00\x00\x10\x00\x00\x00\x10\x00\x00\x00 \x00\x00'
@@ -387,7 +464,11 @@ def test_FLACPicture():
 	assert vorbis_picture_init == vorbis_picture_load
 
 
-def test_FLACSeektable():
+@test(
+	"FLACSeekTable",
+	tags=['unit', 'flac', 'FLACSeekTable'],
+)
+def _():
 	seekpoints = [
 		FLACSeekPoint(
 			first_sample=first_sample,

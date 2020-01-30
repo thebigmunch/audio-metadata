@@ -1,6 +1,10 @@
 from pathlib import Path
 
-import pytest
+from ward import (
+	each,
+	raises,
+	test,
+)
 
 from audio_metadata import (
 	ID3Version,
@@ -11,17 +15,21 @@ from audio_metadata import (
 )
 
 
-def test_ID3v2Frames():
-	with pytest.raises(ValueError):
+@test(
+	"ID3v2Frames",
+	tags=['unit', 'id3', 'id3v2', 'ID3v2Frames'],
+)
+def _():
+	with raises(ValueError):
 		ID3v2Frames(id3_version=(1, 0))
 
-	with pytest.raises(ValueError):
+	with raises(ValueError):
 		ID3v2Frames(id3_version=None)
 
-	with pytest.raises(ValueError):
+	with raises(ValueError):
 		ID3v2Frames.load(b'data', (1, 0))
 
-	with pytest.raises(ValueError):
+	with raises(ValueError):
 		ID3v2Frames.load(b'data', None)
 
 	v22_frames_init = ID3v2Frames(id3_version=ID3Version.v22)
@@ -58,48 +66,54 @@ def test_ID3v2Frames():
 	assert v24_frames_load.FIELD_MAP == default_frames.FIELD_MAP == ID3v2Frames._v24_FIELD_MAP
 
 
-def test_ID3v2Flags():
-	assert all(
-		flag is True
-		for flag in ID3v2Flags(
-			unsync=1,
+@test(
+	"ID3v2Flags",
+	tags=['unit', 'id3', 'id3v2', 'ID3v2Flags'],
+)
+def _(
+	flags=each(
+		ID3v2Flags(
 			extended=1,
 			experimental=1,
 			footer=1,
-		).values()
-	)
-
-	assert all(
-		flag is True
-		for flag in ID3v2Flags(
-			unsync=True,
+			unsync=1,
+		),
+		ID3v2Flags(
 			extended=True,
 			experimental=True,
 			footer=True,
-		).values()
-	)
-
-	assert all(
-		flag is False
-		for flag in ID3v2Flags(
-			unsync=0,
+			unsync=True,
+		),
+		ID3v2Flags(
 			extended=0,
 			experimental=0,
 			footer=0,
-		).values()
-	)
-
-	assert all(
-		flag is False
-		for flag in ID3v2Flags(
-			unsync=False,
+			unsync=0,
+		),
+		ID3v2Flags(
 			extended=False,
 			experimental=False,
 			footer=False,
-		).values()
+			unsync=False,
+		),
+	),
+	expected=each(
+		True,
+		True,
+		False,
+		False,
+	)
+):
+	assert all(
+		flag is expected
+		for flag in flags.values()
 	)
 
 
+@test(
+	"ID3v2Header",
+	tags=['unit', 'id3', 'id3v2', 'ID3v2Header'],
+)
 def test_ID3v2Header():
 	v24_header_load = ID3v2Header.load(Path(__file__).parent / 'files' / 'audio' / 'test-mp3-id3v24.mp3')
 	v24_header_init = ID3v2Header(
@@ -129,7 +143,7 @@ def test_ID3v2Header():
 
 	assert v24_header_load == v24_header_init
 
-	with pytest.raises(InvalidHeader):
+	with raises(InvalidHeader):
 		ID3v2Header.load(
 			(Path(__file__).parent / 'files' / 'audio' / 'test-mp3-id3v24.mp3').read_bytes()[3:]
 		)

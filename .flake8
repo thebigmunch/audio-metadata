@@ -2,7 +2,9 @@
 ignore = E117, E203, W191, W503, F403, F405
 max-line-length = 150
 import-order-style = tbm
-application-import-names = audio_metadata
+application-import-names =
+	audio_metadata
+	tests
 exclude =
 	__pycache__
 	.nox

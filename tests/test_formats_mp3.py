@@ -1,7 +1,11 @@
 import struct
 from pathlib import Path
 
-import pytest
+from ward import (
+	each,
+	raises,
+	test,
+)
 
 from audio_metadata import (
 	InvalidFormat,
@@ -25,10 +29,14 @@ from audio_metadata import (
 	XingToC,
 )
 from audio_metadata.utils import DataReader
-from .utils import strip_repr
+from tests.utils import strip_repr
 
 
-def test_LAMEReplayGain():
+@test(
+	"LAMEReplayGain",
+	tags=['unit', 'mp3', 'lame', 'LAMEReplayGain']
+)
+def _():
 	replay_gain_load = LAMEReplayGain.load(b'\x00\x1b\xfa\x05,D\x00\x00')
 	replay_gain_init = LAMEReplayGain(
 		peak=0.21856749057769775,
@@ -90,49 +98,55 @@ def test_LAMEReplayGain():
 	assert replay_gain_load.album_adjustment == replay_gain_init.album_adjustment == -0.0
 
 
-def test_LAMEEncodingFlags():
-	assert all(
-		flag is True
-		for flag in LAMEEncodingFlags(
+@test(
+	"LAMEEncodingFlags",
+	tags=['unit', 'mp3', 'lame', 'LAMEEncodingFlags']
+)
+def _(
+	flags=each(
+		LAMEEncodingFlags(
 			nogap_continuation=1,
 			nogap_continued=1,
 			nspsytune=1,
 			nssafejoint=1,
-		).values()
-	)
-
-	assert all(
-		flag is True
-		for flag in LAMEEncodingFlags(
+		),
+		LAMEEncodingFlags(
 			nogap_continuation=True,
 			nogap_continued=True,
 			nspsytune=True,
 			nssafejoint=True,
-		).values()
-	)
-
-	assert all(
-		flag is False
-		for flag in LAMEEncodingFlags(
+		),
+		LAMEEncodingFlags(
 			nogap_continuation=0,
 			nogap_continued=0,
 			nspsytune=0,
 			nssafejoint=0,
-		).values()
-	)
-
-	assert all(
-		flag is False
-		for flag in LAMEEncodingFlags(
+		),
+		LAMEEncodingFlags(
 			nogap_continuation=False,
 			nogap_continued=False,
 			nspsytune=False,
 			nssafejoint=False,
-		).values()
+		),
+	),
+	expected=each(
+		True,
+		True,
+		False,
+		False,
+	)
+):
+	assert all(
+		flag is expected
+		for flag in flags.values()
 	)
 
 
-def test_LAMEHeader():
+@test(
+	"LAMEHeader",
+	tags=['unit', 'mp3', 'lame', 'LAMEHeader']
+)
+def _():
 	lame_data = (
 		b'LAME3.99r\x04\xdd\x00\x00\x00\x00\x00\x00\x00\x00'
 		b'5 $\x04\xecM\x00\x01\xf4\x00\x00P\t:\xe9\x1d|'
@@ -175,7 +189,7 @@ def test_LAMEHeader():
 		version=(3, 99),
 	)
 
-	with pytest.raises(InvalidHeader):
+	with raises(InvalidHeader):
 		LAMEHeader.load(lame_data[9:], 100)
 
 	assert lame_header_load == lame_header_init
@@ -225,7 +239,11 @@ def test_LAMEHeader():
 	)
 
 
-def test_XingHeader_no_lame():
+@test(
+	"XingHeader",
+	tags=['unit', 'mp3', 'xing', 'XingHeader']
+)
+def _():
 	xing_data = (
 		b'Xing'
 		b'\x00\x00\x00\x0f'
@@ -240,7 +258,7 @@ def test_XingHeader_no_lame():
 		b'\x00\x00\x00d'
 	)
 
-	with pytest.raises(InvalidHeader):
+	with raises(InvalidHeader):
 		XingHeader.load(xing_data[4:])
 
 	xing_header_load = XingHeader.load(xing_data)
@@ -260,7 +278,11 @@ def test_XingHeader_no_lame():
 	assert xing_header_load.toc == xing_header_init.toc == XingToC(bytearray(xing_data[16:116]))
 
 
-def test_VBRIHeader():
+@test(
+	"VBRIHeader",
+	tags=['unit', 'mp3', 'vbri', 'VBRIHeader']
+)
+def _():
 	vbri_data = (
 		b'VBRI\x00\x01\t1\x00K\x00\x00Pr\x00\x00\x00\xc2\x00\xc1'
 		b'\x00\x01\x00\x02\x00\x01\x02\n\x00h\x00h\x00h\x00h\x00h'
@@ -283,10 +305,10 @@ def test_VBRIHeader():
 		b'\x00h\x00h\x00h\x00h\x00h\x00h\x00h\x00h\x00h\x00h\x00h'
 	)
 
-	with pytest.raises(InvalidHeader):
+	with raises(InvalidHeader):
 		VBRIHeader.load(vbri_data[4:])
 
-	with pytest.raises(InvalidHeader):
+	with raises(InvalidHeader):
 		VBRIHeader.load(vbri_data[:23] + b'\x01' + vbri_data[24:])
 
 	toc_entries = []
@@ -327,7 +349,11 @@ def test_VBRIHeader():
 	assert vbri_header_load.version == vbri_header_init.version == 1
 
 
-def test_MPEGFrameHeader():
+@test(
+	"MPEGFrameHeader",
+	tags=['unit', 'mp3', 'MPEGFrameHeader']
+)
+def _():
 	mpeg_frame_data = (
 		b'\xff\xfb\x90d\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
 		b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00Xing\x00\x00\x00\x0f\x00\x00\x00\xc1\x00\x00P\t\x00\x02'
@@ -346,10 +372,10 @@ def test_MPEGFrameHeader():
 		b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
 	)
 
-	with pytest.raises(InvalidFrame):
+	with raises(InvalidFrame):
 		MPEGFrameHeader.load(mpeg_frame_data[2:])
 
-	with pytest.raises(InvalidFrame):
+	with raises(InvalidFrame):
 		MPEGFrameHeader.load(mpeg_frame_data[0:1] + b'\xee' + mpeg_frame_data[2:])
 
 	mpeg_frame_load = MPEGFrameHeader.load(mpeg_frame_data)
@@ -434,7 +460,11 @@ def test_MPEGFrameHeader():
 	)
 
 
-def test_MP3StreamInfo():
+@test(
+	"MP3StreamInfo",
+	tags=['unit', 'mp3', 'MP3StreamInfo']
+)
+def _():
 	pass
 
 	data = DataReader(Path(__file__).parent / 'files' / 'audio' / 'test-mp3-lame-vbr.mp3')
@@ -465,5 +495,5 @@ def test_MP3StreamInfo():
 	assert MP3StreamInfo.count_mpeg_frames(data) == 0
 
 	data.seek(0)
-	with pytest.raises(InvalidFormat):
+	with raises(InvalidFormat):
 		MP3StreamInfo.find_mpeg_frames(data)

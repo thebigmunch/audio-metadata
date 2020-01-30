@@ -43,21 +43,21 @@ def doc(session):
 @nox.session(python=[py36, py37, py38])
 def test(session):
 	session.install('-U', '.[test]')
-	session.run('coverage', 'run', '-m', 'pytest', *session.posargs)
+	session.run('coverage', 'run', '-m', 'ward', *session.posargs)
 	session.notify('report')
 
 
 @nox.session(python=[py36, py37, py38])
 def integration(session):
 	session.install('-U', '.[test]')
-	session.run('coverage', 'run', '-m', 'pytest', '-m', 'integration', *session.posargs)
+	session.run('coverage', 'run', '-m', 'ward', '--tags', 'integration', *session.posargs)
 	session.notify('report')
 
 
 @nox.session(python=[py36, py37, py38])
 def unit(session):
 	session.install('-U', '.[test]')
-	session.run('coverage', 'run', '-m', 'pytest', '-m', 'not integration', *session.posargs)
+	session.run('coverage', 'run', '-m', 'ward', '--tags', 'unit', *session.posargs)
 	session.notify('report')
 
 
