@@ -162,24 +162,32 @@ class ID3v2Frames(Tags):
 		},
 	)
 
+	def __init__(self, mapping=None, *, id3_version=ID3Version.v24, **kwargs):
+		id3_version = ID3Version(id3_version)
+		if id3_version is ID3Version.v22:
+			self.FIELD_MAP = ID3v2Frames._v22_FIELD_MAP
+		elif id3_version is ID3Version.v23:
+			self.FIELD_MAP = ID3v2Frames._v23_FIELD_MAP
+		elif id3_version is ID3Version.v24:
+			self.FIELD_MAP = ID3v2Frames._v24_FIELD_MAP
+		else:
+			raise ValueError(f"Unsupported ID3 version: {id3_version}")
+
+		super().__init__(mapping, **kwargs)
+
 	@datareader
 	@classmethod
 	def load(cls, data, id3_version):
+		id3_version = ID3Version(id3_version)
 		if id3_version is ID3Version.v22:
-			cls.FIELD_MAP = cls._v22_FIELD_MAP
-
 			struct_pattern = '3s3B'
 			size_len = 3
 			per_byte = 8
 		elif id3_version is ID3Version.v23:
-			cls.FIELD_MAP = cls._v23_FIELD_MAP
-
 			struct_pattern = '4s4B2B'
 			size_len = 4
 			per_byte = 8
 		elif id3_version is ID3Version.v24:
-			cls.FIELD_MAP = cls._v24_FIELD_MAP
-
 			struct_pattern = '4s4B2B'
 			size_len = 4
 			per_byte = 7
@@ -241,7 +249,7 @@ class ID3v2Frames(Tags):
 			else:
 				frames[frame.id].append(frame.value)
 
-		return cls(frames)
+		return cls(frames, id3_version=id3_version)
 
 
 @attrs(repr=False)
