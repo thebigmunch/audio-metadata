@@ -8,6 +8,10 @@ This project adheres to [Semantic Versioning](https://semver.org).
 
 [Commits](https://github.com/thebigmunch/audio-metadata/compare/0.6.0...master)
 
+### Fixed
+
+* ``RIFFTags`` field values are now lists.
+
 
 ## [0.6.0](https://github.com/thebigmunch/audio-metadata/releases/tag/0.6.0) (2019-10-18)
 

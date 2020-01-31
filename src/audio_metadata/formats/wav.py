@@ -56,7 +56,7 @@ class RIFFTags(Tags):
 		while len(field):
 			size = struct.unpack('I', data.read(4))[0]
 			value = data.read(size).strip(b'\x00').decode('utf-8')
-			fields[field.decode('utf-8')] = value
+			fields[field.decode('utf-8')] = [value]
 
 			b = data.read(1)
 			while b == b'\x00':
