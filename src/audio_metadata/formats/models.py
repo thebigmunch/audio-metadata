@@ -32,12 +32,12 @@ class Tags(AttrMapping):
 	def __setitem__(self, key, value):
 		k = self.FIELD_MAP.get(key, key)
 
-		return super().__setitem__(k, value)
+		super().__setitem__(k, value)
 
 	def __delitem__(self, key):
 		k = self.FIELD_MAP.get(key, key)
 
-		return super().__delitem__(k)
+		super().__delitem__(k)
 
 	def __iter__(self):
 		return iter(
