@@ -44,11 +44,7 @@ def doc(session):
 def test(session):
 	session.install('-U', '.[test]')
 	session.run('coverage', 'run', '-m', 'pytest', *session.posargs)
-
-	if ON_GITHUB:
-		session.run('coverage', 'xml')
-	else:
-		session.notify('report')
+	session.notify('report')
 
 
 @nox.session(python=[py36, py37, py38])
@@ -68,5 +64,9 @@ def unit(session):
 @nox.session
 def report(session):
 	session.install('-U', 'coverage[toml]')
-	session.run('coverage', 'report', '-m')
-	session.run('coverage', 'erase')
+
+	if ON_GITHUB:
+		session.run('coverage', 'xml')
+	else:
+		session.run('coverage', 'report', '-m')
+		session.run('coverage', 'erase')
