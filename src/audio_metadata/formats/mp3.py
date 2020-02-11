@@ -385,7 +385,7 @@ class MPEGFrameHeader(AttrMapping):
 	version = attrib()
 	layer = attrib()
 	protected = attrib()
-	padded = attrib()
+	padded = attrib(converter=bool)
 	bitrate = attrib()
 	channel_mode = attrib(converter=MP3ChannelMode)
 	channels = attrib()
@@ -424,7 +424,7 @@ class MPEGFrameHeader(AttrMapping):
 		protected = not protection
 
 		bitrate_index, sample_rate_index, padded = bitstruct.unpack(
-			'u4 u2 u1',
+			'u4 u2 b1',
 			data.read(1),
 		)
 
