@@ -11,6 +11,7 @@ This project adheres to [Semantic Versioning](https://semver.org).
 ### Changed
 
 * Set ``FIELD_MAP`` on instance rather than class in ``ID3v2Frames.load``.
+* Convert ``LAMEHeader.unwise_settings_used`` to boolean.
 
 ### Fixed
 

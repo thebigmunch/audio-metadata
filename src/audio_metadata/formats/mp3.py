@@ -152,7 +152,7 @@ class LAMEHeader(AttrMapping):
 	replay_gain = attrib()
 	source_sample_rate = attrib()
 	surround_info = attrib(converter=LAMESurroundInfo)
-	unwise_settings_used = attrib()
+	unwise_settings_used = attrib(converter=bool)
 
 	def __repr__(self):
 		repr_dict = {}
@@ -229,7 +229,7 @@ class LAMEHeader(AttrMapping):
 		)
 
 		source_sample_rate, unwise_settings_used, channel_mode_, noise_shaping = bitstruct.unpack(
-			'u2 u1 u3 u2',
+			'u2 b1 u3 u2',
 			data.read(1),
 		)
 		channel_mode = LAMEChannelMode(channel_mode_)
