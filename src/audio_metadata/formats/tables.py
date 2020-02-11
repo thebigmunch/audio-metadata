@@ -323,17 +323,17 @@ LAMEPreset = _BaseIntEnum(
 
 
 class LAMEReplayGainOrigin(_BaseIntEnum):
-	not_set = 0
-	artist = 1
-	user = 2
-	model = 3
-	average = 4
+	NOT_SET = 0
+	ARTIST = 1
+	USER = 2
+	MODEL = 3
+	AVERAGE = 4
 
 
 class LAMEReplayGainType(_BaseIntEnum):
-	not_set = 0
-	radio = 1
-	audiophile = 2
+	NOT_SET = 0
+	RADIO = 1
+	AUDIOPHILE = 2
 
 
 class LAMESurroundInfo(_BaseIntEnum):

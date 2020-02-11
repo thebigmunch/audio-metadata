@@ -426,13 +426,16 @@ class ID3v2Frame(ID3v2BaseFrame):
 			language = decode_bytestring(frame_data[1:4])
 			args.append(language)
 
-			values = [decode_bytestring(v, encoding) for v in split_encoded(frame_data[4:], encoding)]
+			values = split_encoded(frame_data[4:], encoding)
 
 			# Ignore empty comments.
 			if len(values) < 2:
 				return None
 
-			args.extend(values)
+			args.extend(
+				decode_bytestring(v, encoding)
+				for v in values
+			)
 		elif frame_type is ID3v2GenreFrame:
 			encoding = determine_encoding(frame_data[0:1])
 
@@ -440,7 +443,10 @@ class ID3v2Frame(ID3v2BaseFrame):
 			values = []
 			while True:
 				split = split_encoded(remainder, encoding)
-				values.extend([decode_bytestring(v, encoding) for v in split])
+				values.extend(
+					decode_bytestring(v, encoding)
+					for v in split
+				)
 
 				if len(split) < 2:
 					break
@@ -473,7 +479,10 @@ class ID3v2Frame(ID3v2BaseFrame):
 			description, value = split_encoded(remainder, encoding)
 
 			values = [decode_bytestring(mime_type)]
-			values.extend([decode_bytestring(v, encoding) for v in [filename, description]])
+			values.extend(
+				decode_bytestring(v, encoding)
+				for v in [filename, description]
+			)
 			values.append(value)
 
 			args.extend(values)

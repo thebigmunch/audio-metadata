@@ -36,19 +36,10 @@ def determine_format(data):
 		Format: An audio format class if supported, else None.
 	"""
 
-	def _verify_mp3(data):
-		try:
-			MP3StreamInfo.find_mpeg_frames(data)
-		except InvalidFormat:
-			return False
-		else:
-			return True
-
-	if not isinstance(data, DataReader):
-		try:
-			data = DataReader(data)
-		except AttributeError:
-			return None
+	try:
+		data = DataReader(data)
+	except AttributeError:
+		return None
 
 	data.seek(0, os.SEEK_SET)
 	d = data.peek(4)
@@ -61,14 +52,16 @@ def determine_format(data):
 
 	if d.startswith(b'ID3'):
 		ID3v2.load(data)
-		d = data.peek(4)
 
-		if d == b'fLaC':
-			return FLAC
-		else:
-			return MP3 if _verify_mp3(data) else None
+	if data.peek(4) == b'fLaC':
+		return FLAC
 
-	return MP3 if _verify_mp3(data) else None
+	try:
+		MP3StreamInfo.find_mpeg_frames(data)
+	except InvalidFormat:
+		return None
+	else:
+		return MP3
 
 
 def load(f):

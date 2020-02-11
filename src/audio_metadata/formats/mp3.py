@@ -349,8 +349,6 @@ class VBRIHeader(AttrMapping):
 		toc_entry_num_bytes = struct.unpack('>H', data.read(2))[0]
 		toc_entry_num_frames = struct.unpack('>H', data.read(2))[0]
 
-		toc_size = num_toc_entries * toc_entry_num_bytes
-
 		if toc_entry_num_bytes not in [2, 4]:
 			raise InvalidHeader('Invalid VBRI TOC entry size.')
 
@@ -361,7 +359,7 @@ class VBRIHeader(AttrMapping):
 
 		toc = VBRIToC(
 			struct.unpack(pattern, data.read(toc_entry_num_bytes))[0]
-			for _ in range(toc_size // toc_entry_num_bytes)
+			for _ in range(num_toc_entries)
 		)
 
 		return cls(
