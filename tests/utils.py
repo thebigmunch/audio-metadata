@@ -4,6 +4,8 @@ def strip_repr(obj):
 	).replace(
 		'\n', ''
 	).replace(
+		'\r', ''
+	).replace(
 		',    ', ', '
 	).replace(
 		'    ', ''

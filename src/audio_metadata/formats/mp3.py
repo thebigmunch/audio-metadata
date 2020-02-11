@@ -176,7 +176,7 @@ class LAMEHeader(AttrMapping):
 
 		version = None
 		version_match = re.search(rb'LAME(\d+)\.(\d+)', encoder)
-		if version_match:
+		if version_match:  # pragma: nobranch
 			version = tuple(int(part) for part in version_match.groups())
 
 		revision, bitrate_mode_ = bitstruct.unpack(
@@ -522,7 +522,7 @@ class MP3StreamInfo(StreamInfo):
 					data.seek(frame._start + frame._size, os.SEEK_SET)
 				except (InvalidFrame, *bitstruct.Error):  # pragma: nocover
 					data.seek(1, os.SEEK_CUR)
-			else:  # pragma: nocover
+			else:
 				data.seek(buffer_size, os.SEEK_CUR)
 
 			buffer = data.peek(buffer_size)
