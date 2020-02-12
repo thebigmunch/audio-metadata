@@ -163,12 +163,13 @@ class ID3v2Frames(Tags):
 	)
 
 	def __init__(self, mapping=None, *, id3_version=ID3Version.v24, **kwargs):
-		id3_version = ID3Version(id3_version)
-		if id3_version is ID3Version.v22:
+		self._version = ID3Version(id3_version)
+
+		if self._version is ID3Version.v22:
 			self.FIELD_MAP = ID3v2Frames._v22_FIELD_MAP
-		elif id3_version is ID3Version.v23:
+		elif self._version is ID3Version.v23:
 			self.FIELD_MAP = ID3v2Frames._v23_FIELD_MAP
-		elif id3_version is ID3Version.v24:
+		elif self._version is ID3Version.v24:
 			self.FIELD_MAP = ID3v2Frames._v24_FIELD_MAP
 		else:
 			raise ValueError(f"Unsupported ID3 version: {id3_version}")
