@@ -203,7 +203,7 @@ class ID3v2Frames(Tags):
 				break
 
 			# Ignore oddities/bad frames.
-			if not isinstance(frame, ID3v2BaseFrame):
+			if frame is None:
 				continue
 
 			# TODO: Finish any missing frame types.
