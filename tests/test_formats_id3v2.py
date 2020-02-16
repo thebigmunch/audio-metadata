@@ -27,21 +27,21 @@ def test_ID3v2Frames():
 	v22_frames_init = ID3v2Frames(id3_version=ID3Version.v22)
 	v22_frames_init_tuple = ID3v2Frames(id3_version=(2, 2))
 	v22_frames_load = ID3v2Frames.load(
-		Path(__file__).parent / 'files' / 'audio' / 'test-mp3-id3v22.mp3',
+		(Path(__file__).parent / 'files' / 'audio' / 'test-mp3-id3v22.mp3').read_bytes()[10:],
 		ID3Version.v22,
 	)
 
 	v23_frames_init = ID3v2Frames(id3_version=ID3Version.v23)
 	v23_frames_init_tuple = ID3v2Frames(id3_version=(2, 3))
 	v23_frames_load = ID3v2Frames.load(
-		Path(__file__).parent / 'files' / 'audio' / 'test-mp3-id3v23.mp3',
+		(Path(__file__).parent / 'files' / 'audio' / 'test-mp3-id3v23.mp3').read_bytes()[10:],
 		ID3Version.v23,
 	)
 
 	v24_frames_init = ID3v2Frames(id3_version=ID3Version.v24)
 	v24_frames_init_tuple = ID3v2Frames(id3_version=(2, 4))
 	v24_frames_load = ID3v2Frames.load(
-		Path(__file__).parent / 'files' / 'audio' / 'test-mp3-id3v24.mp3',
+		(Path(__file__).parent / 'files' / 'audio' / 'test-mp3-id3v24.mp3').read_bytes()[10:],
 		ID3Version.v24,
 	)
 
