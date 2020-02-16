@@ -6,6 +6,7 @@ __all__ = [
 ]
 
 import struct
+import warnings
 from collections import defaultdict
 
 from attr import (
@@ -17,7 +18,10 @@ from tbm_utils import AttrMapping
 
 from .id3v2_frames import *
 from .models import Tags
-from .tables import ID3Version
+from .tables import (
+	ID3Version,
+	ID3v2FrameIDs,
+)
 from ..exceptions import (
 	InvalidFrame,
 	InvalidHeader,
@@ -204,6 +208,15 @@ class ID3v2Frames(Tags):
 
 			# Ignore oddities/bad frames.
 			if frame is None:
+				continue
+
+			# Ignore frames not defined in spec for ID3 version.
+			# Warn user and encourage reporting.
+			if frame.id not in ID3v2FrameIDs[id3_version]:
+				warnings.warn(
+					f"Ignoring '{frame.id}' frame with value '{frame.value}'.\n"
+					f"'{frame.id}' is not supported in the ID3v2.{id3_version.value[1]} specification.\n"
+				)
 				continue
 
 			# TODO: Finish any missing frame types.

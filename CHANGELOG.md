@@ -18,6 +18,8 @@ This project adheres to [Semantic Versioning](https://semver.org).
 
 * Set ``FIELD_MAP`` on instance rather than class in ``ID3v2Frames.load``.
 * Convert ``LAMEHeader.unwise_settings_used`` to boolean.
+* Handle ID3 frames not valid for ID3 header version.
+	Ignore them and emit a warning to the user.
 
 ### Fixed
 
