@@ -1,8 +1,58 @@
+import pytest
+
 from audio_metadata.formats.tables import ID3PictureType
 from audio_metadata.formats.vorbis import (
+	InvalidComment,
+	VorbisComment,
 	VorbisComments,
 	VorbisPicture
 )
+
+
+@pytest.mark.parametrize(
+	'data,expected',
+	[
+		(
+			b'\x10\x00\x00\x00album=test-album',
+			VorbisComment('album', 'test-album'),
+		),
+		(
+			b'\x14\x00\x00\x00COMMENT=test-comment',
+			VorbisComment('comment', 'test-comment'),
+		),
+		(
+			b'\t\x00\x00\x00date=2000',
+			VorbisComment('date', '2000'),
+		),
+		(
+			b'\x0c\x00\x00\x00discnumber=1',
+			VorbisComment('discnumber', '1'),
+		),
+		(
+			b'\x10\x00\x00\x00genre=test-genre',
+			VorbisComment('genre', 'test-genre'),
+		),
+		(
+			b'\x0c\x00\x00\x00DISCTOTAL=99',
+			VorbisComment('disctotal', '99'),
+		),
+		(
+			b'\r\x00\x00\x00TRACKTOTAL=99',
+			VorbisComment('tracktotal', '99'),
+		),
+		(
+			b'\r\x00\x00\x00tracknumber=1',
+			VorbisComment('tracknumber', '1'),
+		),
+	]
+)
+def test_VorbisComment(data, expected):
+	assert VorbisComment.load(data) == expected
+
+
+def test_VorbisComment_invalid():
+	with pytest.raises(InvalidComment):
+		VorbisComment.load(b'\x09\x00\x00\x00albumtest-album')
 
 
 def test_VorbisComments():

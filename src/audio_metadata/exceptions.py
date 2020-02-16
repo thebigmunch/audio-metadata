@@ -2,6 +2,7 @@ __all__ = [
 	'AudioMetadataException',
 	'InvalidBlock',
 	'InvalidChunk',
+	'InvalidComment',
 	'InvalidFormat',
 	'InvalidFrame',
 	'InvalidHeader',
@@ -21,6 +22,12 @@ class InvalidBlock(AudioMetadataException):
 	pass
 
 
+class InvalidComment(AudioMetadataException):
+	"""Exception raised when a Vorbis comment is invalid."""
+
+	pass
+
+
 class InvalidChunk(AudioMetadataException):
 	"""Exception raised when a WAV chunk is invalid."""
 
@@ -34,7 +41,7 @@ class InvalidFormat(AudioMetadataException):
 
 
 class InvalidFrame(AudioMetadataException):
-	"""Exception raised when a metadata frame is invalid."""
+	"""Exception raised when an ID3v2 frame is invalid."""
 
 	pass
 
