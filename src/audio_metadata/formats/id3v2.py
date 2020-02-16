@@ -210,6 +210,7 @@ class ID3v2Frames(Tags):
 			if frame is None:
 				continue
 
+			# TODO: Handle commonly seen frames like from iTunes.
 			# Ignore frames not defined in spec for ID3 version.
 			# Warn user and encourage reporting.
 			if frame.id not in ID3v2FrameIDs[id3_version]:

@@ -30,8 +30,7 @@ class VorbisComment(AttrMapping):
 		length = struct.unpack('I', data.read(4))[0]
 		comment = data.read(length).decode('utf-8', 'replace')
 
-		# TODO: Exception.
-		if '=' not in comment:  # pragma: nobranch
+		if '=' not in comment:
 			raise InvalidComment("Vorbis comment must contain an '='.")
 
 		name, value = comment.split('=', 1)
