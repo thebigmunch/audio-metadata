@@ -22,6 +22,7 @@ This project adheres to [Semantic Versioning](https://semver.org).
 ### Fixed
 
 * ``RIFFTags`` field values are now lists.
+* Regression with ``MP3StreamInfo.find_mpeg_frames`` caching.
 
 
 ## [0.6.0](https://github.com/thebigmunch/audio-metadata/releases/tag/0.6.0) (2019-10-18)

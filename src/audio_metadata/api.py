@@ -36,10 +36,13 @@ def determine_format(data):
 		Format: An audio format class if supported, else None.
 	"""
 
-	try:
-		data = DataReader(data)
-	except AttributeError:
-		return None
+	# Only convert if not already a DataReader.
+	# Otherwise ``find_mpeg_frames`` caching won't work.
+	if not isinstance(data, DataReader):
+		try:
+			data = DataReader(data)
+		except AttributeError:
+			return None
 
 	data.seek(0, os.SEEK_SET)
 	d = data.peek(4)
