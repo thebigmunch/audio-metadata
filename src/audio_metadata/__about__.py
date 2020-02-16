@@ -15,7 +15,7 @@ try:
 except ImportError:
 	from importlib_metadata import metadata
 
-meta = metadata(__name__.replace('.__about__', ''))
+meta = metadata('audio-metadata')
 
 __title__ = meta['Name']
 __summary__ = meta['Summary']
