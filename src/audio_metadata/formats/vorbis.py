@@ -10,12 +10,12 @@ from collections import defaultdict
 from attr import attrib, attrs
 from tbm_utils import AttrMapping
 
-from .models import (
+from .tables import ID3PictureType
+from ..exceptions import InvalidComment
+from ..models import (
 	Picture,
 	Tags,
 )
-from .tables import ID3PictureType
-from ..exceptions import InvalidComment
 from ..utils import datareader
 
 

@@ -25,10 +25,6 @@ from tbm_utils import (
 )
 
 from .id3v2 import ID3v2
-from .models import (
-	Format,
-	StreamInfo,
-)
 from .tables import FLACMetadataBlockType
 from .vorbis import (
 	VorbisComments,
@@ -37,6 +33,10 @@ from .vorbis import (
 from ..exceptions import (
 	InvalidBlock,
 	InvalidHeader,
+)
+from ..models import (
+	Format,
+	StreamInfo,
 )
 from ..utils import datareader
 

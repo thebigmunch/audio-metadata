@@ -14,15 +14,15 @@ from attr import (
 from bidict import frozenbidict
 
 from .id3v2 import ID3v2
-from .models import (
-	Format,
-	StreamInfo,
-	Tags,
-)
 from ..exceptions import (
 	InvalidChunk,
 	InvalidFrame,
 	InvalidHeader,
+)
+from ..models import (
+	Format,
+	StreamInfo,
+	Tags,
 )
 from ..utils import datareader
 

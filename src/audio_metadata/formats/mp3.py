@@ -32,10 +32,6 @@ from .id3v2 import (
 	ID3v2,
 	ID3v2Frames,
 )
-from .models import (
-	Format,
-	StreamInfo,
-)
 from .tables import (
 	LAMEBitrateMode,
 	LAMEChannelMode,
@@ -53,6 +49,10 @@ from ..exceptions import (
 	InvalidFormat,
 	InvalidFrame,
 	InvalidHeader,
+)
+from ..models import (
+	Format,
+	StreamInfo,
 )
 from ..utils import (
 	datareader,

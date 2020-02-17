@@ -30,12 +30,12 @@ from attr import (
 )
 from tbm_utils import AttrMapping
 
-from .models import Picture
 from .tables import (
 	ID3PictureType,
 	ID3v1Genres,
 )
 from ..exceptions import InvalidFrame
+from ..models import Picture
 from ..utils import (
 	datareader,
 	decode_bytestring,

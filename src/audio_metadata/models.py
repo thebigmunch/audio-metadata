@@ -14,7 +14,7 @@ from tbm_utils import (
 	humanize_filesize,
 )
 
-from ..utils import (
+from .utils import (
 	datareader,
 	humanize_bitrate,
 	humanize_sample_rate,

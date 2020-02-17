@@ -5,9 +5,9 @@ __all__ = [
 
 from tbm_utils import AttrMapping
 
-from .models import Tags
 from .tables import ID3v1Genres
 from ..exceptions import InvalidHeader
+from ..models import Tags
 from ..utils import datareader
 
 

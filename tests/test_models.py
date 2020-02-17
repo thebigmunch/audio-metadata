@@ -2,7 +2,7 @@ from pathlib import Path
 
 from bidict import frozenbidict
 
-from audio_metadata.formats.models import (
+from audio_metadata.models import (
 	Format,
 	Picture,
 	StreamInfo,
