@@ -1,3 +1,6 @@
+# http://soundfile.sapp.org/doc/WaveFormat/
+# http://www-mmsp.ece.mcgill.ca/Documents/AudioFormats/WAVE/WAVE.html
+
 __all__ = [
 	'RIFFTags',
 	'WAV',
@@ -27,6 +30,7 @@ from ..models import (
 from ..utils import datareader
 
 
+# https://www.recordingblogs.com/wiki/list-chunk-of-a-wave-file
 class RIFFTags(Tags):
 	FIELD_MAP = frozenbidict(
 		{

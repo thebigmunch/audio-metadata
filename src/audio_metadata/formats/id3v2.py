@@ -1,3 +1,5 @@
+# http://id3.org/Developer%20Information
+
 __all__ = [
 	'ID3v2',
 	'ID3v2Flags',

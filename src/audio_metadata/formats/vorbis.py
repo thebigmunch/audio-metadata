@@ -1,3 +1,5 @@
+# https://xiph.org/vorbis/doc/v-comment.html
+
 __all__ = [
 	'VorbisComment',
 	'VorbisComments',

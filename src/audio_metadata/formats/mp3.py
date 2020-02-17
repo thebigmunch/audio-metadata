@@ -1,3 +1,6 @@
+# https://www.mp3-tech.org/programmer/frame_header.html
+# http://gabriel.mp3-tech.org/mp3infotag.html
+
 __all__ = [
 	'LAMEEncodingFlags',
 	'LAMEHeader',

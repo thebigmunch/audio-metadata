@@ -1,3 +1,5 @@
+# https://xiph.org/flac/format.html
+
 __all__ = [
 	'FLAC',
 	'FLACApplication',

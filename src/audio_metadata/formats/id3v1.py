@@ -1,3 +1,5 @@
+# http://id3.org/ID3v1
+
 __all__ = [
 	'ID3v1',
 	'ID3v1Fields',

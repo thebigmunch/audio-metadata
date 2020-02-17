@@ -33,6 +33,7 @@ class _BaseIntEnum(IntEnum):  # pragma: nocover
 		return f'<{self.__class__.__name__}.{self.name}>'
 
 
+# https://xiph.org/flac/format.html#metadata_block_header
 class FLACMetadataBlockType(_BaseIntEnum):
 	STREAMINFO = 0
 	PADDING = 1
@@ -43,6 +44,7 @@ class FLACMetadataBlockType(_BaseIntEnum):
 	PICTURE = 6
 
 
+# http://id3.org/id3v2.3.0#Attached_picture
 class ID3PictureType(_BaseIntEnum):
 	OTHER = 0
 	FILE_ICON = 1
@@ -77,6 +79,7 @@ class ID3Version(_BaseEnum):
 	v24 = (2, 4)
 
 
+# https://en.wikipedia.org/wiki/List_of_ID3v1_Genres
 ID3v1Genres = [
 	'Blues',
 	'Classic Rock',
@@ -273,6 +276,7 @@ ID3v1Genres = [
 
 
 ID3v2FrameIDs = {
+	# http://id3.org/id3v2-00
 	ID3Version.v22: {
 		'BUF', 'CNT', 'COM', 'CRA', 'CRM', 'ETC', 'EQU', 'IPL',
 		'LNK', 'MCI', 'MLL', 'PIC', 'POP', 'REV', 'RVA', 'SLT',
@@ -283,6 +287,7 @@ ID3v2FrameIDs = {
 		'TT2', 'TT3', 'TXT', 'TXX', 'TYE', 'UFI', 'ULT', 'WAF',
 		'WAR', 'WAS', 'WCM', 'WCP', 'WPB', 'WXX',
 	},
+	# http://id3.org/id3v2.3.0#Declared_ID3v2_frames
 	ID3Version.v23: {
 		'AENC', 'APIC', 'COMM', 'COMR', 'ENCR', 'EQUA', 'ETCO',
 		'GEOB', 'GRID', 'IPLS', 'LINK', 'MCDI', 'MLLT', 'OWNE',
@@ -296,6 +301,7 @@ ID3v2FrameIDs = {
 		'USER', 'USLT', 'WCOM', 'WCOP', 'WOAF', 'WOAR', 'WOAS',
 		'WORS', 'WPAY', 'WPUB', 'WXXX',
 	},
+	# http://id3.org/id3v2.4.0-frames
 	ID3Version.v24: {
 		'AENC', 'APIC', 'ASPI', 'COMM', 'COMR', 'ENCR', 'EQU2',
 		'ETCO', 'GEOB', 'GRID', 'LINK', 'MCDI', 'MLLT', 'OWNE',
