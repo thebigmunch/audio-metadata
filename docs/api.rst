@@ -21,6 +21,7 @@ Exceptions
 
 .. autoexception:: AudioMetadataException
 .. autoexception:: InvalidChunk
+.. autoexception:: InvalidComment
 .. autoexception:: InvalidFrame
 .. autoexception:: InvalidHeader
 .. autoexception:: UnsupportedFormat
@@ -46,6 +47,7 @@ FLAC
 .. autoclass:: FLACCueSheetTrack
 .. autoclass:: FLACMetadataBlock
 .. autoclass:: FLACPadding
+.. autoclass:: FLACPicture
 .. autoclass:: FLACSeekPoint
 .. autoclass:: FLACSeekTable
 .. autoclass:: FLACStreamInfo
@@ -88,8 +90,8 @@ MP3
 Vorbis
 ------
 
+.. autoclass:: VorbisComment
 .. autoclass:: VorbisComments
-.. autoclass:: VorbisPicture
 
 
 WAV
