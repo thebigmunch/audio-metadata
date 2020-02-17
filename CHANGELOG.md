@@ -21,6 +21,7 @@ This project adheres to [Semantic Versioning](https://semver.org).
 * Handle ID3 frames not valid for ID3 header version.
 	Ignore them and emit a warning to the user.
 * Move models module to top level.
+* ``vorbis.VorbisPicture`` -> ``flac.FLACPicture``.
 
 ### Fixed
 

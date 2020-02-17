@@ -6,6 +6,7 @@ __all__ = [
 	'FLACCueSheetTrack',
 	'FLACMetadataBlock',
 	'FLACPadding',
+	'FLACPicture',
 	'FLACSeekPoint',
 	'FLACSeekTable',
 	'FLACStreamInfo',
@@ -25,17 +26,18 @@ from tbm_utils import (
 )
 
 from .id3v2 import ID3v2
-from .tables import FLACMetadataBlockType
-from .vorbis import (
-	VorbisComments,
-	VorbisPicture,
+from .tables import (
+	FLACMetadataBlockType,
+	ID3PictureType,
 )
+from .vorbis import VorbisComments
 from ..exceptions import (
 	InvalidBlock,
 	InvalidHeader,
 )
 from ..models import (
 	Format,
+	Picture,
 	StreamInfo,
 )
 from ..utils import datareader
@@ -248,6 +250,33 @@ class FLACPadding(AttrMapping):
 		return cls(len(data.peek()))
 
 
+class FLACPicture(Picture):
+	@datareader
+	@classmethod
+	def load(cls, data):
+		type_, mime_length = struct.unpack('>2I', data.read(8))
+		mime_type = data.read(mime_length).decode('utf-8', 'replace')
+
+		desc_length = struct.unpack('>I', data.read(4))[0]
+		description = data.read(desc_length).decode('utf-8', 'replace')
+
+		width, height, depth, colors = struct.unpack('>4I', data.read(16))
+
+		data_length = struct.unpack('>I', data.read(4))[0]
+		data = data.read(data_length)
+
+		return cls(
+			type=ID3PictureType(type_),
+			mime_type=mime_type,
+			description=description,
+			width=width,
+			height=height,
+			depth=depth,
+			colors=colors,
+			data=data,
+		)
+
+
 @attrs(repr=False)
 class FLACSeekPoint(AttrMapping):
 	first_sample = attrib()
@@ -332,7 +361,7 @@ class FLAC(Format):
 
 	Attributes:
 		cuesheet (FLACCueSheet): The cuesheet metadata block.
-		pictures (list): A list of :class:`VorbisPicture` objects.
+		pictures (list): A list of :class:`FLACPicture` objects.
 		seektable (FLACSeekTable): The seektable metadata block.
 		streaminfo (FLACStreamInfo): The audio stream information.
 		tags (VorbisComments): The Vorbis comment metadata block.
@@ -391,7 +420,7 @@ class FLAC(Format):
 				self.cuesheet = cuesheet_block
 				self._blocks.append(cuesheet_block)
 			elif block_type == FLACMetadataBlockType.PICTURE:
-				picture = VorbisPicture.load(metadata_block_data)
+				picture = FLACPicture.load(metadata_block_data)
 				self.pictures.append(picture)
 				self._blocks.append(picture)
 			elif block_type >= 127:
