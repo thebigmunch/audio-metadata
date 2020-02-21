@@ -74,7 +74,10 @@ class RIFFTags(Tags):
 		return cls(fields)
 
 
-@attrs(repr=False)
+@attrs(
+	repr=False,
+	kw_only=True,
+)
 class WAVStreamInfo(StreamInfo):
 	_start = attrib()
 	_size = attrib()
@@ -165,13 +168,13 @@ class WAV(Format):
 			duration = audio_size / byte_rate
 
 			self.streaminfo = WAVStreamInfo(
-				audio_start,
-				audio_size,
-				bit_depth,
-				bitrate,
-				channels,
-				duration,
-				sample_rate,
+				start=audio_start,
+				size=audio_size,
+				bit_depth=bit_depth,
+				bitrate=bitrate,
+				channels=channels,
+				duration=duration,
+				sample_rate=sample_rate,
 			)
 		except UnboundLocalError:
 			raise InvalidHeader("Valid WAVE stream info not found.")

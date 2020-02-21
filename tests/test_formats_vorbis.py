@@ -12,35 +12,59 @@ from audio_metadata.formats.vorbis import (
 	[
 		(
 			b'\x10\x00\x00\x00album=test-album',
-			VorbisComment('album', 'test-album'),
+			VorbisComment(
+				name='album',
+				value='test-album',
+			),
 		),
 		(
 			b'\x14\x00\x00\x00COMMENT=test-comment',
-			VorbisComment('comment', 'test-comment'),
+			VorbisComment(
+				name='comment',
+				value='test-comment',
+			),
 		),
 		(
 			b'\t\x00\x00\x00date=2000',
-			VorbisComment('date', '2000'),
+			VorbisComment(
+				name='date',
+				value='2000',
+			),
 		),
 		(
 			b'\x0c\x00\x00\x00discnumber=1',
-			VorbisComment('discnumber', '1'),
+			VorbisComment(
+				name='discnumber',
+				value='1',
+			),
 		),
 		(
 			b'\x10\x00\x00\x00genre=test-genre',
-			VorbisComment('genre', 'test-genre'),
+			VorbisComment(
+				name='genre',
+				value='test-genre',
+			),
 		),
 		(
 			b'\x0c\x00\x00\x00DISCTOTAL=99',
-			VorbisComment('disctotal', '99'),
+			VorbisComment(
+				name='disctotal',
+				value='99',
+			),
 		),
 		(
 			b'\r\x00\x00\x00TRACKTOTAL=99',
-			VorbisComment('tracktotal', '99'),
+			VorbisComment(
+				name='tracktotal',
+				value='99',
+			),
 		),
 		(
 			b'\r\x00\x00\x00tracknumber=1',
-			VorbisComment('tracknumber', '1'),
+			VorbisComment(
+				name='tracknumber',
+				value='1',
+			),
 		),
 	]
 )

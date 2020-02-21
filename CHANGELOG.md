@@ -8,6 +8,10 @@ This project adheres to [Semantic Versioning](https://semver.org).
 
 [Commits](https://github.com/thebigmunch/audio-metadata/compare/0.7.0...master)
 
+### Changed
+
+* Make all attrs classes require keyword arguments.
+
 
 ## [0.7.0](https://github.com/thebigmunch/audio-metadata/releases/tag/0.7.0) (2020-02-17)
 

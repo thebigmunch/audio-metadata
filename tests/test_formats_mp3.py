@@ -93,22 +93,42 @@ def test_LAMEReplayGain():
 def test_LAMEEncodingFlags():
 	assert all(
 		flag is True
-		for flag in LAMEEncodingFlags(1, 1, 1, 1).values()
+		for flag in LAMEEncodingFlags(
+			nogap_continuation=1,
+			nogap_continued=1,
+			nspsytune=1,
+			nssafejoint=1,
+		).values()
 	)
 
 	assert all(
 		flag is True
-		for flag in LAMEEncodingFlags(True, True, True, True).values()
+		for flag in LAMEEncodingFlags(
+			nogap_continuation=True,
+			nogap_continued=True,
+			nspsytune=True,
+			nssafejoint=True,
+		).values()
 	)
 
 	assert all(
 		flag is False
-		for flag in LAMEEncodingFlags(0, 0, 0, 0).values()
+		for flag in LAMEEncodingFlags(
+			nogap_continuation=0,
+			nogap_continued=0,
+			nspsytune=0,
+			nssafejoint=0,
+		).values()
 	)
 
 	assert all(
 		flag is False
-		for flag in LAMEEncodingFlags(False, False, False, False).values()
+		for flag in LAMEEncodingFlags(
+			nogap_continuation=False,
+			nogap_continued=False,
+			nspsytune=False,
+			nssafejoint=False,
+		).values()
 	)
 
 
@@ -120,7 +140,7 @@ def test_LAMEHeader():
 
 	lame_header_load = LAMEHeader.load(lame_data, 100)
 	lame_header_init = LAMEHeader(
-		b'\x1d|',
+		crc=b'\x1d|',
 		ath_type=5,
 		audio_crc=b':\xe9',
 		audio_size=20489,
@@ -225,7 +245,7 @@ def test_XingHeader_no_lame():
 
 	xing_header_load = XingHeader.load(xing_data)
 	xing_header_init = XingHeader(
-		None,
+		lame=None,
 		num_bytes=20489,
 		num_frames=193,
 		quality=100,
@@ -334,12 +354,12 @@ def test_MPEGFrameHeader():
 
 	mpeg_frame_load = MPEGFrameHeader.load(mpeg_frame_data)
 	mpeg_frame_init = MPEGFrameHeader(
-		0,
-		417,
-		None,
-		XingHeader(
-			LAMEHeader(
-				b'\x1d|',
+		start=0,
+		size=417,
+		vbri=None,
+		xing=XingHeader(
+			lame=LAMEHeader(
+				crc=b'\x1d|',
 				ath_type=5,
 				audio_crc=b':\xe9',
 				audio_size=20489,

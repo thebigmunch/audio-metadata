@@ -16,7 +16,10 @@ from ..models import Tags
 from ..utils import datareader
 
 
-@attrs(repr=False)
+@attrs(
+	repr=False,
+	kw_only=True,
+)
 class VorbisComment(AttrMapping):
 	name = attrib(converter=lambda n: n.lower())
 	value = attrib()
@@ -32,7 +35,10 @@ class VorbisComment(AttrMapping):
 
 		name, value = comment.split('=', 1)
 
-		return cls(name, value)
+		return cls(
+			name=name,
+			value=value,
+		)
 
 
 # TODO: Number frames.
@@ -50,4 +56,7 @@ class VorbisComments(Tags):
 			comment = VorbisComment.load(data)
 			fields[comment.name].append(comment.value)
 
-		return cls(**fields, _vendor=vendor)
+		return cls(
+			_vendor=vendor,
+			**fields,
+		)

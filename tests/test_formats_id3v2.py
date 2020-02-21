@@ -61,29 +61,49 @@ def test_ID3v2Frames():
 def test_ID3v2Flags():
 	assert all(
 		flag is True
-		for flag in ID3v2Flags(1, 1, 1, 1).values()
+		for flag in ID3v2Flags(
+			unsync=1,
+			extended=1,
+			experimental=1,
+			footer=1,
+		).values()
 	)
 
 	assert all(
 		flag is True
-		for flag in ID3v2Flags(True, True, True, True).values()
+		for flag in ID3v2Flags(
+			unsync=True,
+			extended=True,
+			experimental=True,
+			footer=True,
+		).values()
 	)
 
 	assert all(
 		flag is False
-		for flag in ID3v2Flags(0, 0, 0, 0).values()
+		for flag in ID3v2Flags(
+			unsync=0,
+			extended=0,
+			experimental=0,
+			footer=0,
+		).values()
 	)
 
 	assert all(
 		flag is False
-		for flag in ID3v2Flags(False, False, False, False).values()
+		for flag in ID3v2Flags(
+			unsync=False,
+			extended=False,
+			experimental=False,
+			footer=False,
+		).values()
 	)
 
 
 def test_ID3v2Header():
 	v24_header_load = ID3v2Header.load(Path(__file__).parent / 'files' / 'audio' / 'test-mp3-id3v24.mp3')
 	v24_header_init = ID3v2Header(
-		2254,
+		size=2254,
 		flags=ID3v2Flags(
 			experimental=False,
 			extended=False,

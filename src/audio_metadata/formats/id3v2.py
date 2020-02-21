@@ -269,7 +269,10 @@ class ID3v2Frames(Tags):
 		return cls(frames, id3_version=id3_version)
 
 
-@attrs(repr=False)
+@attrs(
+	repr=False,
+	kw_only=True,
+)
 class ID3v2Flags(AttrMapping):
 	unsync = attrib(converter=bool)
 	extended = attrib(converter=bool)
@@ -277,7 +280,10 @@ class ID3v2Flags(AttrMapping):
 	footer = attrib(converter=bool)
 
 
-@attrs(repr=False)
+@attrs(
+	repr=False,
+	kw_only=True,
+)
 class ID3v2Header(AttrMapping):
 	_size = attrib()
 	version = attrib()
@@ -318,7 +324,11 @@ class ID3v2Header(AttrMapping):
 
 		size = decode_synchsafe_int(sync_size, 7)
 
-		return cls(size, version, flags)
+		return cls(
+			size=size,
+			version=version,
+			flags=flags,
+		)
 
 
 class ID3v2(AttrMapping):

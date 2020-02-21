@@ -78,24 +78,36 @@ class ID3v2Picture(Picture):
 		)
 
 
-@attrs(repr=False)
+@attrs(
+	repr=False,
+	kw_only=True,
+)
 class ID3v2BaseFrame(AttrMapping):
 	id = attrib()  # noqa
 
 
-@attrs(repr=False)
+@attrs(
+	repr=False,
+	kw_only=True,
+)
 class ID3v2CommentFrame(ID3v2BaseFrame):
 	language = attrib()
 	description = attrib()
 	value = attrib()
 
 
-@attrs(repr=False)
+@attrs(
+	repr=False,
+	kw_only=True,
+)
 class ID3v2GenreFrame(ID3v2BaseFrame):
 	value = attrib()
 
 
-@attrs(repr=False)
+@attrs(
+	repr=False,
+	kw_only=True,
+)
 class ID3v2GEOBFrame(ID3v2BaseFrame):
 	mime_type = attrib()
 	filename = attrib()
@@ -103,7 +115,10 @@ class ID3v2GEOBFrame(ID3v2BaseFrame):
 	value = attrib()
 
 
-@attrs(repr=False)
+@attrs(
+	repr=False,
+	kw_only=True,
+)
 class ID3v2NumberFrame(ID3v2BaseFrame):
 	value = attrib()
 
@@ -128,7 +143,10 @@ class ID3v2NumberFrame(ID3v2BaseFrame):
 		return tot
 
 
-@attrs(repr=False)
+@attrs(
+	repr=False,
+	kw_only=True,
+)
 class ID3v2NumericTextFrame(ID3v2BaseFrame):
 	value = attrib()
 
@@ -138,18 +156,27 @@ class ID3v2NumericTextFrame(ID3v2BaseFrame):
 			raise ValueError("Numeric text frame values must consist only of digits.")
 
 
-@attrs(repr=False)
+@attrs(
+	repr=False,
+	kw_only=True,
+)
 class ID3v2PictureFrame(ID3v2BaseFrame):
 	value = attrib(converter=ID3v2Picture.load)
 
 
-@attrs(repr=False)
+@attrs(
+	repr=False,
+	kw_only=True,
+)
 class ID3v2PrivateFrame(ID3v2BaseFrame):
 	owner = attrib()
 	value = attrib()
 
 
-@attrs(repr=False)
+@attrs(
+	repr=False,
+	kw_only=True,
+)
 class ID3v2SynchronizedLyricsFrame(ID3v2BaseFrame):
 	language = attrib()
 	timestamp_format = attrib()
@@ -157,41 +184,62 @@ class ID3v2SynchronizedLyricsFrame(ID3v2BaseFrame):
 	value = attrib()
 
 
-@attrs(repr=False)
+@attrs(
+	repr=False,
+	kw_only=True,
+)
 class ID3v2TextFrame(ID3v2BaseFrame):
 	value = attrib()
 
 
-@attrs(repr=False)
+@attrs(
+	repr=False,
+	kw_only=True,
+)
 class ID3v2TimestampFrame(ID3v2BaseFrame):
 	value = attrib()
 
 
-@attrs(repr=False)
+@attrs(
+	repr=False,
+	kw_only=True,
+)
 class ID3v2UnsynchronizedLyricsFrame(ID3v2BaseFrame):
 	language = attrib()
 	description = attrib()
 	value = attrib()
 
 
-@attrs(repr=False)
+@attrs(
+	repr=False,
+	kw_only=True,
+)
 class ID3v2URLLinkFrame(ID3v2BaseFrame):
 	value = attrib()
 
 
-@attrs(repr=False)
+@attrs(
+	repr=False,
+	kw_only=True,
+)
 class ID3v2UserURLLinkFrame(ID3v2BaseFrame):
 	description = attrib()
 	value = attrib()
 
 
-@attrs(repr=False)
+@attrs(
+	repr=False,
+	kw_only=True,
+)
 class ID3v2UserTextFrame(ID3v2BaseFrame):
 	description = attrib()
 	value = attrib()
 
 
-@attrs(repr=False)
+@attrs(
+	repr=False,
+	kw_only=True,
+)
 class ID3v2YearFrame(ID3v2NumericTextFrame):
 	value = attrib()
 
@@ -207,7 +255,10 @@ class ID3v2YearFrame(ID3v2NumericTextFrame):
 			raise ValueError("Year frame values must be 4-character number strings.")
 
 
-@attrs(repr=False)
+@attrs(
+	repr=False,
+	kw_only=True,
+)
 class ID3v2TDATFrame(ID3v2NumericTextFrame):
 	value = attrib()
 
@@ -227,7 +278,10 @@ class ID3v2TDATFrame(ID3v2NumericTextFrame):
 			)
 
 
-@attrs(repr=False)
+@attrs(
+	repr=False,
+	kw_only=True,
+)
 class ID3v2TIMEFrame(ID3v2NumericTextFrame):
 	value = attrib()
 
@@ -247,7 +301,10 @@ class ID3v2TIMEFrame(ID3v2NumericTextFrame):
 			)
 
 
-@attrs(repr=False)
+@attrs(
+	repr=False,
+	kw_only=True,
+)
 class ID3v2Frame(ID3v2BaseFrame):
 	value = attrib()
 
@@ -421,23 +478,18 @@ class ID3v2Frame(ID3v2BaseFrame):
 		frame_data = data.read(frame_size)
 
 		# TODO: Move logic into frame classes?
-		args = [frame_id]
+		kwargs = {'id': frame_id}
 		if frame_type is ID3v2CommentFrame:
 			encoding = determine_encoding(frame_data[0:1])
 
-			language = decode_bytestring(frame_data[1:4])
-			args.append(language)
-
 			values = split_encoded(frame_data[4:], encoding)
-
 			# Ignore empty comments.
 			if len(values) < 2:
 				return None
 
-			args.extend(
-				decode_bytestring(v, encoding)
-				for v in values
-			)
+			kwargs['language'] = decode_bytestring(frame_data[1:4])
+			kwargs['description'] = decode_bytestring(values[0], encoding)
+			kwargs['value'] = decode_bytestring(values[1], encoding)
 		elif frame_type is ID3v2GenreFrame:
 			encoding = determine_encoding(frame_data[0:1])
 
@@ -472,7 +524,7 @@ class ID3v2Frame(ID3v2BaseFrame):
 					elif match['id'] == 'RX':
 						genres.append('Remix')
 
-			args.append(genres)
+			kwargs['value'] = genres
 		elif frame_type is ID3v2GEOBFrame:
 			encoding = determine_encoding(frame_data[0:1])
 
@@ -480,36 +532,32 @@ class ID3v2Frame(ID3v2BaseFrame):
 			filename, remainder = split_encoded(remainder, encoding)
 			description, value = split_encoded(remainder, encoding)
 
-			values = [decode_bytestring(mime_type)]
-			values.extend(
-				decode_bytestring(v, encoding)
-				for v in [filename, description]
-			)
-			values.append(value)
-
-			args.extend(values)
+			kwargs['mime_type'] = decode_bytestring(mime_type)
+			kwargs['filename'] = decode_bytestring(filename, encoding)
+			kwargs['description'] = decode_bytestring(description, encoding)
+			kwargs['value'] = value
 		elif frame_type is ID3v2PictureFrame:
-			args.append(frame_data)
+			kwargs['value'] = frame_data
 		elif frame_type is ID3v2PrivateFrame:
 			owner_end = frame_data.index(b'\x00')
-			args.append(frame_data[0:owner_end].decode('iso-8859-1'))
-			args.append(frame_data[owner_end + 1:])
+			kwargs['owner'] = frame_data[0:owner_end].decode('iso-8859-1')
+			kwargs['value'] = frame_data[owner_end + 1:]
 		elif frame_type is ID3v2UnsynchronizedLyricsFrame:
 			encoding = determine_encoding(frame_data[0:1])
 
-			language = decode_bytestring(frame_data[1:4])
-			args.append(language)
+			kwargs['language'] = decode_bytestring(frame_data[1:4])
 
-			for v in split_encoded(frame_data[4:], encoding):
-				args.append(decode_bytestring(v, encoding))
+			description, value = split_encoded(frame_data[4:], encoding)
+			kwargs['description'] = decode_bytestring(description, encoding)
+			kwargs['value'] = decode_bytestring(description, encoding)
 		elif frame_type is ID3v2URLLinkFrame:
-			args.append(unquote(decode_bytestring(frame_data)))
+			kwargs['value'] = unquote(decode_bytestring(frame_data))
 		elif frame_type is ID3v2UserURLLinkFrame:
 			encoding = determine_encoding(frame_data)
 
 			description, url = split_encoded(frame_data[1:], encoding)
-			args.append(decode_bytestring(description, encoding))
-			args.append(unquote(decode_bytestring(url)))
+			kwargs['description'] = decode_bytestring(description, encoding)
+			kwargs['url'] = unquote(decode_bytestring(url))
 		elif issubclass(
 			frame_type,
 			(
@@ -518,7 +566,7 @@ class ID3v2Frame(ID3v2BaseFrame):
 			),
 		):
 			encoding = determine_encoding(frame_data[0:1])
-			args.append(decode_bytestring(frame_data[1:], encoding))
+			kwargs['value'] = decode_bytestring(frame_data[1:], encoding)
 		elif issubclass(
 			frame_type,
 			(
@@ -533,13 +581,13 @@ class ID3v2Frame(ID3v2BaseFrame):
 				for value in split_encoded(frame_data[1:], encoding)
 				if value
 			]
-			args.append(values)
+			kwargs['value'] = values
 		elif frame_type is ID3v2Frame:
-			args.append(frame_data)
+			kwargs['value'] = frame_data
 		else:
-			args.append(decode_bytestring(frame_data))
+			kwargs['value'] = decode_bytestring(frame_data)
 
 		try:
-			return frame_type(*args)
+			return frame_type(**kwargs)
 		except (TypeError, ValueError):  # Bad frame value.
 			return None

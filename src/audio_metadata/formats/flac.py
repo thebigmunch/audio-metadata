@@ -50,7 +50,10 @@ except ImportError:  # pragma: nocover
 	import bitstruct
 
 
-@attrs(repr=False)
+@attrs(
+	repr=False,
+	kw_only=True,
+)
 class FLACApplication(AttrMapping):
 	"""Application metadata block.
 
@@ -71,10 +74,16 @@ class FLACApplication(AttrMapping):
 		id_ = data.read(4).decode('utf-8', 'replace')
 		data = data.read()
 
-		return cls(id_, data)
+		return cls(
+			id=id_,
+			data=data,
+		)
 
 
-@attrs(repr=False)
+@attrs(
+	repr=False,
+	kw_only=True,
+)
 class FLACCueSheetIndex(AttrMapping):
 	"""A cue sheet track index point.
 
@@ -108,10 +117,16 @@ class FLACCueSheetIndex(AttrMapping):
 
 		data.read(3)
 
-		return cls(number, offset)
+		return cls(
+			number=number,
+			offset=offset,
+		)
 
 
-@attrs(repr=False)
+@attrs(
+	repr=False,
+	kw_only=True,
+)
 class FLACCueSheetTrack(AttrMapping):
 	"""A FLAC cue sheet track.
 
@@ -168,12 +183,12 @@ class FLACCueSheetTrack(AttrMapping):
 			indexes.append(FLACCueSheetIndex.load(data))
 
 		return cls(
-			track_number,
-			offset,
-			isrc,
-			type_,
-			pre_emphasis,
-			indexes,
+			track_number=track_number,
+			offset=offset,
+			isrc=isrc,
+			type=type_,
+			pre_emphasis=pre_emphasis,
+			indexes=indexes,
 		)
 
 
@@ -230,7 +245,10 @@ class FLACCueSheet(LabelList):
 		)
 
 
-@attrs(repr=False)
+@attrs(
+	repr=False,
+	kw_only=True,
+)
 class FLACMetadataBlock(AttrMapping):
 	type = attrib()  # noqa
 	data = attrib()
@@ -239,7 +257,10 @@ class FLACMetadataBlock(AttrMapping):
 		return f"<FLACMetadataBlock [{self.type}] ({len(self.data)} bytes)>"
 
 
-@attrs(repr=False)
+@attrs(
+	repr=False,
+	kw_only=True,
+)
 class FLACPadding(AttrMapping):
 	size = attrib()
 
@@ -249,7 +270,7 @@ class FLACPadding(AttrMapping):
 	@datareader
 	@classmethod
 	def load(cls, data):
-		return cls(len(data.peek()))
+		return cls(size=len(data.peek()))
 
 
 class FLACPicture(Picture):
@@ -279,7 +300,10 @@ class FLACPicture(Picture):
 		)
 
 
-@attrs(repr=False)
+@attrs(
+	repr=False,
+	kw_only=True,
+)
 class FLACSeekPoint(AttrMapping):
 	first_sample = attrib()
 	offset = attrib()
@@ -288,7 +312,13 @@ class FLACSeekPoint(AttrMapping):
 	@datareader
 	@classmethod
 	def load(cls, data):
-		return cls(*struct.unpack('>QQH', data.read()))
+		first_sample, offset, num_samples = struct.unpack('>QQH', data.read())
+
+		return cls(
+			first_sample=first_sample,
+			offset=offset,
+			num_samples=num_samples,
+		)
 
 
 class FLACSeekTable(LabelList):
@@ -306,7 +336,10 @@ class FLACSeekTable(LabelList):
 		return cls(seekpoints)
 
 
-@attrs(repr=False)
+@attrs(
+	repr=False,
+	kw_only=True,
+)
 class FLACStreamInfo(StreamInfo):
 	_start = attrib()
 	_size = attrib()
@@ -341,18 +374,18 @@ class FLACStreamInfo(StreamInfo):
 		duration = total_samples / sample_rate
 
 		return cls(
-			None,
-			None,
-			min_block_size,
-			max_block_size,
-			min_frame_size,
-			max_frame_size,
-			bit_depth,
-			None,
-			channels,
-			duration,
-			md5sum,
-			sample_rate,
+			start=None,
+			size=None,
+			min_block_size=min_block_size,
+			max_block_size=max_block_size,
+			min_frame_size=min_frame_size,
+			max_frame_size=max_frame_size,
+			bit_depth=bit_depth,
+			bitrate=None,
+			channels=channels,
+			duration=duration,
+			md5=md5sum,
+			sample_rate=sample_rate,
 		)
 
 
@@ -428,7 +461,12 @@ class FLAC(Format):
 			elif block_type >= 127:
 				raise InvalidBlock(f"{block_type} is not a valid FLAC metadata block type.")
 			else:
-				self._blocks.append(FLACMetadataBlock(block_type, metadata_block_data))
+				self._blocks.append(
+					FLACMetadataBlock(
+						type=block_type,
+						data=metadata_block_data,
+					)
+				)
 
 			if is_last_block:
 				pos = self._obj.tell()

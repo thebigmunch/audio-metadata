@@ -117,7 +117,10 @@ def test_FLAC_load_reserved_block_type():
 		b'\xc4B\xf0\x00\x03]T\x9b\x1b\xe8|kW\x9f\xde#AQ_M\x82\xc0\x08'
 	)
 
-	assert flac._blocks[0] == FLACMetadataBlock(10, b'')
+	assert flac._blocks[0] == FLACMetadataBlock(
+		type=10,
+		data=b'',
+	)
 
 
 def test_FLAC_load_no_duration():
@@ -153,7 +156,10 @@ def test_FLACApplication():
 
 
 def test_FLACCueSheetIndex():
-	cuesheet_index_init = FLACCueSheetIndex(1, 0)
+	cuesheet_index_init = FLACCueSheetIndex(
+		number=1,
+		offset=0,
+	)
 	cuesheet_index_load = FLACCueSheetIndex.load(
 		b'\x00\x00\x00\x00\x00\x00\x00\x00\x01\x00\x00\x00'
 	)
@@ -163,7 +169,10 @@ def test_FLACCueSheetIndex():
 	assert cuesheet_index_init.offset == cuesheet_index_load.offset == 0
 	assert repr(cuesheet_index_init) == repr(cuesheet_index_load) == "<FLACCueSheetIndex ({'number': 1, 'offset': 0})>"
 
-	cuesheet_index_init = FLACCueSheetIndex(2, 588)
+	cuesheet_index_init = FLACCueSheetIndex(
+		number=2,
+		offset=588,
+	)
 	cuesheet_index_load = FLACCueSheetIndex.load(
 		b'\x00\x00\x00\x00\x00\x00\x02L\x02\x00\x00\x00'
 	)
@@ -176,12 +185,17 @@ def test_FLACCueSheetIndex():
 
 def test_FLACCueSheetTrack():
 	cuesheet_track_init = FLACCueSheetTrack(
-		1,
-		0,
-		'123456789012',
-		0,
-		False,
-		[FLACCueSheetIndex(1, 0)]
+		track_number=1,
+		offset=0,
+		isrc='123456789012',
+		type=0,
+		pre_emphasis=False,
+		indexes=[
+			FLACCueSheetIndex(
+				number=1,
+				offset=0,
+			)
+		]
 	)
 	cuesheet_track_load = FLACCueSheetTrack.load(
 		b'\x00\x00\x00\x00\x00\x00\x00\x00\x01123456789012'
@@ -198,14 +212,20 @@ def test_FLACCueSheetTrack():
 	assert cuesheet_track_load.pre_emphasis is False
 
 	cuesheet_track_init = FLACCueSheetTrack(
-		2,
-		44100,
-		'',
-		1,
-		True,
-		[
-			FLACCueSheetIndex(1, 0),
-			FLACCueSheetIndex(2, 588),
+		track_number=2,
+		offset=44100,
+		isrc='',
+		type=1,
+		pre_emphasis=True,
+		indexes=[
+			FLACCueSheetIndex(
+				number=1,
+				offset=0,
+			),
+			FLACCueSheetIndex(
+				number=2,
+				offset=588,
+			),
 		],
 	)
 	cuesheet_track_load = FLACCueSheetTrack.load(
@@ -229,44 +249,60 @@ def test_FLACCueSheet():
 	cuesheet_init = FLACCueSheet(
 		[
 			FLACCueSheetTrack(
-				1,
-				0,
-				'123456789012',
-				0,
-				False,
-				[FLACCueSheetIndex(1, 0)]
+				track_number=1,
+				offset=0,
+				isrc='123456789012',
+				type=0,
+				pre_emphasis=False,
+				indexes=[
+					FLACCueSheetIndex(
+						number=1,
+						offset=0,
+					)
+				]
 			),
 			FLACCueSheetTrack(
-				2,
-				44100,
-				'',
-				1,
-				True,
-				[
-					FLACCueSheetIndex(1, 0),
-					FLACCueSheetIndex(2, 588),
+				track_number=2,
+				offset=44100,
+				isrc='',
+				type=1,
+				pre_emphasis=True,
+				indexes=[
+					FLACCueSheetIndex(
+						number=1,
+						offset=0,
+					),
+					FLACCueSheetIndex(
+						number=2,
+						offset=588,
+					),
 				],
 			),
 			FLACCueSheetTrack(
-				3,
-				88200,
-				'',
-				0,
-				False,
-				[FLACCueSheetIndex(1, 0)],
+				track_number=3,
+				offset=88200,
+				isrc='',
+				type=0,
+				pre_emphasis=False,
+				indexes=[
+					FLACCueSheetIndex(
+						number=1,
+						offset=0,
+					)
+				],
 			),
 			FLACCueSheetTrack(
-				170,
-				162496,
-				'',
-				0,
-				False,
-				[]
+				track_number=170,
+				offset=162496,
+				isrc='',
+				type=0,
+				pre_emphasis=False,
+				indexes=[]
 			)
 		],
-		'1234567890123',
-		88200,
-		True
+		catalog_number='1234567890123',
+		lead_in_samples=88200,
+		compact_disc=True
 	)
 	cuesheet_load = FLACCueSheet.load(
 		b'1234567890123\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
@@ -317,7 +353,7 @@ def test_FLACMetadataBlock():
 
 
 def test_FLACPadding():
-	padding_init = FLACPadding(10)
+	padding_init = FLACPadding(size=10)
 	padding_load = FLACPadding.load(b'\x00' * 10)
 
 	assert padding_init == padding_load
@@ -353,7 +389,10 @@ def test_FLACPicture():
 
 def test_FLACSeektable():
 	seekpoints = [
-		FLACSeekPoint(first_sample, offset, num_samples)
+		FLACSeekPoint(
+			first_sample=first_sample,
+			offset=offset,
+			num_samples=num_samples)
 		for first_sample, offset, num_samples in [
 			(0, 0, 4096),
 			(40960, 140, 4096),

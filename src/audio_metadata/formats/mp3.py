@@ -71,7 +71,10 @@ except ImportError:  # pragma: nocover
 	bitstruct.Error = (bitstruct.Error,)
 
 
-@attrs(repr=False)
+@attrs(
+	repr=False,
+	kw_only=True,
+)
 class LAMEReplayGain(AttrMapping):
 	peak = attrib()
 	track_type = attrib(converter=LAMEReplayGainType)
@@ -116,17 +119,20 @@ class LAMEReplayGain(AttrMapping):
 			album_gain_adjustment *= -1
 
 		return cls(
-			gain_peak,
-			track_gain_type,
-			track_gain_origin,
-			track_gain_adjustment,
-			album_gain_type,
-			album_gain_origin,
-			album_gain_adjustment,
+			peak=gain_peak,
+			track_type=track_gain_type,
+			track_origin=track_gain_origin,
+			track_adjustment=track_gain_adjustment,
+			album_type=album_gain_type,
+			album_origin=album_gain_origin,
+			album_adjustment=album_gain_adjustment,
 		)
 
 
-@attrs(repr=False)
+@attrs(
+	repr=False,
+	kw_only=True,
+)
 class LAMEEncodingFlags(AttrMapping):
 	nogap_continuation = attrib(converter=bool)
 	nogap_continued = attrib(converter=bool)
@@ -134,7 +140,10 @@ class LAMEEncodingFlags(AttrMapping):
 	nspsytune = attrib(converter=bool)
 
 
-@attrs(repr=False)
+@attrs(
+	repr=False,
+	kw_only=True,
+)
 class LAMEHeader(AttrMapping):
 	_crc = attrib()
 	version = attrib()
@@ -212,12 +221,7 @@ class LAMEHeader(AttrMapping):
 		)
 
 		ath_type = flags_ath.pop('ath_type')
-		encoding_flags = LAMEEncodingFlags(
-			flags_ath['nogap_continuation'],
-			flags_ath['nogap_continued'],
-			flags_ath['nssafejoint'],
-			flags_ath['nspsytune'],
-		)
+		encoding_flags = LAMEEncodingFlags(**flags_ath)
 
 		# TODO: Different representation for VBR minimum bitrate vs CBR/ABR specified bitrate?
 		# Can only go up to 255.
@@ -256,26 +260,26 @@ class LAMEHeader(AttrMapping):
 		)
 
 		return cls(
-			lame_crc,
-			version,
-			revision,
-			ath_type,
-			audio_crc,
-			audio_size,
-			bitrate,
-			bitrate_mode,
-			channel_mode,
-			delay,
-			encoding_flags,
-			lowpass_filter,
-			mp3_gain,
-			noise_shaping,
-			padding,
-			preset,
-			replay_gain,
-			source_sample_rate,
-			surround_info,
-			unwise_settings_used,
+			crc=lame_crc,
+			version=version,
+			revision=revision,
+			ath_type=ath_type,
+			audio_crc=audio_crc,
+			audio_size=audio_size,
+			bitrate=bitrate,
+			bitrate_mode=bitrate_mode,
+			channel_mode=channel_mode,
+			delay=delay,
+			encoding_flags=encoding_flags,
+			lowpass_filter=lowpass_filter,
+			mp3_gain=mp3_gain,
+			noise_shaping=noise_shaping,
+			padding=padding,
+			preset=preset,
+			replay_gain=replay_gain,
+			source_sample_rate=source_sample_rate,
+			surround_info=surround_info,
+			unwise_settings_used=unwise_settings_used,
 		)
 
 
@@ -283,7 +287,10 @@ class XingToC(LabelList):
 	item_label = 'entries'
 
 
-@attrs(repr=False)
+@attrs(
+	repr=False,
+	kw_only=True,
+)
 class XingHeader(AttrMapping):
 	_lame = attrib()
 	num_frames = attrib()
@@ -316,14 +323,23 @@ class XingHeader(AttrMapping):
 		if data.peek(4) == b'LAME':
 			lame_header = LAMEHeader.load(data, quality)
 
-		return cls(lame_header, num_frames, num_bytes, toc, quality)
+		return cls(
+			lame=lame_header,
+			num_frames=num_frames,
+			num_bytes=num_bytes,
+			toc=toc,
+			quality=quality,
+		)
 
 
 class VBRIToC(LabelList):
 	item_label = 'entries'
 
 
-@attrs(repr=False)
+@attrs(
+	repr=False,
+	kw_only=True,
+)
 class VBRIHeader(AttrMapping):
 	version = attrib()
 	delay = attrib()
@@ -366,20 +382,23 @@ class VBRIHeader(AttrMapping):
 		)
 
 		return cls(
-			version,
-			delay,
-			quality,
-			num_bytes,
-			num_frames,
-			num_toc_entries,
-			toc_scale_factor,
-			toc_entry_num_bytes,
-			toc_entry_num_frames,
-			toc,
+			version=version,
+			delay=delay,
+			quality=quality,
+			num_bytes=num_bytes,
+			num_frames=num_frames,
+			num_toc_entries=num_toc_entries,
+			toc_scale_factor=toc_scale_factor,
+			toc_entry_num_bytes=toc_entry_num_bytes,
+			toc_entry_num_frames=toc_entry_num_frames,
+			toc=toc,
 		)
 
 
-@attrs(repr=False)
+@attrs(
+	repr=False,
+	kw_only=True,
+)
 class MPEGFrameHeader(AttrMapping):
 	_start = attrib()
 	_size = attrib()
@@ -387,7 +406,7 @@ class MPEGFrameHeader(AttrMapping):
 	_xing = attrib()
 	version = attrib()
 	layer = attrib()
-	protected = attrib()
+	protected = attrib(converter=bool)
 	padded = attrib(converter=bool)
 	bitrate = attrib()
 	channel_mode = attrib(converter=MP3ChannelMode)
@@ -474,22 +493,25 @@ class MPEGFrameHeader(AttrMapping):
 				vbri_header = VBRIHeader.load(data)
 
 		return cls(
-			frame_start,
-			frame_size,
-			vbri_header,
-			xing_header,
-			version,
-			layer,
-			protected,
-			padded,
-			bitrate,
-			channel_mode,
-			channels,
-			sample_rate,
+			start=frame_start,
+			size=frame_size,
+			vbri=vbri_header,
+			xing=xing_header,
+			version=version,
+			layer=layer,
+			protected=protected,
+			padded=padded,
+			bitrate=bitrate,
+			channel_mode=channel_mode,
+			channels=channels,
+			sample_rate=sample_rate,
 		)
 
 
-@attrs(repr=False)
+@attrs(
+	repr=False,
+	kw_only=True,
+)
 class MP3StreamInfo(StreamInfo):
 	_start = attrib()
 	_end = attrib()
@@ -498,7 +520,7 @@ class MP3StreamInfo(StreamInfo):
 	_xing = attrib()
 	version = attrib()
 	layer = attrib()
-	protected = attrib()
+	protected = attrib(converter=bool)
 	bitrate = attrib()
 	bitrate_mode = attrib(converter=MP3BitrateMode)
 	channel_mode = attrib(converter=MP3ChannelMode)
@@ -689,20 +711,20 @@ class MP3StreamInfo(StreamInfo):
 		channels = frames[0].channels
 
 		return cls(
-			audio_start,
-			audio_end,
-			audio_size,
-			vbri_header,
-			xing_header,
-			version,
-			layer,
-			protected,
-			bitrate,
-			bitrate_mode,
-			channel_mode,
-			channels,
-			duration,
-			sample_rate,
+			start=audio_start,
+			end=audio_end,
+			size=audio_size,
+			vbri=vbri_header,
+			xing=xing_header,
+			version=version,
+			layer=layer,
+			protected=protected,
+			bitrate=bitrate,
+			bitrate_mode=bitrate_mode,
+			channel_mode=channel_mode,
+			channels=channels,
+			duration=duration,
+			sample_rate=sample_rate,
 		)
 
 
