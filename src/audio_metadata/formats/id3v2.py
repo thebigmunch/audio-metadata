@@ -234,9 +234,9 @@ class ID3v2Frames(Tags):
 			):
 				frames[f'{frame.id}:{frame.description}:{frame.language}'].append(frame.value)
 			elif isinstance(frame, ID3v2GenreFrame):
-				frames['TCON'] = frame.value
+				frames[frame.id] = frame.value
 			elif isinstance(frame, ID3v2GEOBFrame):
-				frames[f'GEOB:{frame.description}'].append(
+				frames[f'{frame.id}:{frame.description}'].append(
 					{
 
 						'filename': frame.filename,
@@ -245,7 +245,7 @@ class ID3v2Frames(Tags):
 					},
 				)
 			elif isinstance(frame, ID3v2PrivateFrame):
-				frames[f'PRIV:{frame.owner}'].append(frame.value)
+				frames[f'{frame.id}:{frame.owner}'].append(frame.value)
 			elif isinstance(
 				frame,
 				(
