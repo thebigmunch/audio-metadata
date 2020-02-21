@@ -8,6 +8,12 @@ This project adheres to [Semantic Versioning](https://semver.org).
 
 [Commits](https://github.com/thebigmunch/audio-metadata/compare/0.7.0...master)
 
+### Added
+
+* Support for ID3v2 involved people list frames.
+	* ``ID3v2InvolvedPerson``.
+	* ``ID3v2InvolvedPeopleListFrame``.
+
 ### Changed
 
 * Make all attrs classes require keyword arguments.

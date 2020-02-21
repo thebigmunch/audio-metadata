@@ -70,6 +70,7 @@ class ID3v2Frames(Tags):
 			'originalartist': 'TOA',
 			'originalauthor': 'TOL',
 			'originaldate': 'TOR',
+			'people': 'IPL',
 			'pictures': 'PIC',
 			'playcount': 'CNT',
 			'remixer': 'TP4',
@@ -113,6 +114,7 @@ class ID3v2Frames(Tags):
 			'originalartist': 'TOPE',
 			'originalauthor': 'TOLY',
 			'originaldate': 'TORY',
+			'people': 'IPLS',
 			'pictures': 'APIC',
 			'playcount': 'PCNT',
 			'remixer': 'TPE4',
@@ -158,6 +160,7 @@ class ID3v2Frames(Tags):
 			'originalartist': 'TOPE',
 			'originalauthor': 'TOLY',
 			'originaldate': 'TDOR',
+			'people': 'TIPL',
 			'pictures': 'APIC',
 			'playcount': 'PCNT',
 			'remixer': 'TPE4',
@@ -257,6 +260,7 @@ class ID3v2Frames(Tags):
 			elif isinstance(
 				frame,
 				(
+					ID3v2InvolvedPeopleListFrame,
 					ID3v2NumericTextFrame,
 					ID3v2TextFrame,
 					ID3v2TimestampFrame,

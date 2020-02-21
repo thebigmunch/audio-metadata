@@ -6,6 +6,8 @@ __all__ = [
 	'ID3v2Frame',
 	'ID3v2GEOBFrame',
 	'ID3v2GenreFrame',
+	'ID3v2InvolvedPeopleListFrame',
+	'ID3v2InvolvedPerson',
 	'ID3v2NumberFrame',
 	'ID3v2NumericTextFrame',
 	'ID3v2Picture',
@@ -26,6 +28,7 @@ import string
 import struct
 from urllib.parse import unquote
 
+import more_itertools
 from attr import (
 	attrib,
 	attrs,
@@ -50,6 +53,15 @@ from ..utils import (
 )
 
 _genre_re = re.compile(r"((?:\((?P<id>\d+|RX|CR)\))*)(?P<name>.+)?")
+
+
+@attrs(
+	repr=False,
+	kw_only=True,
+)
+class ID3v2InvolvedPerson(AttrMapping):
+	involvement = attrib()
+	name = attrib()
 
 
 class ID3v2Picture(Picture):
@@ -114,6 +126,14 @@ class ID3v2GEOBFrame(ID3v2BaseFrame):
 	mime_type = attrib()
 	filename = attrib()
 	description = attrib()
+	value = attrib()
+
+
+@attrs(
+	repr=False,
+	kw_only=True,
+)
+class ID3v2InvolvedPeopleListFrame(ID3v2BaseFrame):
 	value = attrib()
 
 
@@ -311,26 +331,29 @@ class ID3v2Frame(ID3v2BaseFrame):
 	value = attrib()
 
 	# TODO:ID3v2.2
-	# TODO: BUF, CNT, CRA, CRM, ETC, EQU, IPL, LNK, MCI, MLL, POP, REV,
+	# TODO: BUF, CNT, CRA, CRM, ETC, EQU, LNK, MCI, MLL, POP, REV,
 	# TODO: RVA, STC, UFI
 
 	# TODO: ID3v2.3
-	# TODO: AENC, COMR, ENCR, EQUA, ETCO, GRID, IPLS, LINK, MCDI, MLLT, OWNE
+	# TODO: AENC, COMR, ENCR, EQUA, ETCO, GRID, LINK, MCDI, MLLT, OWNE
 	# TODO: PCNT, POPM, POSS, RBUF, RVAD, RVRB, SYTC, UFID, USER
 
 	# TODO: ID3v2.4
-	# TODO: ASPI, EQU2, RVA2, SEEK, SIGN, TDEN, TDOR, TDRC, TDRL, TDTG, TIPL
-	# TODO: TMCL, TPRO,
+	# TODO: ASPI, EQU2, RVA2, SEEK, SIGN, TDEN, TDOR, TDRC, TDRL, TDTG
+	# TODO: TMCL, TPRO
 
 	_FRAME_TYPES = {
 		# Complex Text Frames
 		'COM': ID3v2CommentFrame,
 		'GEO': ID3v2GEOBFrame,
+		'IPL': ID3v2InvolvedPeopleListFrame,
 		'TXX': ID3v2UserTextFrame,
 
 		'COMM': ID3v2CommentFrame,
 		'GEOB': ID3v2GEOBFrame,
+		'IPLS': ID3v2InvolvedPeopleListFrame,
 		'PRIV': ID3v2PrivateFrame,
+		'TIPL': ID3v2InvolvedPeopleListFrame,
 		'TXXX': ID3v2UserTextFrame,
 
 		# Genre Frame
@@ -492,6 +515,29 @@ class ID3v2Frame(ID3v2BaseFrame):
 			kwargs['language'] = decode_bytestring(frame_data[1:4])
 			kwargs['description'] = decode_bytestring(values[0], encoding)
 			kwargs['value'] = decode_bytestring(values[1], encoding)
+		elif frame_type is ID3v2InvolvedPeopleListFrame:
+			encoding = determine_encoding(frame_data[0:1])
+
+			values = []
+			tail = frame_data[1:]
+
+			while tail:
+				head, tail = split_encoded(tail, encoding)
+				values.append(head)
+
+			people = [
+				ID3v2InvolvedPerson(
+					involvement=decode_bytestring(involvement, encoding),
+					name=decode_bytestring(name, encoding),
+				)
+				for involvement, name in more_itertools.chunked(values, 2)
+			]
+
+			# Ignore empty people list.
+			if len(values) < 1:
+				return None
+
+			kwargs['value'] = people
 		elif frame_type is ID3v2GenreFrame:
 			encoding = determine_encoding(frame_data[0:1])
 
