@@ -97,16 +97,14 @@ The high-level API and basic usage are covered, but more advanced features/funct
 
 ## TODO
 
-Please don't submit issues regarding the following:
-
-* Docs, docs, and more docs.
-* Finish ID3 abstractions.
-* Add support for more file formats.
-	* MP4 reading is already well underway.
-* Add write support.
-
 If you're willing to [contribute](https://github.com/thebigmunch/audio-metadata/blob/master/.github/CONTRIBUTING.md)
-your time to work on them, post in the **Development** category on the [Discourse forum](https://forum.thebigmunch.me/).
+your time to work on [audio-metadata](https://github.com/thebigmunch/audio-metadata/), you can:
+
+* Post in the [Development](https://forum.thebigmunch.me/c/dev/) category on the [Discourse forum](https://forum.thebigmunch.me/).
+* Browse and comment on [issues](https://github.com/thebigmunch/audio-metadata/issues) or [pull requests](https://github.com/thebigmunch/audio-metadata/pulls).
+* [Open an issue](https://github.com/thebigmunch/audio-metadata/issues/new) with a bug report or feature request.
+* See current [projects](https://github.com/thebigmunch/audio-metadata/projects).
+* Contact me by email at mail@thebigmunch.me.
 
 
 ## Appreciation
