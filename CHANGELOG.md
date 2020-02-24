@@ -14,6 +14,9 @@ This project adheres to [Semantic Versioning](https://semver.org).
 	* ``ID3v2InvolvedPerson``.
 	* ``ID3v2InvolvedPeopleListFrame``.
 * ``ID3v2Comment``.
+* ``Ogg``.
+* ``OggPage``.
+* ``OggPageHeader``.
 
 ### Changed
 
