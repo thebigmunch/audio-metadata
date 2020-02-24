@@ -22,6 +22,7 @@ from .formats import (
 	WAV,
 	ID3v2,
 	MP3StreamInfo,
+	OggOpus,
 )
 
 
@@ -46,7 +47,13 @@ def determine_format(data):
 			return None
 
 	data.seek(0, os.SEEK_SET)
-	d = data.peek(4)
+	d = data.peek(36)
+
+	if (
+		d.startswith(b'OggS')
+		and b'OpusHead' in d
+	):
+		return OggOpus
 
 	if d.startswith(b'fLaC'):
 		return FLAC
