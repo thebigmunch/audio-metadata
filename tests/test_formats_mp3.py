@@ -220,7 +220,7 @@ def test_LAMEHeader():
 		"'preset': <LAMEPreset.V0>, 'replay_gain': <LAMEReplayGain ({'album_adjustment': 0.0, "
 		"'album_origin': <LAMEReplayGainOrigin.NOT_SET>, 'album_type': <LAMEReplayGainType.NOT_SET>, 'peak': None, "
 		"'track_adjustment': 0.0, 'track_origin': <LAMEReplayGainOrigin.NOT_SET>, 'track_type': <LAMEReplayGainType.NOT_SET>, })>, "
-		"'revision': 0, 'source_sample_rate': 1, 'surround_info': <LAMESurroundInfo.NO_SURROUND>, "
+		"'revision': 0, 'source_sample_rate': '1.0 Hz', 'surround_info': <LAMESurroundInfo.NO_SURROUND>, "
 		"'unwise_settings_used': False, 'version': (3, 99),})>"
 	)
 

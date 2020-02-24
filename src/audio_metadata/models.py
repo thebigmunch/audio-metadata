@@ -126,7 +126,7 @@ class StreamInfo(AttrMapping):
 				repr_dict[k] = humanize_bitrate(v)
 			elif k == 'duration':
 				repr_dict[k] = humanize_duration(v)
-			elif k == 'sample_rate':
+			elif 'sample_rate' in k:
 				repr_dict[k] = humanize_sample_rate(v)
 			elif not k.startswith('_'):
 				repr_dict[k] = v

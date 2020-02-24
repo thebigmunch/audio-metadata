@@ -174,6 +174,8 @@ class LAMEHeader(AttrMapping):
 				repr_dict[k] = humanize_bitrate(v)
 			elif k == 'audio_size':
 				repr_dict[k] = humanize_filesize(v, precision=2)
+			elif 'sample_rate' in k:
+				repr_dict[k] = humanize_sample_rate(v)
 			elif not k.startswith('_'):
 				repr_dict[k] = v
 
