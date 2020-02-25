@@ -122,7 +122,7 @@ class StreamInfo(AttrMapping):
 		repr_dict = {}
 
 		for k, v in sorted(self.items()):
-			if k == 'bitrate':
+			if k.endswith('bitrate'):
 				repr_dict[k] = humanize_bitrate(v)
 			elif k == 'duration':
 				repr_dict[k] = humanize_duration(v)

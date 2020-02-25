@@ -34,6 +34,10 @@ This project adheres to [Semantic Versioning](https://semver.org).
 	* ``TDTG``.
 * Support for TMCL ID3v2.4 frame.
 	* ``ID3v2Performer``.
+* Ogg Vorbis load(s) support.
+	* ``OggVorbis``.
+	* ``OggVorbisStreamInfo``.
+	* ``OggOpusVorbisComments``.
 
 ### Changed
 
