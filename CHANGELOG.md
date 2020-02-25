@@ -12,6 +12,10 @@ This project adheres to [Semantic Versioning](https://semver.org).
 
 * Make all attrs classes require keyword arguments.
 
+### Removed
+
+* Move ``DataReader`` class and ``datareader`` decorator to ``tbm-utils``.
+
 
 ## [0.7.0](https://github.com/thebigmunch/audio-metadata/releases/tag/0.7.0) (2020-02-17)
 

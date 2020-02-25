@@ -16,7 +16,10 @@ from attr import (
 	attrs,
 )
 from bidict import frozenbidict
-from tbm_utils import AttrMapping
+from tbm_utils import (
+	AttrMapping,
+	datareader,
+)
 
 from .id3v2_frames import *
 from .tables import (
@@ -28,10 +31,7 @@ from ..exceptions import (
 	InvalidHeader,
 )
 from ..models import Tags
-from ..utils import (
-	datareader,
-	decode_synchsafe_int,
-)
+from ..utils import decode_synchsafe_int
 
 try:  # pragma: nocover
 	import bitstruct.c as bitstruct

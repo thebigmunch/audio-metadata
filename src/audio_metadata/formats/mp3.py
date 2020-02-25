@@ -27,6 +27,7 @@ from attr import (
 from tbm_utils import (
 	AttrMapping,
 	LabelList,
+	datareader,
 	humanize_filesize,
 )
 
@@ -58,7 +59,6 @@ from ..models import (
 	StreamInfo,
 )
 from ..utils import (
-	datareader,
 	humanize_bitrate,
 	humanize_sample_rate,
 )

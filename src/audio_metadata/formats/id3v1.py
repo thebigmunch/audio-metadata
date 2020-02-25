@@ -5,12 +5,14 @@ __all__ = [
 	'ID3v1Fields',
 ]
 
-from tbm_utils import AttrMapping
+from tbm_utils import (
+	AttrMapping,
+	datareader,
+)
 
 from .tables import ID3v1Genres
 from ..exceptions import InvalidHeader
 from ..models import Tags
-from ..utils import datareader
 
 
 class ID3v1Fields(Tags):

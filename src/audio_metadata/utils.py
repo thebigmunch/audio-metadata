@@ -1,5 +1,4 @@
 __all__ = [
-	'DataReader',
 	'decode_synchsafe_int',
 	'get_image_size',
 	'humanize_bitrate',
@@ -13,50 +12,8 @@ from codecs import (
 	BOM_UTF16_LE,
 )
 from functools import reduce
-from io import (
-	DEFAULT_BUFFER_SIZE,
-	BufferedReader,
-	BytesIO,
-	FileIO,
-)
 
-import wrapt
-
-
-class DataReader(BufferedReader):
-	def __init__(self, data, buffer_size=DEFAULT_BUFFER_SIZE):
-		if isinstance(data, (BufferedReader, DataReader)):
-			if isinstance(data.raw, FileIO):
-				data = FileIO(data.name, 'rb')
-			else:
-				data = BytesIO(data.read())
-		elif isinstance(data, (os.PathLike, str)):
-			data = FileIO(data, 'rb')
-		elif isinstance(data, (bytearray, bytes, memoryview)):
-			data = BytesIO(data)
-
-		super().__init__(data, buffer_size=buffer_size)
-
-	def peek(self, size=DEFAULT_BUFFER_SIZE):
-		if size > DEFAULT_BUFFER_SIZE:
-			size = DEFAULT_BUFFER_SIZE
-
-		peeked = super().peek(size)[:size]
-
-		if len(peeked) < size:
-			peeked = self.read(size)
-			self.seek(-len(peeked), os.SEEK_CUR)
-
-		return peeked
-
-
-@wrapt.decorator
-def datareader(wrapped, instance, args, kwargs):
-	if not isinstance(args[0], DataReader):
-		data = DataReader(args[0])
-		args = (data, *args[1:])
-
-	return wrapped(*args, **kwargs)
+from tbm_utils import DataReader
 
 
 def decode_bytestring(b, encoding='iso-8859-1'):

@@ -10,12 +10,12 @@ import os
 from bidict import frozenbidict
 from tbm_utils import (
 	AttrMapping,
+	datareader,
 	humanize_duration,
 	humanize_filesize,
 )
 
 from .utils import (
-	datareader,
 	humanize_bitrate,
 	humanize_sample_rate,
 )

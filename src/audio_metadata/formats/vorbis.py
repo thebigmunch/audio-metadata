@@ -9,11 +9,13 @@ import struct
 from collections import defaultdict
 
 from attr import attrib, attrs
-from tbm_utils import AttrMapping
+from tbm_utils import (
+	AttrMapping,
+	datareader,
+)
 
 from ..exceptions import InvalidComment
 from ..models import Tags
-from ..utils import datareader
 
 
 @attrs(

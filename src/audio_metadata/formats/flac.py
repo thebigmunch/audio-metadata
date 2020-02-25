@@ -25,6 +25,7 @@ from attr import (
 from tbm_utils import (
 	AttrMapping,
 	LabelList,
+	datareader,
 )
 
 from .id3v2 import ID3v2
@@ -42,7 +43,6 @@ from ..models import (
 	Picture,
 	StreamInfo,
 )
-from ..utils import datareader
 
 try:  # pragma: nocover
 	import bitstruct.c as bitstruct

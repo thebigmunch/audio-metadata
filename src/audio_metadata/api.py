@@ -10,6 +10,8 @@ from io import (
 	FileIO,
 )
 
+from tbm_utils import DataReader
+
 from .exceptions import (
 	InvalidFormat,
 	UnsupportedFormat,
@@ -21,7 +23,6 @@ from .formats import (
 	ID3v2,
 	MP3StreamInfo,
 )
-from .utils import DataReader
 
 
 def determine_format(data):

@@ -15,6 +15,7 @@ from attr import (
 	attrs,
 )
 from bidict import frozenbidict
+from tbm_utils import datareader
 
 from .id3v2 import ID3v2
 from ..exceptions import (
@@ -27,7 +28,6 @@ from ..models import (
 	StreamInfo,
 	Tags,
 )
-from ..utils import datareader
 
 
 # https://www.recordingblogs.com/wiki/list-chunk-of-a-wave-file

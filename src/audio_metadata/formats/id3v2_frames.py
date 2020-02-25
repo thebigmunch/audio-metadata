@@ -30,7 +30,10 @@ from attr import (
 	attrib,
 	attrs,
 )
-from tbm_utils import AttrMapping
+from tbm_utils import (
+	AttrMapping,
+	datareader,
+)
 
 from .tables import (
 	ID3PictureType,
@@ -39,7 +42,6 @@ from .tables import (
 from ..exceptions import InvalidFrame
 from ..models import Picture
 from ..utils import (
-	datareader,
 	decode_bytestring,
 	decode_synchsafe_int,
 	determine_encoding,
