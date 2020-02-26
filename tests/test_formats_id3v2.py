@@ -108,14 +108,28 @@ def test_ID3v2Header():
 			experimental=False,
 			extended=False,
 			footer=False,
+			unsync=False,
+		),
+		version=ID3Version.v24,
+	)
+
+	assert v24_header_load == v24_header_init
+
+	v24_header_load = ID3v2Header.load(Path(__file__).parent / 'files' / 'audio' / 'test-mp3-id3v24-unsync.mp3')
+	v24_header_init = ID3v2Header(
+		size=2254,
+		flags=ID3v2Flags(
+			experimental=False,
+			extended=False,
+			footer=False,
 			unsync=True,
 		),
 		version=ID3Version.v24,
 	)
 
+	assert v24_header_load == v24_header_init
+
 	with pytest.raises(InvalidHeader):
 		ID3v2Header.load(
 			(Path(__file__).parent / 'files' / 'audio' / 'test-mp3-id3v24.mp3').read_bytes()[3:]
 		)
-
-	assert v24_header_load == v24_header_init
