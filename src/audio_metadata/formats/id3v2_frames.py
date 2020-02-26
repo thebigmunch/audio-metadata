@@ -2,6 +2,7 @@
 
 __all__ = [
 	'ID3v2BaseFrame',
+	'ID3v2Comment',
 	'ID3v2CommentFrame',
 	'ID3v2Frame',
 	'ID3v2GEOBFrame',
@@ -64,6 +65,16 @@ class ID3v2InvolvedPerson(AttrMapping):
 	name = attrib()
 
 
+@attrs(
+	repr=False,
+	kw_only=True,
+)
+class ID3v2Comment(AttrMapping):
+	language = attrib()
+	description = attrib()
+	text = attrib()
+
+
 class ID3v2Picture(Picture):
 	@datareader
 	@classmethod
@@ -105,8 +116,6 @@ class ID3v2BaseFrame(AttrMapping):
 	kw_only=True,
 )
 class ID3v2CommentFrame(ID3v2BaseFrame):
-	language = attrib()
-	description = attrib()
 	value = attrib()
 
 
@@ -512,9 +521,13 @@ class ID3v2Frame(ID3v2BaseFrame):
 			if len(values) < 2:
 				return None
 
-			kwargs['language'] = decode_bytestring(frame_data[1:4])
-			kwargs['description'] = decode_bytestring(values[0], encoding)
-			kwargs['value'] = decode_bytestring(values[1], encoding)
+			comment = ID3v2Comment(
+				language=decode_bytestring(frame_data[1:4]),
+				description=decode_bytestring(values[0], encoding),
+				text=decode_bytestring(values[1], encoding)
+			)
+
+			kwargs['value'] = comment
 		elif frame_type is ID3v2InvolvedPeopleListFrame:
 			encoding = determine_encoding(frame_data[0:1])
 

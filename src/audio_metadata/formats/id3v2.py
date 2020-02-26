@@ -39,7 +39,7 @@ except ImportError:  # pragma: nocover
 	import bitstruct
 
 
-# Mappings used: https://picard.musicbrainz.org/docs/mappings/
+# Mappings based on https://picard.musicbrainz.org/docs/mappings/
 class ID3v2Frames(Tags):
 	_v22_FIELD_MAP = frozenbidict(
 		{
@@ -230,14 +230,11 @@ class ID3v2Frames(Tags):
 			if isinstance(
 				frame,
 				(
-					ID3v2CommentFrame,
 					ID3v2SynchronizedLyricsFrame,
 					ID3v2UnsynchronizedLyricsFrame,
 				),
 			):
 				frames[f'{frame.id}:{frame.description}:{frame.language}'].append(frame.value)
-			elif isinstance(frame, ID3v2GenreFrame):
-				frames[frame.id] = frame.value
 			elif isinstance(frame, ID3v2GEOBFrame):
 				frames[f'{frame.id}:{frame.description}'].append(
 					{
@@ -260,6 +257,7 @@ class ID3v2Frames(Tags):
 			elif isinstance(
 				frame,
 				(
+					ID3v2GenreFrame,
 					ID3v2InvolvedPeopleListFrame,
 					ID3v2NumericTextFrame,
 					ID3v2TextFrame,

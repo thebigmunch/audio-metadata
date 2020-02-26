@@ -13,10 +13,16 @@ This project adheres to [Semantic Versioning](https://semver.org).
 * Support for ID3v2 involved people list frames.
 	* ``ID3v2InvolvedPerson``.
 	* ``ID3v2InvolvedPeopleListFrame``.
+* ``ID3v2Comment``.
 
 ### Changed
 
 * Make all attrs classes require keyword arguments.
+* Rework ID3v2 comments abstractions.
+	* Add ``ID3v2Comment`` class to encapsulate each comment.
+	* Change ``ID3v2CommentFrame`` to have only value attribute
+		that contains a single comment.
+	* Change ``ID3v2Frames`` to present a list of comments for ``comment`` key.
 
 ### Removed
 
