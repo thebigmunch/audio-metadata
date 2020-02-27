@@ -26,7 +26,7 @@ from .formats import (
 
 
 def determine_format(data):
-	"""Determine the format of an audio file.
+	"""Determine the format of a filepath, file-like object, or bytes-like object.
 
 	Parameters:
 		data (bytes-like object, str, os.PathLike, or file-like object):
@@ -69,7 +69,7 @@ def determine_format(data):
 
 
 def load(f):
-	"""Load audio metadata from filepath or file-like object.
+	"""Load audio metadata from a filepath or file-like object.
 
 	Parameters:
 		f (str, os.PathLike, or file-like object):
