@@ -33,7 +33,7 @@ from .tables import (
 	FLACMetadataBlockType,
 	ID3PictureType,
 )
-from .vorbis import VorbisComments
+from .vorbis_comments import VorbisComments
 from ..exceptions import (
 	InvalidBlock,
 	InvalidHeader,

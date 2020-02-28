@@ -5,7 +5,7 @@ from .id3v2_frames import *
 from .mp3 import *
 from .ogg import *
 from .tables import *
-from .vorbis import *
+from .vorbis_comments import *
 from .wav import *
 
 
@@ -17,6 +17,6 @@ __all__ = [
 	*mp3.__all__,
 	*ogg.__all__,
 	*tables.__all__,
-	*vorbis.__all__,
+	*vorbis_comments.__all__,
 	*wav.__all__,
 ]

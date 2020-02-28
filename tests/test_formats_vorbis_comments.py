@@ -1,6 +1,6 @@
 import pytest
 
-from audio_metadata.formats.vorbis import (
+from audio_metadata import (
 	InvalidComment,
 	VorbisComment,
 	VorbisComments,
