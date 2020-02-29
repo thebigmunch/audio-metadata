@@ -155,7 +155,7 @@ class Ogg(Format):
 		except ValueError:
 			raise Exception  # TODO
 
-		self._obj.seek(-index, os.SEEK_END)
+		self._obj.seek(-(len(data) - index), os.SEEK_END)
 
 		last_page = None
 		try:
