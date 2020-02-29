@@ -61,7 +61,7 @@ class OggPageHeader(AttrMapping):
 		if version != 0:
 			raise UnsupportedFormat(f"Ogg version '{version}' is not supported.")
 
-		is_continued, is_first, is_last = bitstruct.unpack('<p5 b1 b1 b1', flags)
+		is_last, is_first, is_continued = bitstruct.unpack('<p5 b1 b1 b1', flags)
 
 		return cls(
 			start=start,
