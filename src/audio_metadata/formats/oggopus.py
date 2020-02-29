@@ -143,4 +143,6 @@ class OggOpus(Ogg):
 			for picture in pictures
 		]
 
+		self._obj.close()
+
 		return self
