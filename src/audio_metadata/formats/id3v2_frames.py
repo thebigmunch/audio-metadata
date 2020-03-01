@@ -2,6 +2,7 @@
 
 __all__ = [
 	'ID3v2BaseFrame',
+	'ID3v2BinaryDataFrame',
 	'ID3v2Comment',
 	'ID3v2CommentFrame',
 	'ID3v2Frame',
@@ -109,6 +110,14 @@ class ID3v2Picture(Picture):
 )
 class ID3v2BaseFrame(AttrMapping):
 	id = attrib()  # noqa
+
+
+@attrs(
+	repr=False,
+	kw_only=True,
+)
+class ID3v2BinaryDataFrame(AttrMapping):
+	value = attrib()
 
 
 @attrs(
@@ -513,7 +522,9 @@ class ID3v2Frame(ID3v2BaseFrame):
 
 		# TODO: Move logic into frame classes?
 		kwargs = {'id': frame_id}
-		if frame_type is ID3v2CommentFrame:
+		if frame_type is ID3v2BinaryDataFrame:
+			kwargs['value'] = frame_data
+		elif frame_type is ID3v2CommentFrame:
 			encoding = determine_encoding(frame_data[0:1])
 
 			values = split_encoded(frame_data[4:], encoding)

@@ -23,6 +23,7 @@ This project adheres to [Semantic Versioning](https://semver.org).
 	* ``OggOpus``.
 	* ``OggOpusVorbisComments``.
 * ``AudioMetadataWarning``.
+* ``ID3v2BinaryDataFrame``.
 
 ### Changed
 
