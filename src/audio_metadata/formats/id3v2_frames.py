@@ -353,7 +353,7 @@ class ID3v2Frame(ID3v2BaseFrame):
 	# TODO: RVA, STC, UFI
 
 	# TODO: ID3v2.3
-	# TODO: AENC, COMR, ENCR, EQUA, ETCO, GRID, LINK, MCDI, MLLT, OWNE
+	# TODO: AENC, COMR, ENCR, EQUA, ETCO, GRID, LINK, MLLT, OWNE
 	# TODO: PCNT, POPM, POSS, RBUF, RVAD, RVRB, SYTC, UFID, USER
 
 	# TODO: ID3v2.4
@@ -361,6 +361,8 @@ class ID3v2Frame(ID3v2BaseFrame):
 	# TODO: TMCL, TPRO
 
 	_FRAME_TYPES = {
+		# Binary data frames
+		'MCDI': ID3v2BinaryDataFrame,
 		# Complex Text Frames
 		'COM': ID3v2CommentFrame,
 		'GEO': ID3v2GEOBFrame,

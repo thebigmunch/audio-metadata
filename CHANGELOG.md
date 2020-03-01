@@ -24,6 +24,7 @@ This project adheres to [Semantic Versioning](https://semver.org).
 	* ``OggOpusVorbisComments``.
 * ``AudioMetadataWarning``.
 * ``ID3v2BinaryDataFrame``.
+* Support for MCDI ID3v2 frame.
 
 ### Changed
 
