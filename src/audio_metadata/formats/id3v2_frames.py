@@ -359,19 +359,23 @@ class ID3v2Frame(ID3v2BaseFrame):
 	value = attrib()
 
 	# TODO:ID3v2.2
-	# TODO: BUF, CNT, CRA, CRM, ETC, EQU, LNK, MCI, MLL, POP, REV,
-	# TODO: RVA, STC, UFI
+	# TODO: BUF, CNT, CRA, CRM, ETC, EQU, LNK, MCI, MLL, PCS,
+	# TODO: POP, REV, RVA, STC, UFI
 
 	# TODO: ID3v2.3
 	# TODO: AENC, COMR, ENCR, EQUA, ETCO, GRID, LINK, MLLT, OWNE
-	# TODO: PCNT, POPM, POSS, RBUF, RVAD, RVRB, SYTC, UFID, USER
+	# TODO: PCNT, PCST, POPM, POSS, RBUF, RGAD, RVAD, RVRB, SYTC,
+	# TODO: UFID, USER, XRVA
 
 	# TODO: ID3v2.4
-	# TODO: ASPI, EQU2, RVA2, SEEK, SIGN, TMCL, TPRO
+	# TODO: ASPI, EQU2, PCST, RGAD, RVA2, SEEK, SIGN,
+	# TODO: TMCL, TPRO, XRVA
 
 	_FRAME_TYPES = {
 		# Binary data frames
 		'MCDI': ID3v2BinaryDataFrame,
+		'NCON': ID3v2BinaryDataFrame,
+
 		# Complex Text Frames
 		'COM': ID3v2CommentFrame,
 		'GEO': ID3v2GEOBFrame,
@@ -432,6 +436,7 @@ class ID3v2Frame(ID3v2BaseFrame):
 		'TAL': ID3v2TextFrame,
 		'TCM': ID3v2TextFrame,
 		'TCR': ID3v2TextFrame,
+		'TDS': ID3v2TextFrame,
 		'TEN': ID3v2TextFrame,
 		'TFT': ID3v2TextFrame,
 		'TKE': ID3v2TextFrame,
@@ -448,7 +453,12 @@ class ID3v2Frame(ID3v2BaseFrame):
 		'TPB': ID3v2TextFrame,
 		'TRC': ID3v2TextFrame,
 		'TRD': ID3v2TextFrame,
+		'TS2': ID3v2TextFrame,
+		'TSA': ID3v2TextFrame,
+		'TSC': ID3v2TextFrame,
+		'TSP': ID3v2TextFrame,
 		'TSS': ID3v2TextFrame,
+		'TST': ID3v2TextFrame,
 		'TT1': ID3v2TextFrame,
 		'TT2': ID3v2TextFrame,
 		'TT3': ID3v2TextFrame,
@@ -458,6 +468,7 @@ class ID3v2Frame(ID3v2BaseFrame):
 		'TCMP': ID3v2TextFrame,
 		'TCOM': ID3v2TextFrame,
 		'TCOP': ID3v2TextFrame,
+		'TDES': ID3v2TextFrame,
 		'TENC': ID3v2TextFrame,
 		'TEXT': ID3v2TextFrame,
 		'TFLT': ID3v2TextFrame,
@@ -465,6 +476,7 @@ class ID3v2Frame(ID3v2BaseFrame):
 		'TIT2': ID3v2TextFrame,
 		'TIT3': ID3v2TextFrame,
 		'TKEY': ID3v2TextFrame,
+		'TKWD': ID3v2TextFrame,
 		'TLAN': ID3v2TextFrame,
 		'TMED': ID3v2TextFrame,
 		'TMOO': ID3v2TextFrame,
@@ -489,26 +501,35 @@ class ID3v2Frame(ID3v2BaseFrame):
 		'TSRC': ID3v2TextFrame,
 		'TSSE': ID3v2TextFrame,
 		'TSST': ID3v2TextFrame,
+		'XSOA': ID3v2TextFrame,
 		'XSOP': ID3v2TextFrame,
+		'XSOT': ID3v2TextFrame,
 
 		# Timestamp Frames
+		'TDR': ID3v2TimestampFrame,
+
 		'TDEN': ID3v2TimestampFrame,
 		'TDOR': ID3v2TimestampFrame,
 		'TDRC': ID3v2TimestampFrame,
 		'TDRL': ID3v2TimestampFrame,
 		'TDTG': ID3v2TimestampFrame,
+		'XDOR': ID3v2TimestampFrame,
 
 		# URL Link Frames
+		'TID': ID3v2URLLinkFrame,
 		'WAF': ID3v2URLLinkFrame,
 		'WAR': ID3v2URLLinkFrame,
 		'WAS': ID3v2URLLinkFrame,
 		'WCM': ID3v2URLLinkFrame,
 		'WCP': ID3v2URLLinkFrame,
+		'WFD': ID3v2URLLinkFrame,
 		'WPB': ID3v2URLLinkFrame,
 		'WXX': ID3v2UserURLLinkFrame,
 
+		'TGID': ID3v2URLLinkFrame,
 		'WCOM': ID3v2URLLinkFrame,
 		'WCOP': ID3v2URLLinkFrame,
+		'WFED': ID3v2URLLinkFrame,
 		'WOAF': ID3v2URLLinkFrame,
 		'WOAR': ID3v2URLLinkFrame,
 		'WOAS': ID3v2URLLinkFrame,

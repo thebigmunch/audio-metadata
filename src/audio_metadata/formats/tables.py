@@ -4,6 +4,7 @@ __all__ = [
 	'ID3Version',
 	'ID3v1Genres',
 	'ID3v2FrameIDs',
+	'ID3v2UnofficialFrameIDs',
 	'LAMEBitrateMode',
 	'LAMEChannelMode',
 	'LAMEPreset',
@@ -315,7 +316,24 @@ ID3v2FrameIDs = {
 		'TRSO', 'TSOA', 'TSOP', 'TSOT', 'TSRC', 'TSSE', 'TSST',
 		'TXXX', 'UFID', 'USER', 'USLT', 'WCOM', 'WCOP', 'WOAF',
 		'WOAR', 'WOAS', 'WORS', 'WPAY', 'WPUB', 'WXXX',
-	}
+	},
+}
+
+ID3v2UnofficialFrameIDs = {
+	ID3Version.v22: {
+		'CM1', 'PCS', 'TCP', 'TDR', 'TDS', 'TID', 'TS2', 'TSA',
+		'TSC', 'TSP', 'TST', 'WFD',
+	},
+	ID3Version.v23: {
+		'NCON', 'PCST', 'RGAD', 'TCMP', 'TDES', 'TGID', 'TKWD',
+		'TSO2', 'TSOC', 'WFED', 'XDOR', 'XSOA', 'XSOP', 'XSOT',
+		'XRVA',
+	},
+	ID3Version.v24: {
+		'NCON', 'PCST', 'RGAD', 'TCMP', 'TDES', 'TGID', 'TKWD',
+		'TSO2', 'TSOC', 'WFED', 'XDOR', 'XSOA', 'XSOP', 'XSOT',
+		'XRVA',
+	},
 }
 
 

@@ -25,6 +25,7 @@ from .id3v2_frames import *
 from .tables import (
 	ID3Version,
 	ID3v2FrameIDs,
+	ID3v2UnofficialFrameIDs,
 )
 from ..exceptions import (
 	InvalidFrame,
@@ -45,14 +46,19 @@ class ID3v2Frames(Tags):
 	_v22_FIELD_MAP = frozenbidict(
 		{
 			'album': 'TAL',
+			'albumsort': 'TSA',
 			'albumartist': 'TP2',
+			'albumartistsort': 'TS2',
 			'artist': 'TP1',
+			'artistsort': 'TSP',
 			'audiodelay': 'TDY',
 			'audiolength': 'TLE',
 			'audiosize': 'TSI',
 			'bpm': 'TBP',
 			'comment': 'COM',
+			'compilation': 'TCP',
 			'composer': 'TCM',
+			'composersort': 'TSC',
 			'conductor': 'TP3',
 			'copyright': 'TCR',
 			'date': 'TYE',
@@ -81,6 +87,7 @@ class ID3v2Frames(Tags):
 			'remixer': 'TP4',
 			'subtitle': 'TT3',
 			'title': 'TT2',
+			'titlesort': 'TST',
 			'tracknumber': 'TRK',
 		},
 	)
@@ -231,10 +238,13 @@ class ID3v2Frames(Tags):
 			if frame is None:
 				continue
 
-			# TODO: Handle commonly seen frames like from iTunes.
 			# Ignore frames not defined in spec for ID3 version.
+			# Allow unofficial frames to load (3 character frames only load for ID3v2.2).
 			# Warn user and encourage reporting.
-			if frame.id not in ID3v2FrameIDs[id3_version]:
+			if (
+				frame.id not in ID3v2FrameIDs[id3_version]
+				and frame.id not in ID3v2UnofficialFrameIDs[id3_version]
+			):
 				warnings.warn(
 					(
 						f"Ignoring '{frame.id}' frame with value '{frame.value}'.\n"
