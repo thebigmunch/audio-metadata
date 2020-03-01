@@ -18,6 +18,7 @@ This project adheres to [Semantic Versioning](https://semver.org).
 	* ``Ogg``.
 	* ``OggPage``.
 	* ``OggPageHeader``.
+	* ``OggPageSegments``.
 * Ogg Opus load(s) support.
 	* ``OggOpus``.
 	* ``OggOpusVorbisComments``.

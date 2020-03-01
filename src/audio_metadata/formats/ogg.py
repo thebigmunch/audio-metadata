@@ -6,6 +6,7 @@ __all__ = [
 	'Ogg',
 	'OggPage',
 	'OggPageHeader',
+	'OggPageSegments',
 ]
 
 import os
@@ -15,6 +16,7 @@ import bitstruct
 from attr import attrib, attrs
 from tbm_utils import (
 	AttrMapping,
+	LabelList,
 	datareader,
 )
 
@@ -77,6 +79,10 @@ class OggPageHeader(AttrMapping):
 		)
 
 
+class OggPageSegments(LabelList):
+	item_label = ('segment', 'segments')
+
+
 @attrs(
 	repr=False,
 	kw_only=True,
@@ -92,7 +98,7 @@ class OggPage(AttrMapping):
 	sequence_number = attrib()
 	crc = attrib()
 	num_segments = attrib()
-	segments = attrib()
+	segments = attrib(converter=OggPageSegments)
 
 	@datareader
 	@classmethod
