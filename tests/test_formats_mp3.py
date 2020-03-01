@@ -227,11 +227,11 @@ def _():
 	assert lame_header_load.unwise_settings_used is lame_header_init.unwise_settings_used is False
 	assert lame_header_load.version == lame_header_init.version == (3, 99)
 	assert strip_repr(lame_header_load) == strip_repr(lame_header_init) == (
-		"<LAMEHeader ({'ath_type': 5, 'audio_crc': b':\\xe9', 'audio_size': '20.01 KiB', 'bitrate': '32 Kbps', "
+		"<LAMEHeader({'ath_type': 5, 'audio_crc': b':\\xe9', 'audio_size': '20.01 KiB', 'bitrate': '32 Kbps', "
 		"'bitrate_mode': <LAMEBitrateMode.VBR_METHOD_2>, 'channel_mode': <LAMEChannelMode.JOINT_STEREO>, 'delay': 576, "
-		"'encoding_flags': <LAMEEncodingFlags ({'nogap_continuation': False, 'nogap_continued': False, 'nspsytune': True, "
+		"'encoding_flags': <LAMEEncodingFlags({'nogap_continuation': False, 'nogap_continued': False, 'nspsytune': True, "
 		"'nssafejoint': True, })>, 'lowpass_filter': 22100, 'mp3_gain': 0, 'noise_shaping': 1, 'padding': 1260, "
-		"'preset': <LAMEPreset.V0>, 'replay_gain': <LAMEReplayGain ({'album_adjustment': 0.0, "
+		"'preset': <LAMEPreset.V0>, 'replay_gain': <LAMEReplayGain({'album_adjustment': 0.0, "
 		"'album_origin': <LAMEReplayGainOrigin.NOT_SET>, 'album_type': <LAMEReplayGainType.NOT_SET>, 'peak': None, "
 		"'track_adjustment': 0.0, 'track_origin': <LAMEReplayGainOrigin.NOT_SET>, 'track_type': <LAMEReplayGainType.NOT_SET>, })>, "
 		"'revision': 0, 'source_sample_rate': '1.0 Hz', 'surround_info': <LAMESurroundInfo.NO_SURROUND>, "
@@ -455,7 +455,7 @@ def _():
 	assert mpeg_frame_load.sample_rate == mpeg_frame_init.sample_rate == 44100
 	assert mpeg_frame_load.version == mpeg_frame_init.version == 1
 	assert strip_repr(mpeg_frame_load) == strip_repr(mpeg_frame_init) == (
-		"<MPEGFrameHeader ({'bitrate': '128 Kbps', 'channel_mode': <MP3ChannelMode.JOINT_STEREO>, "
+		"<MPEGFrameHeader({'bitrate': '128 Kbps', 'channel_mode': <MP3ChannelMode.JOINT_STEREO>, "
 		"'channels': 2, 'layer': 3, 'padded': False, 'protected': False, 'sample_rate': '44.1 KHz', 'version': 1,})>"
 	)
 

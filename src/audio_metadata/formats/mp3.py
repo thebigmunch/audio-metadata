@@ -286,7 +286,7 @@ class LAMEHeader(AttrMapping):
 
 
 class XingToC(LabelList):
-	item_label = 'entries'
+	item_label = ('entry', 'entries')
 
 
 @attrs(
@@ -335,7 +335,7 @@ class XingHeader(AttrMapping):
 
 
 class VBRIToC(LabelList):
-	item_label = 'entries'
+	item_label = ('entry', 'entries')
 
 
 @attrs(

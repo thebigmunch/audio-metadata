@@ -224,7 +224,7 @@ def _():
 	assert cuesheet_index_init == cuesheet_index_load
 	assert cuesheet_index_init.number == cuesheet_index_load.number == 1
 	assert cuesheet_index_init.offset == cuesheet_index_load.offset == 0
-	assert repr(cuesheet_index_init) == repr(cuesheet_index_load) == "<FLACCueSheetIndex ({'number': 1, 'offset': 0})>"
+	assert repr(cuesheet_index_init) == repr(cuesheet_index_load) == "<FLACCueSheetIndex({'number': 1, 'offset': 0})>"
 
 	cuesheet_index_init = FLACCueSheetIndex(
 		number=2,
@@ -237,7 +237,7 @@ def _():
 	assert cuesheet_index_init == cuesheet_index_load
 	assert cuesheet_index_init.number == cuesheet_index_load.number == 2
 	assert cuesheet_index_init.offset == cuesheet_index_load.offset == 588
-	assert repr(cuesheet_index_init) == repr(cuesheet_index_load) == "<FLACCueSheetIndex ({'number': 2, 'offset': 588})>"
+	assert repr(cuesheet_index_init) == repr(cuesheet_index_load) == "<FLACCueSheetIndex({'number': 2, 'offset': 588})>"
 
 
 @test(

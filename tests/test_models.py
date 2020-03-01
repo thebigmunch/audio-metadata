@@ -53,7 +53,7 @@ def _():
 		data=test_image.read_bytes()
 	)
 
-	assert repr(picture) == "<Picture ({'data': '96.00 B', 'height': 16, 'width': 16})>"
+	assert repr(picture) == "<Picture({'data': '96.00 B', 'height': 16, 'width': 16})>"
 
 
 @test(
@@ -69,7 +69,7 @@ def _():
 		channels=2
 	)
 
-	assert strip_repr(stream_info) == "<StreamInfo ({'bitrate': '320 Kbps', 'channels': 2, 'duration': '01:40', 'sample_rate': '44.1 KHz',})>"
+	assert strip_repr(stream_info) == "<StreamInfo({'bitrate': '320 Kbps', 'channels': 2, 'duration': '01:40', 'sample_rate': '44.1 KHz',})>"
 
 
 @test(
@@ -89,4 +89,4 @@ def _():
 
 	assert list(iter(test_tags)) == ['artist', 'title']
 
-	assert repr(test_tags) == "<Tags ({'artist': 'value1', 'title': 'value2'})>"
+	assert repr(test_tags) == "<Tags({'artist': 'value1', 'title': 'value2'})>"

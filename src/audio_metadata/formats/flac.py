@@ -206,7 +206,7 @@ class FLACCueSheet(LabelList):
 		compact_disc (bool): ``True`` if the cue sheet corresponds to a compact disc, else ``False``.
 	"""
 
-	item_label = 'tracks'
+	item_label = ('track', 'tracks')
 
 	def __init__(self, tracks, catalog_number, lead_in_samples, compact_disc):
 		super().__init__(tracks)
@@ -322,7 +322,7 @@ class FLACSeekPoint(AttrMapping):
 
 
 class FLACSeekTable(LabelList):
-	item_label = 'seekpoints'
+	item_label = ('seekpoint', 'seekpoints')
 
 	@datareader
 	@classmethod
