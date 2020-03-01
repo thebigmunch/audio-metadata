@@ -107,12 +107,15 @@ class OggOpus(Ogg):
 			self.streaminfo = OggOpusStreamInfo.load(page.segments[0])
 			info_serial = page.serial_number
 
-		page = next(self.parse_pages())
+		audio_start = self._obj.tell()
 
+		page = next(self.parse_pages())
 		if (
 			page.serial_number == info_serial
 			and page.segments[0].startswith(b'OpusTags')
 		):
+			audio_start = self._obj.tell()
+
 			tag_pages = [page]
 			while not (
 				tag_pages[-1].is_complete
@@ -122,7 +125,8 @@ class OggOpus(Ogg):
 				if page.serial_number == tag_pages[0].serial_number:
 					tag_pages.append(page)
 
-		audio_start = self._obj.tell()
+					audio_start = self._obj.tell()
+
 		last_page = self.find_last_page(info_serial)
 		audio_end = self._obj.tell()
 
