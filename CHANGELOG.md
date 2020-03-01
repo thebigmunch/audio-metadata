@@ -25,6 +25,12 @@ This project adheres to [Semantic Versioning](https://semver.org).
 * ``AudioMetadataWarning``.
 * ``ID3v2BinaryDataFrame``.
 * Support for MCDI ID3v2 frame.
+* Finish support for ID3v2.4 timestamp frames.
+	* ``TDEN``.
+	* ``TDOR``.
+	* ``TDRC``.
+	* ``TDRL``.
+	* ``TDTG``.
 
 ### Changed
 

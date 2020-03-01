@@ -35,6 +35,8 @@ from attr import (
 	attrib,
 	attrs,
 )
+from pendulum.parsing import ParserError
+from pendulum.parsing.iso8601 import parse_iso8601
 from tbm_utils import (
 	AttrMapping,
 	datareader,
@@ -239,6 +241,14 @@ class ID3v2TextFrame(ID3v2BaseFrame):
 class ID3v2TimestampFrame(ID3v2BaseFrame):
 	value = attrib()
 
+	@value.validator
+	def validate_value(self, attribute, value):
+		for v in value:
+			try:
+				parse_iso8601(v)
+			except ParserError:
+				raise ValueError("Timestamp frame values must conform to the ID3v2-compliant subset of ISO 8601.")
+
 
 @attrs(
 	repr=False,
@@ -357,8 +367,7 @@ class ID3v2Frame(ID3v2BaseFrame):
 	# TODO: PCNT, POPM, POSS, RBUF, RVAD, RVRB, SYTC, UFID, USER
 
 	# TODO: ID3v2.4
-	# TODO: ASPI, EQU2, RVA2, SEEK, SIGN, TDEN, TDOR, TDRC, TDRL, TDTG
-	# TODO: TMCL, TPRO
+	# TODO: ASPI, EQU2, RVA2, SEEK, SIGN, TMCL, TPRO
 
 	_FRAME_TYPES = {
 		# Binary data frames
@@ -480,11 +489,14 @@ class ID3v2Frame(ID3v2BaseFrame):
 		'TSRC': ID3v2TextFrame,
 		'TSSE': ID3v2TextFrame,
 		'TSST': ID3v2TextFrame,
+		'XSOP': ID3v2TextFrame,
 
 		# Timestamp Frames
-		# TODO: Proper.
+		'TDEN': ID3v2TimestampFrame,
+		'TDOR': ID3v2TimestampFrame,
 		'TDRC': ID3v2TimestampFrame,
 		'TDRL': ID3v2TimestampFrame,
+		'TDTG': ID3v2TimestampFrame,
 
 		# URL Link Frames
 		'WAF': ID3v2URLLinkFrame,
