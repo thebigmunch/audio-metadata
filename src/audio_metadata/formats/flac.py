@@ -44,9 +44,9 @@ from ..models import (
 	StreamInfo,
 )
 
-try:  # pragma: nocover
+try:
 	import bitstruct.c as bitstruct
-except ImportError:  # pragma: nocover
+except ImportError:
 	import bitstruct
 
 

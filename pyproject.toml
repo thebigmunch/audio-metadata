@@ -74,17 +74,24 @@ test = [
 
 [tool.coverage.run]
 branch = true
-source = [ "audio_metadata" ]
-omit = [
-	"**/__about__.py",
-	"**/__init__.py",
-	"**/exceptions.py",
-	"**/formats/tables.py",
+source = [
+	"audio_metadata",
+	"tests",
 ]
 
 [tool.coverage.report]
 precision = 2
 show_missing = true
+exclude_lines = [
+	"__all__",
+	"import",
+	"except ImportError:",
+	"pass",
+	"# pragma: nocover",
+	"# pragma: no cover",
+	"# pragma: nobranch",
+	"# pragma: no branch",
+]
 
 
 [tool.ward]

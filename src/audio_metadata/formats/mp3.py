@@ -63,10 +63,10 @@ from ..utils import (
 	humanize_sample_rate,
 )
 
-try:  # pragma: nocover
+try:
 	import bitstruct.c as bitstruct
 	bitstruct.Error = (TypeError, ValueError)
-except ImportError:  # pragma: nocover
+except ImportError:
 	import bitstruct
 	bitstruct.Error = (bitstruct.Error,)
 

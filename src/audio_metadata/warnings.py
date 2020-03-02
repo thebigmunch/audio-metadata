@@ -7,7 +7,7 @@ import warnings
 
 
 # Override warning output format.
-def showwarning(message, category, filename, lineno, file=None, line=None):
+def showwarning(message, category, filename, lineno, file=None, line=None):  # pragma: nocover
 	if file is None:
 		file = sys.stderr
 		if file is None:

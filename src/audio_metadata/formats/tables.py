@@ -23,12 +23,12 @@ from enum import (
 )
 
 
-class _BaseEnum(Enum):  # pragma: nocover
+class _BaseEnum(Enum):
 	def __repr__(self):
 		return f'<{self.__class__.__name__}.{self.name}>'
 
 
-class _BaseIntEnum(IntEnum):  # pragma: nocover
+class _BaseIntEnum(IntEnum):
 	def __repr__(self):
 		return f'<{self.__class__.__name__}.{self.name}>'
 

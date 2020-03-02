@@ -34,9 +34,9 @@ from ..models import Tags
 from ..utils import decode_synchsafe_int
 from ..warnings import AudioMetadataWarning
 
-try:  # pragma: nocover
+try:
 	import bitstruct.c as bitstruct
-except ImportError:  # pragma: nocover
+except ImportError:
 	import bitstruct
 
 
