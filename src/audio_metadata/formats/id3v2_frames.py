@@ -8,10 +8,11 @@ __all__ = [
 	'ID3v2Frame',
 	'ID3v2GEOBFrame',
 	'ID3v2GenreFrame',
-	'ID3v2InvolvedPeopleListFrame',
 	'ID3v2InvolvedPerson',
+	'ID3v2MappingListFrame',
 	'ID3v2NumberFrame',
 	'ID3v2NumericTextFrame',
+	'ID3v2Performer',
 	'ID3v2Picture',
 	'ID3v2PictureFrame',
 	'ID3v2PrivateFrame',
@@ -65,6 +66,15 @@ _genre_re = re.compile(r"((?:\((?P<id>\d+|RX|CR)\))*)(?P<name>.+)?")
 )
 class ID3v2InvolvedPerson(AttrMapping):
 	involvement = attrib()
+	name = attrib()
+
+
+@attrs(
+	repr=False,
+	kw_only=True,
+)
+class ID3v2Performer(AttrMapping):
+	instrument = attrib()
 	name = attrib()
 
 
@@ -153,7 +163,7 @@ class ID3v2GEOBFrame(ID3v2BaseFrame):
 	repr=False,
 	kw_only=True,
 )
-class ID3v2InvolvedPeopleListFrame(ID3v2BaseFrame):
+class ID3v2MappingListFrame(ID3v2BaseFrame):
 	value = attrib()
 
 
@@ -369,7 +379,7 @@ class ID3v2Frame(ID3v2BaseFrame):
 
 	# TODO: ID3v2.4
 	# TODO: ASPI, EQU2, PCST, RGAD, RVA2, SEEK, SIGN,
-	# TODO: TMCL, TPRO, XRVA
+	# TODO: TPRO, XRVA
 
 	_FRAME_TYPES = {
 		# Binary data frames
@@ -379,14 +389,15 @@ class ID3v2Frame(ID3v2BaseFrame):
 		# Complex Text Frames
 		'COM': ID3v2CommentFrame,
 		'GEO': ID3v2GEOBFrame,
-		'IPL': ID3v2InvolvedPeopleListFrame,
+		'IPL': ID3v2MappingListFrame,
 		'TXX': ID3v2UserTextFrame,
 
 		'COMM': ID3v2CommentFrame,
 		'GEOB': ID3v2GEOBFrame,
-		'IPLS': ID3v2InvolvedPeopleListFrame,
+		'IPLS': ID3v2MappingListFrame,
 		'PRIV': ID3v2PrivateFrame,
-		'TIPL': ID3v2InvolvedPeopleListFrame,
+		'TIPL': ID3v2MappingListFrame,
+		'TMCL': ID3v2MappingListFrame,
 		'TXXX': ID3v2UserTextFrame,
 
 		# Genre Frame
@@ -574,7 +585,7 @@ class ID3v2Frame(ID3v2BaseFrame):
 			)
 
 			kwargs['value'] = comment
-		elif frame_type is ID3v2InvolvedPeopleListFrame:
+		elif frame_type is ID3v2MappingListFrame:
 			encoding = determine_encoding(frame_data[0:1])
 
 			values = []
@@ -584,19 +595,28 @@ class ID3v2Frame(ID3v2BaseFrame):
 				head, tail = split_encoded(tail, encoding)
 				values.append(head)
 
-			people = [
-				ID3v2InvolvedPerson(
-					involvement=decode_bytestring(involvement, encoding),
-					name=decode_bytestring(name, encoding),
-				)
-				for involvement, name in more_itertools.chunked(values, 2)
-			]
+			if frame_id == 'TMCL':
+				mapping_list = [
+					ID3v2Performer(
+						instrument=decode_bytestring(instrument, encoding),
+						name=decode_bytestring(name, encoding),
+					)
+					for instrument, name in more_itertools.chunked(values, 2)
+				]
+			else:
+				mapping_list = [
+					ID3v2InvolvedPerson(
+						involvement=decode_bytestring(involvement, encoding),
+						name=decode_bytestring(name, encoding),
+					)
+					for involvement, name in more_itertools.chunked(values, 2)
+				]
 
 			# Ignore empty people list.
 			if len(values) < 1:
 				return None
 
-			kwargs['value'] = people
+			kwargs['value'] = mapping_list
 		elif frame_type is ID3v2GenreFrame:
 			encoding = determine_encoding(frame_data[0:1])
 

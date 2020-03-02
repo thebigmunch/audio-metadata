@@ -287,7 +287,7 @@ class ID3v2Frames(Tags):
 				frame,
 				(
 					ID3v2GenreFrame,
-					ID3v2InvolvedPeopleListFrame,
+					ID3v2MappingListFrame,
 					ID3v2NumericTextFrame,
 					ID3v2TextFrame,
 					ID3v2TimestampFrame,

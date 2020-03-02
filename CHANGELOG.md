@@ -12,7 +12,7 @@ This project adheres to [Semantic Versioning](https://semver.org).
 
 * Support for ID3v2 involved people list frames.
 	* ``ID3v2InvolvedPerson``.
-	* ``ID3v2InvolvedPeopleListFrame``.
+	* ``ID3v2MappingListFrame``.
 * ``ID3v2Comment``.
 * Ogg machinery.
 	* ``Ogg``.
@@ -31,6 +31,8 @@ This project adheres to [Semantic Versioning](https://semver.org).
 	* ``TDRC``.
 	* ``TDRL``.
 	* ``TDTG``.
+* Support for TMCL ID3v2.4 frame.
+	* ``ID3v2Performer``.
 
 ### Changed
 
