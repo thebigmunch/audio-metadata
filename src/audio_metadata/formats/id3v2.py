@@ -32,6 +32,7 @@ from ..exceptions import (
 )
 from ..models import Tags
 from ..utils import decode_synchsafe_int
+from ..warnings import AudioMetadataWarning
 
 try:  # pragma: nocover
 	import bitstruct.c as bitstruct
@@ -220,8 +221,11 @@ class ID3v2Frames(Tags):
 			# Warn user and encourage reporting.
 			if frame.id not in ID3v2FrameIDs[id3_version]:
 				warnings.warn(
-					f"Ignoring '{frame.id}' frame with value '{frame.value}'.\n"
-					f"'{frame.id}' is not supported in the ID3v2.{id3_version.value[1]} specification.\n"
+					(
+						f"Ignoring '{frame.id}' frame with value '{frame.value}'.\n"
+						f"'{frame.id}' is not supported in the ID3v2.{id3_version.value[1]} specification.\n"
+					),
+					AudioMetadataWarning
 				)
 				continue
 

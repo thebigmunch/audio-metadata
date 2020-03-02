@@ -22,6 +22,7 @@ This project adheres to [Semantic Versioning](https://semver.org).
 * Ogg Opus load(s) support.
 	* ``OggOpus``.
 	* ``OggOpusVorbisComments``.
+* ``AudioMetadataWarning``.
 
 ### Changed
 
