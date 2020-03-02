@@ -691,10 +691,11 @@ class MP3StreamInfo(StreamInfo):
 			num_samples = samples_per_frame * vbri_header.num_frames
 			bitrate_mode = MP3BitrateMode.VBR
 		else:
+			num_samples = samples_per_frame * (audio_size / frames[0]._size)
+
+		if bitrate_mode is MP3BitrateMode.UNKNOWN:
 			if more_itertools.all_equal([frame['bitrate'] for frame in frames]):  # pragma: nobranch
 				bitrate_mode = MP3BitrateMode.CBR
-
-			num_samples = samples_per_frame * (audio_size / frames[0]._size)
 
 		if bitrate_mode is MP3BitrateMode.CBR:
 			bitrate = frames[0].bitrate

@@ -49,6 +49,10 @@ This project adheres to [Semantic Versioning](https://semver.org).
 
 * Move ``DataReader`` class and ``datareader`` decorator to ``tbm-utils``.
 
+### Fixed
+
+* Apply CBR bitrate mode check to MP3s with non-LAME Xing headers.
+
 
 ## [0.7.0](https://github.com/thebigmunch/audio-metadata/releases/tag/0.7.0) (2020-02-17)
 
