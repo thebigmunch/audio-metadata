@@ -1,6 +1,7 @@
 import struct
 from pathlib import Path
 
+from tbm_utils import DataReader
 from ward import (
 	each,
 	raises,
@@ -28,7 +29,6 @@ from audio_metadata import (
 	XingHeader,
 	XingToC,
 )
-from audio_metadata.utils import DataReader
 from tests.utils import strip_repr
 
 
@@ -465,8 +465,6 @@ def _():
 	tags=['unit', 'mp3', 'MP3StreamInfo']
 )
 def _():
-	pass
-
 	data = DataReader(Path(__file__).parent / 'files' / 'audio' / 'test-mp3-lame-vbr.mp3')
 	assert MP3StreamInfo.count_mpeg_frames(data) == 193
 

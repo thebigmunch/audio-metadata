@@ -13,7 +13,7 @@ from codecs import (
 )
 from functools import reduce
 
-from tbm_utils import DataReader
+from tbm_utils import datareader
 
 
 def decode_bytestring(b, encoding='iso-8859-1'):
@@ -51,10 +51,8 @@ def determine_encoding(b):
 	return encoding
 
 
+@datareader
 def get_image_size(data):
-	if not isinstance(data, DataReader):  # pragma: nocover
-		data = DataReader(data)
-
 	b = data.read(56)
 	size = len(b)
 

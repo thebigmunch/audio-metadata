@@ -530,6 +530,7 @@ class MP3StreamInfo(StreamInfo):
 	duration = attrib()
 	sample_rate = attrib()
 
+	@datareader
 	@staticmethod
 	def count_mpeg_frames(data):
 		num_frames = 0
@@ -556,6 +557,7 @@ class MP3StreamInfo(StreamInfo):
 
 		return num_frames
 
+	@datareader
 	@staticmethod
 	@lru_cache()
 	def find_mpeg_frames(data):

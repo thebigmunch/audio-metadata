@@ -1,6 +1,7 @@
 from pathlib import Path
 
 from bidict import frozenbidict
+from tbm_utils import DataReader
 from ward import test
 
 from audio_metadata.models import (
@@ -9,7 +10,6 @@ from audio_metadata.models import (
 	StreamInfo,
 	Tags
 )
-from audio_metadata.utils import DataReader
 from tests.utils import strip_repr
 
 
