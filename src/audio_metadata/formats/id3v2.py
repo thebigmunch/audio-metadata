@@ -250,7 +250,7 @@ class ID3v2Frames(Tags):
 						f"Ignoring '{frame.id}' frame with value '{frame.value}'.\n"
 						f"'{frame.id}' is not supported in the ID3v2.{id3_version.value[1]} specification.\n"
 					),
-					AudioMetadataWarning
+					AudioMetadataWarning,
 				)
 				continue
 
@@ -264,11 +264,6 @@ class ID3v2Frames(Tags):
 				),
 			):
 				frames[f'{frame.id}:{frame.description}:{frame.language}'].append(frame.value)
-			elif isinstance(
-				frame,
-				ID3v2UserTextFrame,
-			):
-				frames[f'{frame.id}:{frame.description}'].append(frame.value)
 			elif isinstance(
 				frame,
 				(

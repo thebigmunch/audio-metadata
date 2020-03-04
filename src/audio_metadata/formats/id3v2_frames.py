@@ -23,6 +23,7 @@ __all__ = [
 	'ID3v2TimestampFrame',
 	'ID3v2UnsynchronizedLyricsFrame',
 	'ID3v2URLLinkFrame',
+	'ID3v2UserText',
 	'ID3v2UserTextFrame',
 	'ID3v2UserURLLink',
 	'ID3v2UserURLLinkFrame',
@@ -109,6 +110,15 @@ class ID3v2Performer(AttrMapping):
 class ID3v2PrivateInfo(AttrMapping):
 	owner = attrib()
 	data = attrib()
+
+
+@attrs(
+	repr=False,
+	kw_only=True,
+)
+class ID3v2UserText(AttrMapping):
+	description = attrib()
+	text = attrib()
 
 
 @attrs(
@@ -319,7 +329,6 @@ class ID3v2UserURLLinkFrame(ID3v2BaseFrame):
 	kw_only=True,
 )
 class ID3v2UserTextFrame(ID3v2BaseFrame):
-	description = attrib()
 	value = attrib()
 
 
@@ -711,6 +720,14 @@ class ID3v2Frame(ID3v2BaseFrame):
 			kwargs['value'] = decode_bytestring(description, encoding)
 		elif frame_type is ID3v2URLLinkFrame:
 			kwargs['value'] = unquote(decode_bytestring(frame_data))
+		elif frame_type is ID3v2UserTextFrame:
+			encoding = determine_encoding(frame_data)
+
+			description, text = split_encoded(frame_data[1:], encoding)
+			kwargs['value'] = ID3v2UserText(
+				description=decode_bytestring(description, encoding),
+				text=decode_bytestring(text, encoding),
+			)
 		elif frame_type is ID3v2UserURLLinkFrame:
 			encoding = determine_encoding(frame_data)
 
@@ -719,13 +736,7 @@ class ID3v2Frame(ID3v2BaseFrame):
 				description=decode_bytestring(description, encoding),
 				url=unquote(decode_bytestring(url)),
 			)
-		elif issubclass(
-			frame_type,
-			(
-				ID3v2NumberFrame,
-				ID3v2UserTextFrame,
-			),
-		):
+		elif issubclass(frame_type, ID3v2NumberFrame):
 			encoding = determine_encoding(frame_data[0:1])
 			kwargs['value'] = decode_bytestring(frame_data[1:], encoding)
 		elif issubclass(

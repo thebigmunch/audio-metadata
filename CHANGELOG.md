@@ -41,6 +41,7 @@ This project adheres to [Semantic Versioning](https://semver.org).
 * ``ID3v2GeneralEncapsulatedObject``.
 * ``ID3v2PrivateInfo``.
 * ``ID3v2UserURLLink``.
+* ``ID3v2UserText``.
 
 ### Changed
 
@@ -71,6 +72,12 @@ This project adheres to [Semantic Versioning](https://semver.org).
 		that contains a single user URL link object.
 	* Change ``ID3v2Frames`` to present a list of user URL link
 		objects for ``WXXX`` key.
+* Rework ID3v2 user text frame abstractions.
+	* Add ``ID3v2UserText`` class.
+	* Change ``ID3v2UserTextFrame`` to have only value attribute.
+		that contains a single user text object.
+	* Change ``ID3v2Frames`` to present a list of user text
+		objects for ``TXXX`` key.
 
 ### Removed
 
