@@ -210,7 +210,7 @@ class ID3v2Frames(Tags):
 
 	@datareader
 	@classmethod
-	def load(cls, data, id3_version):
+	def parse(cls, data, id3_version):
 		id3_version = ID3Version(id3_version)
 		if id3_version is ID3Version.v22:
 			struct_pattern = '3s3B'
@@ -230,7 +230,7 @@ class ID3v2Frames(Tags):
 		frames = defaultdict(list)
 		while True:
 			try:
-				frame = ID3v2Frame.load(data, struct_pattern, size_len, per_byte)
+				frame = ID3v2Frame.parse(data, struct_pattern, size_len, per_byte)
 			except InvalidFrame:
 				break
 
@@ -331,7 +331,7 @@ class ID3v2Header(AttrMapping):
 
 	@datareader
 	@classmethod
-	def load(cls, data):
+	def parse(cls, data):
 		if data.read(3) != b"ID3":
 			raise InvalidHeader("Valid ID3v2 header not found.")
 
@@ -374,13 +374,13 @@ class ID3v2(AttrMapping):
 
 	@datareader
 	@classmethod
-	def load(cls, data):
+	def parse(cls, data):
 		if data.peek(3) != b"ID3":
 			raise InvalidHeader("Valid ID3v2 header not found.")
 
 		self = cls()
 
-		self._header = ID3v2Header.load(data.read(10))
+		self._header = ID3v2Header.parse(data.read(10))
 		self._size = 10 + self._header._size
 
 		if self._header.flags.extended:
@@ -399,7 +399,7 @@ class ID3v2(AttrMapping):
 			self._size += 10
 			data.read(10)
 
-		self.tags = ID3v2Frames.load(
+		self.tags = ID3v2Frames.parse(
 			data.read(self._header._size),
 			self._header.version,
 		)

@@ -37,7 +37,7 @@ from tests.utils import strip_repr
 	tags=['unit', 'mp3', 'lame', 'LAMEReplayGain']
 )
 def _():
-	replay_gain_load = LAMEReplayGain.load(b'\x00\x1b\xfa\x05,D\x00\x00')
+	replay_gain_load = LAMEReplayGain.parse(b'\x00\x1b\xfa\x05,D\x00\x00')
 	replay_gain_init = LAMEReplayGain(
 		peak=0.21856749057769775,
 		track_type=1,
@@ -57,7 +57,7 @@ def _():
 	assert replay_gain_load.album_origin == replay_gain_init.album_origin == 0
 	assert replay_gain_load.album_adjustment == replay_gain_init.album_adjustment == 0.0
 
-	replay_gain_load = LAMEReplayGain.load(b'\x00\x00\x00\x00\x00\x00\x00\x00')
+	replay_gain_load = LAMEReplayGain.parse(b'\x00\x00\x00\x00\x00\x00\x00\x00')
 	replay_gain_init = LAMEReplayGain(
 		peak=None,
 		track_type=0,
@@ -77,7 +77,7 @@ def _():
 	assert replay_gain_load.album_origin == replay_gain_init.album_origin == 0
 	assert replay_gain_load.album_adjustment == replay_gain_init.album_adjustment == 0.0
 
-	replay_gain_load = LAMEReplayGain.load(b'\x00\x1b\xfa\x05.D\x02\x00')
+	replay_gain_load = LAMEReplayGain.parse(b'\x00\x1b\xfa\x05.D\x02\x00')
 	replay_gain_init = LAMEReplayGain(
 		peak=0.21856749057769775,
 		track_type=1,
@@ -152,7 +152,7 @@ def _():
 		b'5 $\x04\xecM\x00\x01\xf4\x00\x00P\t:\xe9\x1d|'
 	)
 
-	lame_header_load = LAMEHeader.load(lame_data, 100)
+	lame_header_load = LAMEHeader.parse(lame_data, 100)
 	lame_header_init = LAMEHeader(
 		crc=b'\x1d|',
 		ath_type=5,
@@ -190,7 +190,7 @@ def _():
 	)
 
 	with raises(InvalidHeader):
-		LAMEHeader.load(lame_data[9:], 100)
+		LAMEHeader.parse(lame_data[9:], 100)
 
 	assert lame_header_load == lame_header_init
 	assert lame_header_load._crc == lame_header_init._crc == b'\x1d|'
@@ -259,9 +259,9 @@ def _():
 	)
 
 	with raises(InvalidHeader):
-		XingHeader.load(xing_data[4:])
+		XingHeader.parse(xing_data[4:])
 
-	xing_header_load = XingHeader.load(xing_data)
+	xing_header_load = XingHeader.parse(xing_data)
 	xing_header_init = XingHeader(
 		lame=None,
 		num_bytes=20489,
@@ -306,10 +306,10 @@ def _():
 	)
 
 	with raises(InvalidHeader):
-		VBRIHeader.load(vbri_data[4:])
+		VBRIHeader.parse(vbri_data[4:])
 
 	with raises(InvalidHeader):
-		VBRIHeader.load(vbri_data[:23] + b'\x01' + vbri_data[24:])
+		VBRIHeader.parse(vbri_data[:23] + b'\x01' + vbri_data[24:])
 
 	toc_entries = []
 	i = 26
@@ -322,7 +322,7 @@ def _():
 		)
 		i += 2
 
-	vbri_header_load = VBRIHeader.load(vbri_data)
+	vbri_header_load = VBRIHeader.parse(vbri_data)
 	vbri_header_init = VBRIHeader(
 		delay=0.00015842914581298828,
 		num_bytes=20594,
@@ -373,12 +373,12 @@ def _():
 	)
 
 	with raises(InvalidFrame):
-		MPEGFrameHeader.load(mpeg_frame_data[2:])
+		MPEGFrameHeader.parse(mpeg_frame_data[2:])
 
 	with raises(InvalidFrame):
-		MPEGFrameHeader.load(mpeg_frame_data[0:1] + b'\xee' + mpeg_frame_data[2:])
+		MPEGFrameHeader.parse(mpeg_frame_data[0:1] + b'\xee' + mpeg_frame_data[2:])
 
-	mpeg_frame_load = MPEGFrameHeader.load(mpeg_frame_data)
+	mpeg_frame_load = MPEGFrameHeader.parse(mpeg_frame_data)
 	mpeg_frame_init = MPEGFrameHeader(
 		start=0,
 		size=417,

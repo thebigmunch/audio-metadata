@@ -70,7 +70,7 @@ class FLACApplication(AttrMapping):
 
 	@datareader
 	@classmethod
-	def load(cls, data):
+	def parse(cls, data):
 		id_ = data.read(4).decode('utf-8', 'replace')
 		data = data.read()
 
@@ -104,7 +104,7 @@ class FLACCueSheetIndex(AttrMapping):
 
 	@datareader
 	@classmethod
-	def load(cls, data):
+	def parse(cls, data):
 		offset = struct.unpack(
 			'>Q',
 			data.read(8),
@@ -156,7 +156,7 @@ class FLACCueSheetTrack(AttrMapping):
 
 	@datareader
 	@classmethod
-	def load(cls, data):
+	def parse(cls, data):
 		offset = struct.unpack(
 			'>Q',
 			data.read(8),
@@ -180,7 +180,7 @@ class FLACCueSheetTrack(AttrMapping):
 
 		indexes = []
 		for _ in range(num_indexes):
-			indexes.append(FLACCueSheetIndex.load(data))
+			indexes.append(FLACCueSheetIndex.parse(data))
 
 		return cls(
 			track_number=track_number,
@@ -216,7 +216,7 @@ class FLACCueSheet(LabelList):
 
 	@datareader
 	@classmethod
-	def load(cls, data):
+	def parse(cls, data):
 		catalog_number = data.read(128).rstrip(b'\0').decode('ascii', 'replace')
 		lead_in_samples = struct.unpack(
 			'>Q',
@@ -235,7 +235,7 @@ class FLACCueSheet(LabelList):
 
 		tracks = []
 		for _ in range(num_tracks):
-			tracks.append(FLACCueSheetTrack.load(data))
+			tracks.append(FLACCueSheetTrack.parse(data))
 
 		return cls(
 			tracks,
@@ -269,14 +269,14 @@ class FLACPadding(AttrMapping):
 
 	@datareader
 	@classmethod
-	def load(cls, data):
+	def parse(cls, data):
 		return cls(size=len(data.peek()))
 
 
 class FLACPicture(Picture):
 	@datareader
 	@classmethod
-	def load(cls, data):
+	def parse(cls, data):
 		type_, mime_length = struct.unpack('>2I', data.read(8))
 		mime_type = data.read(mime_length).decode('utf-8', 'replace')
 
@@ -311,7 +311,7 @@ class FLACSeekPoint(AttrMapping):
 
 	@datareader
 	@classmethod
-	def load(cls, data):
+	def parse(cls, data):
 		first_sample, offset, num_samples = struct.unpack('>QQH', data.read())
 
 		return cls(
@@ -326,11 +326,11 @@ class FLACSeekTable(LabelList):
 
 	@datareader
 	@classmethod
-	def load(cls, data):
+	def parse(cls, data):
 		seekpoints = []
 		seekpoint = data.read(18)
 		while len(seekpoint) == 18:
-			seekpoints.append(FLACSeekPoint.load(seekpoint))
+			seekpoints.append(FLACSeekPoint.parse(seekpoint))
 			seekpoint = data.read(18)
 
 		return cls(seekpoints)
@@ -356,7 +356,7 @@ class FLACStreamInfo(StreamInfo):
 
 	@datareader
 	@classmethod
-	def load(cls, data):
+	def parse(cls, data):
 		stream_info_block_data = bitstruct.unpack(
 			'u16 u16 u24 u24 u20 u3 u5 u36 r128',
 			data.read(34),
@@ -409,12 +409,12 @@ class FLAC(Format):
 		self._blocks = []
 
 	@classmethod
-	def load(cls, data):
+	def parse(cls, data):
 		self = super()._load(data)
 
 		# Ignore ID3v2 in FLAC.
 		if self._obj.peek(3) == b'ID3':
-			ID3v2.load(self._obj)
+			ID3v2.parse(self._obj)
 
 		if self._obj.read(4) != b'fLaC':
 			raise InvalidHeader("Valid FLAC header not found.")
@@ -434,28 +434,28 @@ class FLAC(Format):
 			metadata_block_data = self._obj.read(block_size)
 
 			if block_type == FLACMetadataBlockType.STREAMINFO:
-				streaminfo_block = FLACStreamInfo.load(metadata_block_data)
+				streaminfo_block = FLACStreamInfo.parse(metadata_block_data)
 				self.streaminfo = streaminfo_block
 				self._blocks.append(streaminfo_block)
 			elif block_type == FLACMetadataBlockType.PADDING:
-				self._blocks.append(FLACPadding.load(metadata_block_data))
+				self._blocks.append(FLACPadding.parse(metadata_block_data))
 			elif block_type == FLACMetadataBlockType.APPLICATION:
-				application_block = FLACApplication.load(metadata_block_data)
+				application_block = FLACApplication.parse(metadata_block_data)
 				self._blocks.append(application_block)
 			elif block_type == FLACMetadataBlockType.SEEKTABLE:
-				seektable = FLACSeekTable.load(metadata_block_data)
+				seektable = FLACSeekTable.parse(metadata_block_data)
 				self.seektable = seektable
 				self._blocks.append(seektable)
 			elif block_type == FLACMetadataBlockType.VORBIS_COMMENT:
-				comment_block = VorbisComments.load(metadata_block_data)
+				comment_block = VorbisComments.parse(metadata_block_data)
 				self.tags = comment_block
 				self._blocks.append(comment_block)
 			elif block_type == FLACMetadataBlockType.CUESHEET:
-				cuesheet_block = FLACCueSheet.load(metadata_block_data)
+				cuesheet_block = FLACCueSheet.parse(metadata_block_data)
 				self.cuesheet = cuesheet_block
 				self._blocks.append(cuesheet_block)
 			elif block_type == FLACMetadataBlockType.PICTURE:
-				picture = FLACPicture.load(metadata_block_data)
+				picture = FLACPicture.parse(metadata_block_data)
 				self.pictures.append(picture)
 				self._blocks.append(picture)
 			elif block_type >= 127:

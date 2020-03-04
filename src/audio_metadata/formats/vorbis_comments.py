@@ -28,7 +28,7 @@ class VorbisComment(AttrMapping):
 
 	@datareader
 	@classmethod
-	def load(cls, data):
+	def parse(cls, data):
 		length = struct.unpack('I', data.read(4))[0]
 		comment = data.read(length).decode('utf-8', 'replace')
 
@@ -47,7 +47,7 @@ class VorbisComment(AttrMapping):
 class VorbisComments(Tags):
 	@datareader
 	@classmethod
-	def load(cls, data):
+	def parse(cls, data):
 		vendor_length = struct.unpack('I', data.read(4))[0]
 		vendor = data.read(vendor_length).decode('utf-8', 'replace')
 		num_comments = struct.unpack('I', data.read(4))[0]
@@ -55,7 +55,7 @@ class VorbisComments(Tags):
 		fields = defaultdict(list)
 
 		for _ in range(num_comments):
-			comment = VorbisComment.load(data)
+			comment = VorbisComment.parse(data)
 			fields[comment.name].append(comment.value)
 
 		return cls(

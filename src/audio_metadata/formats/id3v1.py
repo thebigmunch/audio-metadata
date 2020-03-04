@@ -18,7 +18,7 @@ from ..models import Tags
 class ID3v1Fields(Tags):
 	@datareader
 	@classmethod
-	def load(cls, data):
+	def parse(cls, data):
 		self = cls()
 
 		title = data.read(30).strip(b'\x00').decode('iso-8859-1')
@@ -56,11 +56,11 @@ class ID3v1Fields(Tags):
 class ID3v1(AttrMapping):
 	@datareader
 	@classmethod
-	def load(cls, data):
+	def parse(cls, data):
 		if data.read(3) != b"TAG":
 			raise InvalidHeader("Valid ID3v1 header not found.")
 
 		self = cls()
-		self.tags = ID3v1Fields.load(data)
+		self.tags = ID3v1Fields.parse(data)
 
 		return self

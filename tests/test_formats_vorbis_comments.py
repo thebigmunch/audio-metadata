@@ -61,7 +61,7 @@ def _(
 		),
 	)
 ):
-	assert VorbisComment.load(data) == expected
+	assert VorbisComment.parse(data) == expected
 
 
 @test(
@@ -70,7 +70,7 @@ def _(
 )
 def _():
 	with raises(InvalidComment):
-		VorbisComment.load(b'\x09\x00\x00\x00albumtest-album')
+		VorbisComment.parse(b'\x09\x00\x00\x00albumtest-album')
 
 
 @test(
@@ -91,7 +91,7 @@ def _():
 		tracknumber=['1'],
 		tracktotal=['99'],
 	)
-	vorbis_comments_load = VorbisComments.load(
+	vorbis_comments_load = VorbisComments.parse(
 		b' \x00\x00\x00reference libFLAC 1.3.2 20170101\n\x00\x00\x00'
 		b'\x10\x00\x00\x00album=test-album'
 		b'\x12\x00\x00\x00artist=test-artist'

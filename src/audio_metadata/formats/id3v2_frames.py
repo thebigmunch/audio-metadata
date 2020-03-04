@@ -91,7 +91,7 @@ class ID3v2Comment(AttrMapping):
 class ID3v2Picture(Picture):
 	@datareader
 	@classmethod
-	def load(cls, data):
+	def parse(cls, data):
 		data = data.read()
 
 		encoding = determine_encoding(data[0:1])
@@ -213,7 +213,7 @@ class ID3v2NumericTextFrame(ID3v2BaseFrame):
 	kw_only=True,
 )
 class ID3v2PictureFrame(ID3v2BaseFrame):
-	value = attrib(converter=ID3v2Picture.load)
+	value = attrib(converter=ID3v2Picture.parse)
 
 
 @attrs(
@@ -552,7 +552,7 @@ class ID3v2Frame(ID3v2BaseFrame):
 
 	@datareader
 	@classmethod
-	def load(cls, data, struct_pattern, size_len, per_byte):
+	def parse(cls, data, struct_pattern, size_len, per_byte):
 		try:
 			frame = struct.unpack(struct_pattern, data.read(struct.calcsize(struct_pattern)))
 		except struct.error:

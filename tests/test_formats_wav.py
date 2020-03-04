@@ -17,7 +17,7 @@ from audio_metadata import (
 )
 def _():
 	with raises(InvalidChunk):
-		RIFFTags.load(b'NOTINFO')
+		RIFFTags.parse(b'NOTINFO')
 
 	riff_tags_init = RIFFTags(
 		album=['test-album'],
@@ -29,7 +29,7 @@ def _():
 		tracknumber=['1'],
 	)
 
-	riff_tags_load = RIFFTags.load(
+	riff_tags_load = RIFFTags.parse(
 		b'INFOIPRD\x0b\x00\x00\x00test-album\x00\x00'
 		b'IART\x0c\x00\x00\x00test-artist\x00'
 		b'IGNR\x0b\x00\x00\x00test-genre\x00\x00'
@@ -48,11 +48,11 @@ def _():
 )
 def _():
 	with raises(InvalidHeader) as ctx:
-		WAV.load(b'TEST0000WAVE')
+		WAV.parse(b'TEST0000WAVE')
 	assert str(ctx.raised) == "Valid WAVE header not found."
 
 	with raises(InvalidHeader):
-		WAV.load(b'RIFF0000TEST')
+		WAV.parse(b'RIFF0000TEST')
 
 
 @test(
@@ -61,7 +61,7 @@ def _():
 )
 def _():
 	with raises(InvalidHeader):
-		WAV.load(b'RIFF0000WAVEid3 1234')
+		WAV.parse(b'RIFF0000WAVEid3 1234')
 
 
 @test(
@@ -70,5 +70,5 @@ def _():
 )
 def _():
 	with raises(InvalidHeader) as ctx:
-		WAV.load(b'RIFF0000WAVE')
+		WAV.parse(b'RIFF0000WAVE')
 	assert str(ctx.raised) == "Valid WAVE stream info not found."

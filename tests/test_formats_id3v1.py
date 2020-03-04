@@ -26,7 +26,7 @@ ID3v1_DATA = (
 	tags=['unit', 'id3', 'id3v1', 'ID3v1'],
 )
 def _():
-	id3v1 = ID3v1.load(ID3v1_DATA)
+	id3v1 = ID3v1.parse(ID3v1_DATA)
 	expected_fields = ID3v1Fields(
 		title=['test-title'],
 		artist=['test-artist'],
@@ -46,7 +46,7 @@ def _():
 )
 def _():
 	with raises(InvalidHeader):
-		ID3v1.load(ID3v1_DATA[3:])
+		ID3v1.parse(ID3v1_DATA[3:])
 
 
 @test(
@@ -54,7 +54,7 @@ def _():
 	tags=['unit', 'id3', 'id3v1', 'ID3v1'],
 )
 def _():
-	id3v1 = ID3v1.load(ID3v1_DATA.replace(b'test-title', b'\x00' * 10))
+	id3v1 = ID3v1.parse(ID3v1_DATA.replace(b'test-title', b'\x00' * 10))
 	assert 'title' not in id3v1.tags
 
 
@@ -63,7 +63,7 @@ def _():
 	tags=['unit', 'id3', 'id3v1', 'ID3v1'],
 )
 def _():
-	id3v1 = ID3v1.load(ID3v1_DATA.replace(b'test-artist', b'\x00' * 11))
+	id3v1 = ID3v1.parse(ID3v1_DATA.replace(b'test-artist', b'\x00' * 11))
 	assert 'artist' not in id3v1.tags
 
 
@@ -72,7 +72,7 @@ def _():
 	tags=['unit', 'id3', 'id3v1', 'ID3v1'],
 )
 def _():
-	id3v1 = ID3v1.load(ID3v1_DATA.replace(b'test-album', b'\x00' * 10))
+	id3v1 = ID3v1.parse(ID3v1_DATA.replace(b'test-album', b'\x00' * 10))
 	assert 'album' not in id3v1.tags
 
 
@@ -81,7 +81,7 @@ def _():
 	tags=['unit', 'id3', 'id3v1', 'ID3v1'],
 )
 def _():
-	id3v1 = ID3v1.load(ID3v1_DATA.replace(b'2000', b'\x00' * 4))
+	id3v1 = ID3v1.parse(ID3v1_DATA.replace(b'2000', b'\x00' * 4))
 	assert 'year' not in id3v1.tags
 
 
@@ -90,7 +90,7 @@ def _():
 	tags=['unit', 'id3', 'id3v1', 'ID3v1'],
 )
 def _():
-	id3v1 = ID3v1.load(ID3v1_DATA.replace(b'test-comment', b'\x00' * 12))
+	id3v1 = ID3v1.parse(ID3v1_DATA.replace(b'test-comment', b'\x00' * 12))
 	assert 'comment' not in id3v1.tags
 
 
@@ -99,7 +99,7 @@ def _():
 	tags=['unit', 'id3', 'id3v1', 'ID3v1'],
 )
 def _():
-	id3v1 = ID3v1.load(ID3v1_DATA.replace(b'\x01', b'\x00'))
+	id3v1 = ID3v1.parse(ID3v1_DATA.replace(b'\x01', b'\x00'))
 	assert 'tracknumber' not in id3v1.tags
 
 
@@ -108,5 +108,5 @@ def _():
 	tags=['unit', 'id3', 'id3v1', 'ID3v1'],
 )
 def _():
-	id3v1 = ID3v1.load(ID3v1_DATA.replace(b'\x01\x08', b'\x01\xEF'))
+	id3v1 = ID3v1.parse(ID3v1_DATA.replace(b'\x01\x08', b'\x01\xEF'))
 	assert 'genre' not in id3v1.tags

@@ -62,7 +62,7 @@ def determine_format(data):
 		return WAV
 
 	if d.startswith(b'ID3'):
-		ID3v2.load(data)
+		ID3v2.parse(data)
 
 	if data.peek(4) == b'fLaC':
 		return FLAC
@@ -108,7 +108,7 @@ def load(f):
 	else:
 		data.seek(0, os.SEEK_SET)
 
-	return parser_cls.load(data)
+	return parser_cls.parse(data)
 
 
 def loads(b):
@@ -138,4 +138,4 @@ def loads(b):
 	else:
 		data.seek(0, os.SEEK_SET)
 
-	return parser_cls.load(data)
+	return parser_cls.parse(data)

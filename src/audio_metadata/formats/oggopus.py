@@ -23,11 +23,11 @@ from ..models import StreamInfo
 class OggOpusVorbisComments(VorbisComments):
 	@datareader
 	@classmethod
-	def load(cls, data):
+	def parse(cls, data):
 		if data.read(8) != b'OpusTags':
 			raise Exception  # TODO
 
-		return super().load(data)
+		return super().parse(data)
 
 
 @attrs(
@@ -49,7 +49,7 @@ class OggOpusStreamInfo(StreamInfo):
 
 	@datareader
 	@classmethod
-	def load(cls, data):
+	def parse(cls, data):
 		if data.read(8) != b'OpusHead':
 			raise Exception  # TODO
 
@@ -92,7 +92,7 @@ class OggOpus(Ogg):
 	tags_type = OggOpusVorbisComments
 
 	@classmethod
-	def load(cls, data):
+	def parse(cls, data):
 		self = super()._load(data)
 
 		self._obj.seek(0, os.SEEK_SET)
@@ -104,7 +104,7 @@ class OggOpus(Ogg):
 		if not page.segments[0].startswith(b'OpusHead'):
 			raise InvalidFormat(f"'OpusHead' must be first page in Ogg Opus.")
 		else:
-			self.streaminfo = OggOpusStreamInfo.load(page.segments[0])
+			self.streaminfo = OggOpusStreamInfo.parse(page.segments[0])
 			info_serial = page.serial_number
 
 		audio_start = self._obj.tell()
@@ -139,11 +139,11 @@ class OggOpus(Ogg):
 			page.segments[0]
 			for page in tag_pages
 		)
-		self.tags = OggOpusVorbisComments.load(tag_data)
+		self.tags = OggOpusVorbisComments.parse(tag_data)
 
 		pictures = self.tags.pop('metadata_block_picture', [])
 		self.pictures = [
-			FLACPicture.load(b64decode(picture))
+			FLACPicture.parse(b64decode(picture))
 			for picture in pictures
 		]
 

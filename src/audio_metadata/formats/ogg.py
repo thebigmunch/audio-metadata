@@ -45,7 +45,7 @@ class OggPageHeader(AttrMapping):
 
 	@datareader
 	@classmethod
-	def load(cls, data):
+	def parse(cls, data):
 		start = data.tell()
 
 		(
@@ -102,8 +102,8 @@ class OggPage(AttrMapping):
 
 	@datareader
 	@classmethod
-	def load(cls, data):
-		header = OggPageHeader.load(data)
+	def parse(cls, data):
+		header = OggPageHeader.parse(data)
 
 		segment_sizes = []
 		total = 0
@@ -165,7 +165,7 @@ class Ogg(Format):
 
 		last_page = None
 		try:
-			page = OggPage.load(self._obj)
+			page = OggPage.parse(self._obj)
 		except Exception:  # TODO
 			pass
 		else:
@@ -182,7 +182,7 @@ class Ogg(Format):
 		if last_page is None:
 			self._obj.seek(0, os.SEEK_SET)
 			try:
-				page = OggPage.load(self._obj)
+				page = OggPage.parse(self._obj)
 				while True:
 					if page.serial_number == info_serial:
 						if (
@@ -194,7 +194,7 @@ class Ogg(Format):
 							if page.is_last:
 								break
 
-					page = OggPage.load(self._obj)
+					page = OggPage.parse(self._obj)
 			except Exception:
 				pass
 
@@ -202,4 +202,4 @@ class Ogg(Format):
 
 	def parse_pages(self):
 		while (self.filesize - self._obj.tell()) >= 27:
-			yield OggPage.load(self._obj)
+			yield OggPage.parse(self._obj)

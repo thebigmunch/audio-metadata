@@ -25,7 +25,7 @@ from audio_metadata import (
 	tags=['unit', 'flac', 'FLAC'],
 )
 def test_FLAC_load_ID3v2():
-	FLAC.load(
+	FLAC.parse(
 		b'ID3\x04\x00\x80\x00\x00\x00\x00'
 		b'fLaC\x80\x00\x00"\x10\x00\x10\x00\x00\x00\x0e\x00\x00\x10\n'
 		b'\xc4B\xf0\x00\x03]T\x9b\x1b\xe8|kW\x9f\xde#AQ_M\x82\xc0\x08'
@@ -37,7 +37,7 @@ def test_FLAC_load_ID3v2():
 	tags=['unit', 'flac', 'FLAC'],
 )
 def test_FLAC_load_padding():
-	FLAC.load(
+	FLAC.parse(
 		b'fLaC\x00\x00\x00"\x10\x00\x10\x00\x00\x00\x0e\x00\x00\x10\n'
 		b'\xc4B\xf0\x00\x03]T\x9b\x1b\xe8|kW\x9f\xde#AQ_M\x82\xc0\x08'
 		b'\x81\x00\x00\n'
@@ -49,7 +49,7 @@ def test_FLAC_load_padding():
 	tags=['unit', 'flac', 'FLAC'],
 )
 def test_FLAC_load_application():
-	FLAC.load(
+	FLAC.parse(
 		b'fLaC\x00\x00\x00"\x10\x00\x10\x00\x00\x00\x0e\x00\x00\x10\n'
 		b'\xc4B\xf0\x00\x03]T\x9b\x1b\xe8|kW\x9f\xde#AQ_M\x82\xc0\x08'
 		b'\x82\x00\x00\x10aiffFORM\x02\xe0\x9b\x08AIFF'
@@ -61,7 +61,7 @@ def test_FLAC_load_application():
 	tags=['unit', 'flac', 'FLAC'],
 )
 def test_FLAC_load_seektable():
-	FLAC.load(
+	FLAC.parse(
 		b'fLaC\x00\x00\x00"\x10\x00\x10\x00\x00\x00\x0e\x00\x00\x10\n'
 		b'\xc4B\xf0\x00\x03]T\x9b\x1b\xe8|kW\x9f\xde#AQ_M\x82\xc0\x08'
 		b'\x83\x00\x00Z\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x10\x00'
@@ -77,7 +77,7 @@ def test_FLAC_load_seektable():
 	tags=['unit', 'flac', 'FLAC'],
 )
 def test_FLAC_load_vorbis_comment():
-	FLAC.load(
+	FLAC.parse(
 		b'fLaC\x00\x00\x00"\x10\x00\x10\x00\x00\x00\x0e\x00\x00\x10\n'
 		b'\xc4B\xf0\x00\x03]T\x9b\x1b\xe8|kW\x9f\xde#AQ_M\x82\xc0\x08'
 		b'\x84\x00\x00\x15\r\x00\x00\x00Lavf58.30.100\x00\x00\x00\x00'
@@ -89,7 +89,7 @@ def test_FLAC_load_vorbis_comment():
 	tags=['unit', 'flac', 'FLAC'],
 )
 def test_FLAC_load_cuesheet():
-	FLAC.load(
+	FLAC.parse(
 		b'fLaC\x00\x00\x00"\x10\x00\x10\x00\x00\x00\x0e\x00\x00\x10\n'
 		b'\xc4B\xf0\x00\x03]T\x9b\x1b\xe8|kW\x9f\xde#AQ_M\x82\xc0\x08'
 		b'\x85\x00\x02L1234567890123\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
@@ -130,7 +130,7 @@ def test_FLAC_load_cuesheet():
 	tags=['unit', 'flac', 'FLAC'],
 )
 def test_FLAC_load_picture():
-	FLAC.load(
+	FLAC.parse(
 		b'fLaC\x00\x00\x00"\x10\x00\x10\x00\x00\x00\x0e\x00\x00\x10\n'
 		b'\xc4B\xf0\x00\x03]T\x9b\x1b\xe8|kW\x9f\xde#AQ_M\x82\xc0\x08'
 		b'\x86\x00\x00\x89\x00\x00\x00\x03\x00\x00\x00\timage/png\x00\x00\x00\x00'
@@ -147,7 +147,7 @@ def test_FLAC_load_picture():
 	tags=['unit', 'flac', 'FLAC'],
 )
 def _():
-	flac = FLAC.load(
+	flac = FLAC.parse(
 		b'fLaC\n\x00\x00\x00\x80\x00\x00"\x10\x00\x10\x00\x00\x00\x0e\x00\x00\x10\n'
 		b'\xc4B\xf0\x00\x03]T\x9b\x1b\xe8|kW\x9f\xde#AQ_M\x82\xc0\x08'
 	)
@@ -163,7 +163,7 @@ def _():
 	tags=['unit', 'flac', 'FLAC'],
 )
 def _():
-	FLAC.load(
+	FLAC.parse(
 		b'fLaC\x80\x00\x00"\x12\x00\x12\x00\x00\x00\x00\x00JX\n\xc4B\xf0\x00\x00'
 		b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
 	)
@@ -175,7 +175,7 @@ def _():
 )
 def _():
 	with raises(InvalidHeader) as ctx:
-		FLAC.load(b'TEST')
+		FLAC.parse(b'TEST')
 	assert str(ctx.raised) == "Valid FLAC header not found."
 
 
@@ -185,7 +185,7 @@ def _():
 )
 def _():
 	with raises(InvalidBlock) as ctx:
-		FLAC.load(b'fLaC\xff\x00\x00\x00')
+		FLAC.parse(b'fLaC\xff\x00\x00\x00')
 	assert str(ctx.raised) == "127 is not a valid FLAC metadata block type."
 
 
@@ -198,7 +198,7 @@ def _():
 		id='aiff',
 		data=b'FORM\x02\xe0\x9b\x08AIFF'
 	)
-	application_load = FLACApplication.load(
+	application_load = FLACApplication.parse(
 		b'aiffFORM\x02\xe0\x9b\x08AIFF'
 	)
 
@@ -217,7 +217,7 @@ def _():
 		number=1,
 		offset=0,
 	)
-	cuesheet_index_load = FLACCueSheetIndex.load(
+	cuesheet_index_load = FLACCueSheetIndex.parse(
 		b'\x00\x00\x00\x00\x00\x00\x00\x00\x01\x00\x00\x00'
 	)
 
@@ -230,7 +230,7 @@ def _():
 		number=2,
 		offset=588,
 	)
-	cuesheet_index_load = FLACCueSheetIndex.load(
+	cuesheet_index_load = FLACCueSheetIndex.parse(
 		b'\x00\x00\x00\x00\x00\x00\x02L\x02\x00\x00\x00'
 	)
 
@@ -258,7 +258,7 @@ def _():
 			)
 		]
 	)
-	cuesheet_track_load = FLACCueSheetTrack.load(
+	cuesheet_track_load = FLACCueSheetTrack.parse(
 		b'\x00\x00\x00\x00\x00\x00\x00\x00\x01123456789012'
 		b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
 		b'\x00\x00\x01\x00\x00\x00\x00\x00\x00\x00\x00\x01\x00\x00\x00'
@@ -289,7 +289,7 @@ def _():
 			),
 		],
 	)
-	cuesheet_track_load = FLACCueSheetTrack.load(
+	cuesheet_track_load = FLACCueSheetTrack.parse(
 		b'\x00\x00\x00\x00\x00\x00\xacD\x02\x00\x00\x00'
 		b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\xc0\x00'
 		b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
@@ -369,7 +369,7 @@ def _():
 		lead_in_samples=88200,
 		compact_disc=True
 	)
-	cuesheet_load = FLACCueSheet.load(
+	cuesheet_load = FLACCueSheet.parse(
 		b'1234567890123\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
 		b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
 		b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
@@ -427,7 +427,7 @@ def _():
 )
 def _():
 	padding_init = FLACPadding(size=10)
-	padding_load = FLACPadding.load(b'\x00' * 10)
+	padding_load = FLACPadding.parse(b'\x00' * 10)
 
 	assert padding_init == padding_load
 	assert repr(padding_init) == repr(padding_load) == '<FLACPadding (10 bytes)>'
@@ -459,7 +459,7 @@ def _():
 		colors=0,
 		data=image_data[41:],
 	)
-	vorbis_picture_load = FLACPicture.load(image_data)
+	vorbis_picture_load = FLACPicture.parse(image_data)
 
 	assert vorbis_picture_init == vorbis_picture_load
 
@@ -484,7 +484,7 @@ def _():
 	]
 
 	seektable_init = FLACSeekTable(seekpoints)
-	seektable_load = FLACSeekTable.load(
+	seektable_load = FLACSeekTable.parse(
 		b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x10\x00'
 		b'\x00\x00\x00\x00\x00\x00\xa0\x00\x00\x00\x00\x00\x00\x00\x00\x8c\x10\x00'
 		b'\x00\x00\x00\x00\x00\x01P\x00\x00\x00\x00\x00\x00\x00\x01&\x10\x00'

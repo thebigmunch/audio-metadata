@@ -86,7 +86,7 @@ class LAMEReplayGain(AttrMapping):
 
 	@datareader
 	@classmethod
-	def load(cls, data):
+	def parse(cls, data):
 		peak_data = struct.unpack('>I', data.read(4))[0]
 
 		if peak_data == 0:
@@ -183,7 +183,7 @@ class LAMEHeader(AttrMapping):
 
 	@datareader
 	@classmethod
-	def load(cls, data, xing_quality):
+	def parse(cls, data, xing_quality):
 		encoder = data.read(9)
 		if not encoder.startswith(b'LAME'):
 			raise InvalidHeader('Valid LAME header not found.')
@@ -208,7 +208,7 @@ class LAMEHeader(AttrMapping):
 			data.read(1),
 		)[0] * 100
 
-		replay_gain = LAMEReplayGain.load(data)
+		replay_gain = LAMEReplayGain.parse(data)
 
 		flags_ath = bitstruct.unpack_dict(
 			'b1 b1 b1 b1 u4',
@@ -302,7 +302,7 @@ class XingHeader(AttrMapping):
 
 	@datareader
 	@classmethod
-	def load(cls, data):
+	def parse(cls, data):
 		if data.read(4) not in [b'Xing', b'Info']:
 			raise InvalidHeader('Valid Xing header not found.')
 
@@ -323,7 +323,7 @@ class XingHeader(AttrMapping):
 			quality = struct.unpack('>I', data.read(4))[0]
 
 		if data.peek(4) == b'LAME':
-			lame_header = LAMEHeader.load(data, quality)
+			lame_header = LAMEHeader.parse(data, quality)
 
 		return cls(
 			lame=lame_header,
@@ -356,7 +356,7 @@ class VBRIHeader(AttrMapping):
 
 	@datareader
 	@classmethod
-	def load(cls, data):
+	def parse(cls, data):
 		if data.read(4) not in [b'VBRI']:
 			raise InvalidHeader('Valid VBRI header not found.')
 
@@ -430,7 +430,7 @@ class MPEGFrameHeader(AttrMapping):
 
 	@datareader
 	@classmethod
-	def load(cls, data):
+	def parse(cls, data):
 		frame_start = data.tell()
 
 		sync, version_id, layer_index, protection = bitstruct.unpack(
@@ -487,12 +487,12 @@ class MPEGFrameHeader(AttrMapping):
 			data.seek(frame_start + xing_header_start, os.SEEK_SET)
 
 			if data.peek(4) in [b'Xing', b'Info']:
-				xing_header = XingHeader.load(data.read(frame_size))
+				xing_header = XingHeader.parse(data.read(frame_size))
 
 			data.seek(frame_start + 36, os.SEEK_SET)
 
 			if data.peek(4) == b'VBRI':
-				vbri_header = VBRIHeader.load(data)
+				vbri_header = VBRIHeader.parse(data)
 
 		return cls(
 			start=frame_start,
@@ -545,7 +545,7 @@ class MP3StreamInfo(StreamInfo):
 				data.seek(sync_start, os.SEEK_CUR)
 
 				try:
-					frame = MPEGFrameHeader.load(data)
+					frame = MPEGFrameHeader.parse(data)
 					num_frames += 1
 					data.seek(frame._start + frame._size, os.SEEK_SET)
 				except (InvalidFrame, *bitstruct.Error):  # pragma: nocover
@@ -575,7 +575,7 @@ class MP3StreamInfo(StreamInfo):
 				if bitstruct.unpack('u11', data.peek(2))[0] == 2047:
 					for _ in range(4):
 						try:
-							frame = MPEGFrameHeader.load(data)
+							frame = MPEGFrameHeader.parse(data)
 							frames.append(frame)
 							if frame._xing and frame._xing.num_frames:
 								break
@@ -623,7 +623,7 @@ class MP3StreamInfo(StreamInfo):
 
 	@datareader
 	@classmethod
-	def load(cls, data):
+	def parse(cls, data):
 		frames = cls.find_mpeg_frames(data)
 
 		samples_per_frame, _ = MP3SamplesPerFrame[(frames[0].version, frames[0].layer)]
@@ -747,17 +747,17 @@ class MP3(Format):
 	tags_type = ID3v2Frames
 
 	@classmethod
-	def load(cls, data):
+	def parse(cls, data):
 		self = super()._load(data)
 
 		try:
-			self._id3 = ID3v2.load(self._obj)
+			self._id3 = ID3v2.parse(self._obj)
 			self.pictures = self._id3.pictures
 			self.tags = self._id3.tags
 		except (InvalidFrame, InvalidHeader):
 			self._obj.seek(0, os.SEEK_SET)
 
-		self.streaminfo = MP3StreamInfo.load(self._obj)
+		self.streaminfo = MP3StreamInfo.parse(self._obj)
 
 		# Use ID3v1 if present and ID3v2 is not.
 		if '_id3' not in self:
@@ -771,7 +771,7 @@ class MP3(Format):
 
 			id3v1_index = end_buffer.find(b'TAG')
 			if id3v1_index != -1:
-				id3v1 = ID3v1.load(end_buffer[id3v1_index : id3v1_index + 128])
+				id3v1 = ID3v1.parse(end_buffer[id3v1_index : id3v1_index + 128])
 				self._id3 = id3v1
 				self.tags = self._id3.tags
 

@@ -50,7 +50,7 @@ class RIFFTags(Tags):
 
 	@datareader
 	@classmethod
-	def load(cls, data):
+	def parse(cls, data):
 		if data.read(4) != b'INFO':
 			raise InvalidChunk('Valid RIFF INFO chunk not found.')
 
@@ -102,7 +102,7 @@ class WAV(Format):
 	tags_type = RIFFTags
 
 	@classmethod
-	def load(cls, data):
+	def parse(cls, data):
 		self = super()._load(data)
 
 		chunk_id = self._obj.read(4)
@@ -144,10 +144,10 @@ class WAV(Format):
 				subchunk_id == b'LIST'
 				and self._obj.peek(4) == b'INFO'
 			):
-				self._riff = RIFFTags.load(self._obj.read(subchunk_size))
+				self._riff = RIFFTags.parse(self._obj.read(subchunk_size))
 			elif subchunk_id.lower() == b'id3 ':
 				try:
-					id3 = ID3v2.load(self._obj)
+					id3 = ID3v2.parse(self._obj)
 				except (InvalidFrame, InvalidHeader):
 					raise
 				else:

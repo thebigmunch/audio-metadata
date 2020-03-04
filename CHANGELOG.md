@@ -44,6 +44,7 @@ This project adheres to [Semantic Versioning](https://semver.org).
 	* Change ``ID3v2Frames`` to present a list of comments for ``comment`` key.
 * Rename ``formats.vorbis`` module to ``formats.vorbis_comments``.
 * Load most commonly used unoffical ID3v2 frames.
+* Rename class builder methods to ``parse``.
 
 ### Removed
 
