@@ -21,6 +21,7 @@ This project adheres to [Semantic Versioning](https://semver.org).
 	* ``OggPageSegments``.
 * Ogg Opus load(s) support.
 	* ``OggOpus``.
+	* ``OggOpusStreaminfo``.
 	* ``OggOpusVorbisComments``.
 * ``AudioMetadataWarning``.
 * ``ID3v2BinaryDataFrame``.

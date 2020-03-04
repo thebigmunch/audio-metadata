@@ -1,5 +1,6 @@
 __all__ = [
 	'OggOpus',
+	'OggOpusStreamInfo',
 	'OggOpusVorbisComments',
 ]
 
