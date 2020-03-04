@@ -87,6 +87,31 @@ class WAVStreamInfo(StreamInfo):
 	duration = attrib()
 	sample_rate = attrib()
 
+	@datareader
+	@classmethod
+	def parse(cls, data):
+		audio_format, channels, sample_rate = struct.unpack(
+			'HHI',
+			data.read(8),
+		)
+
+		byte_rate, block_align, bit_depth = struct.unpack(
+			'<IHH',
+			data.read(8),
+		)
+
+		bitrate = byte_rate * 8
+
+		return cls(
+			start=None,
+			size=None,
+			bit_depth=bit_depth,
+			bitrate=bitrate,
+			channels=channels,
+			duration=None,
+			sample_rate=sample_rate,
+		)
+
 
 class WAV(Format):
 	"""WAV file format object.
@@ -123,18 +148,7 @@ class WAV(Format):
 			)
 
 			if subchunk_id == b'fmt ':
-				audio_format, channels, sample_rate = struct.unpack(
-					'HHI',
-					self._obj.read(8),
-				)
-
-				byte_rate, block_align, bit_depth = struct.unpack(
-					'<IHH',
-					self._obj.read(8),
-				)
-
-				bitrate = byte_rate * 8
-
+				self.streaminfo = WAVStreamInfo.parse(self._obj)
 				self._obj.read(subchunk_size - 16)  # Read through rest of subchunk if not PCM.
 			elif subchunk_id == b'data':
 				audio_start = self._obj.tell()
@@ -165,17 +179,9 @@ class WAV(Format):
 			self.tags = self._riff
 
 		try:
-			duration = audio_size / byte_rate
-
-			self.streaminfo = WAVStreamInfo(
-				start=audio_start,
-				size=audio_size,
-				bit_depth=bit_depth,
-				bitrate=bitrate,
-				channels=channels,
-				duration=duration,
-				sample_rate=sample_rate,
-			)
+			self.streaminfo._start = audio_start
+			self.streaminfo._size = audio_size
+			self.streaminfo.duration = self.streaminfo._size / self.streaminfo.bitrate / 8
 		except UnboundLocalError:
 			raise InvalidHeader("Valid WAVE stream info not found.")
 
