@@ -266,10 +266,7 @@ class ID3v2Frames(Tags):
 				frames[f'{frame.id}:{frame.description}:{frame.language}'].append(frame.value)
 			elif isinstance(
 				frame,
-				(
-					ID3v2UserTextFrame,
-					ID3v2UserURLLinkFrame,
-				),
+				ID3v2UserTextFrame,
 			):
 				frames[f'{frame.id}:{frame.description}'].append(frame.value)
 			elif isinstance(

@@ -24,6 +24,7 @@ __all__ = [
 	'ID3v2UnsynchronizedLyricsFrame',
 	'ID3v2URLLinkFrame',
 	'ID3v2UserTextFrame',
+	'ID3v2UserURLLink',
 	'ID3v2UserURLLinkFrame',
 	'ID3v2YearFrame',
 ]
@@ -114,11 +115,9 @@ class ID3v2PrivateInfo(AttrMapping):
 	repr=False,
 	kw_only=True,
 )
-class ID3v2GeneralEncapsulatedObject(AttrMapping):
-	mime_type = attrib()
-	filename = attrib()
+class ID3v2UserURLLink(AttrMapping):
 	description = attrib()
-	value = attrib()
+	url = attrib()
 
 
 class ID3v2Picture(Picture):
@@ -312,7 +311,6 @@ class ID3v2URLLinkFrame(ID3v2BaseFrame):
 	kw_only=True,
 )
 class ID3v2UserURLLinkFrame(ID3v2BaseFrame):
-	description = attrib()
 	value = attrib()
 
 
@@ -694,19 +692,6 @@ class ID3v2Frame(ID3v2BaseFrame):
 						genres.append('Remix')
 
 			kwargs['value'] = genres
-		elif frame_type is ID3v2GEOBFrame:
-			encoding = determine_encoding(frame_data[0:1])
-
-			mime_type, remainder = split_encoded(frame_data[1:], encoding)
-			filename, remainder = split_encoded(remainder, encoding)
-			description, value = split_encoded(remainder, encoding)
-
-			kwargs['value'] = ID3v2GeneralEncapsulatedObject(
-				mime_type=mime_type,
-				filename=filename,
-				description=description,
-				value=value,
-			)
 		elif frame_type is ID3v2PictureFrame:
 			kwargs['value'] = frame_data
 		elif frame_type is ID3v2PrivateFrame:
@@ -730,8 +715,10 @@ class ID3v2Frame(ID3v2BaseFrame):
 			encoding = determine_encoding(frame_data)
 
 			description, url = split_encoded(frame_data[1:], encoding)
-			kwargs['description'] = decode_bytestring(description, encoding)
-			kwargs['url'] = unquote(decode_bytestring(url))
+			kwargs['value'] = ID3v2UserURLLink(
+				description=decode_bytestring(description, encoding),
+				url=unquote(decode_bytestring(url)),
+			)
 		elif issubclass(
 			frame_type,
 			(

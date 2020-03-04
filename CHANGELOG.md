@@ -40,6 +40,7 @@ This project adheres to [Semantic Versioning](https://semver.org).
 	* ``OggOpusVorbisComments``.
 * ``ID3v2GeneralEncapsulatedObject``.
 * ``ID3v2PrivateInfo``.
+* ``ID3v2UserURLLink``.
 
 ### Changed
 
@@ -64,6 +65,12 @@ This project adheres to [Semantic Versioning](https://semver.org).
 		that contains a single private information object.
 	* Change ``ID3v2Frames`` to present a list of private info
 		objects for ``PRIV`` key.
+* Rework ID3v2 user URL link frame abstractions.
+	* Add ``ID3v2UserURLLink`` class.
+	* Change ``ID3v2UserURLLinkFrame`` to have only value attribute.
+		that contains a single user URL link object.
+	* Change ``ID3v2Frames`` to present a list of user URL link
+		objects for ``WXXX`` key.
 
 ### Removed
 
