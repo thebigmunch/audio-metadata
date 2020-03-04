@@ -64,6 +64,16 @@ _genre_re = re.compile(r"((?:\((?P<id>\d+|RX|CR)\))*)(?P<name>.+)?")
 	repr=False,
 	kw_only=True,
 )
+class ID3v2Comment(AttrMapping):
+	language = attrib()
+	description = attrib()
+	text = attrib()
+
+
+@attrs(
+	repr=False,
+	kw_only=True,
+)
 class ID3v2InvolvedPerson(AttrMapping):
 	involvement = attrib()
 	name = attrib()
@@ -82,10 +92,11 @@ class ID3v2Performer(AttrMapping):
 	repr=False,
 	kw_only=True,
 )
-class ID3v2Comment(AttrMapping):
-	language = attrib()
+class ID3v2GeneralEncapsulatedObject(AttrMapping):
+	mime_type = attrib()
+	filename = attrib()
 	description = attrib()
-	text = attrib()
+	value = attrib()
 
 
 class ID3v2Picture(Picture):
@@ -153,9 +164,6 @@ class ID3v2GenreFrame(ID3v2BaseFrame):
 	kw_only=True,
 )
 class ID3v2GEOBFrame(ID3v2BaseFrame):
-	mime_type = attrib()
-	filename = attrib()
-	description = attrib()
 	value = attrib()
 
 
@@ -659,10 +667,12 @@ class ID3v2Frame(ID3v2BaseFrame):
 			filename, remainder = split_encoded(remainder, encoding)
 			description, value = split_encoded(remainder, encoding)
 
-			kwargs['mime_type'] = decode_bytestring(mime_type)
-			kwargs['filename'] = decode_bytestring(filename, encoding)
-			kwargs['description'] = decode_bytestring(description, encoding)
-			kwargs['value'] = value
+			kwargs['value'] = ID3v2GeneralEncapsulatedObject(
+				mime_type=mime_type,
+				filename=filename,
+				description=description,
+				value=value,
+			)
 		elif frame_type is ID3v2PictureFrame:
 			kwargs['value'] = frame_data
 		elif frame_type is ID3v2PrivateFrame:

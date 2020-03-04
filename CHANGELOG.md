@@ -38,18 +38,25 @@ This project adheres to [Semantic Versioning](https://semver.org).
 	* ``OggVorbis``.
 	* ``OggVorbisStreamInfo``.
 	* ``OggOpusVorbisComments``.
+* ``ID3v2GeneralEncapsulatedObject``.
 
 ### Changed
 
 * Make all attrs classes require keyword arguments.
 * Rework ID3v2 comments abstractions.
 	* Add ``ID3v2Comment`` class to encapsulate each comment.
-	* Change ``ID3v2CommentFrame`` to have only value attribute
+	* Change ``ID3v2CommentFrame`` to have only value attribute.
 		that contains a single comment.
 	* Change ``ID3v2Frames`` to present a list of comments for ``comment`` key.
 * Rename ``formats.vorbis`` module to ``formats.vorbis_comments``.
 * Load most commonly used unoffical ID3v2 frames.
 * Rename class builder methods to ``parse``.
+* Rework ID3v2 general encapsulated object abstractions.
+	* Add ``ID3v2GeneralEncapsulatedObject`` class.
+	* Change ``ID3v2GEOBFrame`` to have only value attribute.
+		that contains a single comment.
+	* Change ``ID3v2Frames`` to present a list of general
+		encapsulated objects for ``GEOB`` key.
 
 ### Removed
 

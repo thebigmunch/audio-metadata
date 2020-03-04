@@ -264,15 +264,6 @@ class ID3v2Frames(Tags):
 				),
 			):
 				frames[f'{frame.id}:{frame.description}:{frame.language}'].append(frame.value)
-			elif isinstance(frame, ID3v2GEOBFrame):
-				frames[f'{frame.id}:{frame.description}'].append(
-					{
-
-						'filename': frame.filename,
-						'mime_type': frame.mime_type,
-						'value': frame.value,
-					},
-				)
 			elif isinstance(frame, ID3v2PrivateFrame):
 				frames[f'{frame.id}:{frame.owner}'].append(frame.value)
 			elif isinstance(
