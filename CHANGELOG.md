@@ -39,6 +39,7 @@ This project adheres to [Semantic Versioning](https://semver.org).
 	* ``OggVorbisStreamInfo``.
 	* ``OggOpusVorbisComments``.
 * ``ID3v2GeneralEncapsulatedObject``.
+* ``ID3v2PrivateInfo``.
 
 ### Changed
 
@@ -54,9 +55,15 @@ This project adheres to [Semantic Versioning](https://semver.org).
 * Rework ID3v2 general encapsulated object abstractions.
 	* Add ``ID3v2GeneralEncapsulatedObject`` class.
 	* Change ``ID3v2GEOBFrame`` to have only value attribute.
-		that contains a single comment.
+		that contains a single general encapsulated object.
 	* Change ``ID3v2Frames`` to present a list of general
 		encapsulated objects for ``GEOB`` key.
+* Rework ID3v2 private information frame abstractions.
+	* Add ``ID3v2PrivateInfo`` class.
+	* Change ``ID3v2PrivateFrame`` to have only value attribute.
+		that contains a single private information object.
+	* Change ``ID3v2Frames`` to present a list of private info
+		objects for ``PRIV`` key.
 
 ### Removed
 

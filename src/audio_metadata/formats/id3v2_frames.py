@@ -74,6 +74,17 @@ class ID3v2Comment(AttrMapping):
 	repr=False,
 	kw_only=True,
 )
+class ID3v2GeneralEncapsulatedObject(AttrMapping):
+	mime_type = attrib()
+	filename = attrib()
+	description = attrib()
+	value = attrib()
+
+
+@attrs(
+	repr=False,
+	kw_only=True,
+)
 class ID3v2InvolvedPerson(AttrMapping):
 	involvement = attrib()
 	name = attrib()
@@ -86,6 +97,15 @@ class ID3v2InvolvedPerson(AttrMapping):
 class ID3v2Performer(AttrMapping):
 	instrument = attrib()
 	name = attrib()
+
+
+@attrs(
+	repr=False,
+	kw_only=True,
+)
+class ID3v2PrivateInfo(AttrMapping):
+	owner = attrib()
+	data = attrib()
 
 
 @attrs(
@@ -229,7 +249,6 @@ class ID3v2PictureFrame(ID3v2BaseFrame):
 	kw_only=True,
 )
 class ID3v2PrivateFrame(ID3v2BaseFrame):
-	owner = attrib()
 	value = attrib()
 
 
@@ -625,6 +644,19 @@ class ID3v2Frame(ID3v2BaseFrame):
 				return None
 
 			kwargs['value'] = mapping_list
+		elif frame_type is ID3v2GEOBFrame:
+			encoding = determine_encoding(frame_data[0:1])
+
+			mime_type, remainder = split_encoded(frame_data[1:], encoding)
+			filename, remainder = split_encoded(remainder, encoding)
+			description, value = split_encoded(remainder, encoding)
+
+			kwargs['value'] = ID3v2GeneralEncapsulatedObject(
+				mime_type=mime_type,
+				filename=filename,
+				description=description,
+				value=value,
+			)
 		elif frame_type is ID3v2GenreFrame:
 			encoding = determine_encoding(frame_data[0:1])
 
@@ -677,8 +709,11 @@ class ID3v2Frame(ID3v2BaseFrame):
 			kwargs['value'] = frame_data
 		elif frame_type is ID3v2PrivateFrame:
 			owner_end = frame_data.index(b'\x00')
-			kwargs['owner'] = frame_data[0:owner_end].decode('iso-8859-1')
-			kwargs['value'] = frame_data[owner_end + 1:]
+
+			kwargs['value'] = ID3v2PrivateInfo(
+				owner=frame_data[0:owner_end].decode('iso-8859-1'),
+				data=frame_data[owner_end + 1:],
+			)
 		elif frame_type is ID3v2UnsynchronizedLyricsFrame:
 			encoding = determine_encoding(frame_data[0:1])
 
