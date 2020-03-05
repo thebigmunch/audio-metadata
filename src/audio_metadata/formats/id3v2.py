@@ -267,14 +267,6 @@ class ID3v2Frames(Tags):
 			if isinstance(
 				frame,
 				(
-					ID3v2SynchronizedLyricsFrame,
-					ID3v2UnsynchronizedLyricsFrame,
-				),
-			):
-				frames[f'{frame.id}:{frame.description}:{frame.language}'].append(frame.value)
-			elif isinstance(
-				frame,
-				(
 					ID3v2GenreFrame,
 					ID3v2MappingListFrame,
 					ID3v2NumericTextFrame,

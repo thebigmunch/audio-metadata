@@ -42,13 +42,20 @@ This project adheres to [Semantic Versioning](https://semver.org).
 * ``ID3v2PrivateInfo``.
 * ``ID3v2UserURLLink``.
 * ``ID3v2UserText``.
+* ``ID3v2Lyrics``.
+* ``ID3v2SynchronizedLyrics``.
+* ``ID3v2UnsynchronizedLyrics``.
+* ``ID3v2LyricsFrame``.
+* ``ID3v2LyricsContentType``.
+* ``ID3v2LyricsTimestampFormat``.
+
 
 ### Changed
 
 * Make all attrs classes require keyword arguments.
 * Rework ID3v2 comments abstractions.
 	* Add ``ID3v2Comment`` class to encapsulate each comment.
-	* Change ``ID3v2CommentFrame`` to have only value attribute.
+	* Change ``ID3v2CommentFrame`` to have only value attribute
 		that contains a single comment.
 	* Change ``ID3v2Frames`` to present a list of comments for ``comment`` key.
 * Rename ``formats.vorbis`` module to ``formats.vorbis_comments``.
@@ -56,28 +63,37 @@ This project adheres to [Semantic Versioning](https://semver.org).
 * Rename class builder methods to ``parse``.
 * Rework ID3v2 general encapsulated object abstractions.
 	* Add ``ID3v2GeneralEncapsulatedObject`` class.
-	* Change ``ID3v2GEOBFrame`` to have only value attribute.
+	* Change ``ID3v2GEOBFrame`` to have only value attribute
 		that contains a single general encapsulated object.
 	* Change ``ID3v2Frames`` to present a list of general
 		encapsulated objects for ``GEOB`` key.
 * Rework ID3v2 private information frame abstractions.
 	* Add ``ID3v2PrivateInfo`` class.
-	* Change ``ID3v2PrivateFrame`` to have only value attribute.
+	* Change ``ID3v2PrivateFrame`` to have only value attribute
 		that contains a single private information object.
 	* Change ``ID3v2Frames`` to present a list of private info
 		objects for ``PRIV`` key.
 * Rework ID3v2 user URL link frame abstractions.
 	* Add ``ID3v2UserURLLink`` class.
-	* Change ``ID3v2UserURLLinkFrame`` to have only value attribute.
+	* Change ``ID3v2UserURLLinkFrame`` to have only value attribute
 		that contains a single user URL link object.
 	* Change ``ID3v2Frames`` to present a list of user URL link
 		objects for ``WXXX`` key.
 * Rework ID3v2 user text frame abstractions.
 	* Add ``ID3v2UserText`` class.
-	* Change ``ID3v2UserTextFrame`` to have only value attribute.
+	* Change ``ID3v2UserTextFrame`` to have only value attribute
 		that contains a single user text object.
 	* Change ``ID3v2Frames`` to present a list of user text
 		objects for ``TXXX`` key.
+* Rework ID3v2 lyrics frames abstractions.
+	* Add ``ID3v2Lyrics``, ``ID3v2SynchronizedLyrics``,
+		and ``ID3v2UnsynchronizedLyrics`` classes.
+	* Change ``ID3v2SynchronizedLyricsFrame``
+		and``ID3v2UnsynchronizedLyricsFrame``
+		to have only value attribute
+		that contains a single lyrics object.
+	* Change ``ID3v2Frames`` to present a list of lyrics
+		objects for ``SYLT``/``USLT`` keys.
 
 ### Removed
 

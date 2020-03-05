@@ -10,6 +10,8 @@ __all__ = [
 	'ID3v2GeneralEncapsulatedObject',
 	'ID3v2GenreFrame',
 	'ID3v2InvolvedPerson',
+	'ID3v2Lyrics',
+	'ID3v2LyricsFrame',
 	'ID3v2MappingListFrame',
 	'ID3v2NumberFrame',
 	'ID3v2NumericTextFrame',
@@ -18,9 +20,11 @@ __all__ = [
 	'ID3v2PictureFrame',
 	'ID3v2PrivateFrame',
 	'ID3v2PrivateInfo',
+	'ID3v2SynchronizedLyrics',
 	'ID3v2SynchronizedLyricsFrame',
 	'ID3v2TextFrame',
 	'ID3v2TimestampFrame',
+	'ID3v2UnsynchronizedLyrics',
 	'ID3v2UnsynchronizedLyricsFrame',
 	'ID3v2URLLinkFrame',
 	'ID3v2UserText',
@@ -50,6 +54,8 @@ from tbm_utils import (
 from .tables import (
 	ID3PictureType,
 	ID3v1Genres,
+	ID3v2LyricsContentType,
+	ID3v2LyricsTimestampFormat,
 )
 from ..exceptions import InvalidFrame
 from ..models import Picture
@@ -110,6 +116,33 @@ class ID3v2Performer(AttrMapping):
 class ID3v2PrivateInfo(AttrMapping):
 	owner = attrib()
 	data = attrib()
+
+
+@attrs(
+	repr=False,
+	kw_only=True,
+)
+class ID3v2Lyrics(AttrMapping):
+	language = attrib()
+	description = attrib()
+	text = attrib()
+
+
+@attrs(
+	repr=False,
+	kw_only=True,
+)
+class ID3v2SynchronizedLyrics(ID3v2Lyrics):
+	timestamp_format = attrib(converter=ID3v2LyricsTimestampFormat)
+	content_type = attrib(converter=ID3v2LyricsContentType)
+
+
+@attrs(
+	repr=False,
+	kw_only=True,
+)
+class ID3v2UnsynchronizedLyrics(ID3v2Lyrics):
+	pass
 
 
 @attrs(
@@ -202,6 +235,14 @@ class ID3v2GEOBFrame(ID3v2BaseFrame):
 	repr=False,
 	kw_only=True,
 )
+class ID3v2LyricsFrame(ID3v2BaseFrame):
+	value = attrib()
+
+
+@attrs(
+	repr=False,
+	kw_only=True,
+)
 class ID3v2MappingListFrame(ID3v2BaseFrame):
 	value = attrib()
 
@@ -267,11 +308,8 @@ class ID3v2PrivateFrame(ID3v2BaseFrame):
 	repr=False,
 	kw_only=True,
 )
-class ID3v2SynchronizedLyricsFrame(ID3v2BaseFrame):
-	language = attrib()
-	timestamp_format = attrib()
-	description = attrib()
-	value = attrib()
+class ID3v2SynchronizedLyricsFrame(ID3v2LyricsFrame):
+	pass
 
 
 @attrs(
@@ -302,10 +340,8 @@ class ID3v2TimestampFrame(ID3v2BaseFrame):
 	repr=False,
 	kw_only=True,
 )
-class ID3v2UnsynchronizedLyricsFrame(ID3v2BaseFrame):
-	language = attrib()
-	description = attrib()
-	value = attrib()
+class ID3v2UnsynchronizedLyricsFrame(ID3v2LyricsFrame):
+	pass
 
 
 @attrs(
@@ -617,7 +653,7 @@ class ID3v2Frame(ID3v2BaseFrame):
 			comment = ID3v2Comment(
 				language=decode_bytestring(frame_data[1:4]),
 				description=decode_bytestring(values[0], encoding),
-				text=decode_bytestring(values[1], encoding)
+				text=decode_bytestring(values[1], encoding),
 			)
 
 			kwargs['value'] = comment
@@ -710,14 +746,28 @@ class ID3v2Frame(ID3v2BaseFrame):
 				owner=frame_data[0:owner_end].decode('iso-8859-1'),
 				data=frame_data[owner_end + 1:],
 			)
+		elif frame_type is ID3v2SynchronizedLyricsFrame:
+			encoding = determine_encoding(frame_data)
+
+			description, text = split_encoded(frame_data[6:], encoding)
+
+			kwargs['value'] = ID3v2SynchronizedLyrics(
+				language=decode_bytestring(frame_data[1:4]),
+				description=decode_bytestring(description, encoding),
+				text=decode_bytestring(text, encoding),
+				timestamp_format=frame_data[4],
+				content_type=frame_data[5],
+			)
 		elif frame_type is ID3v2UnsynchronizedLyricsFrame:
 			encoding = determine_encoding(frame_data)
 
-			kwargs['language'] = decode_bytestring(frame_data[1:4])
+			description, text = split_encoded(frame_data[4:], encoding)
 
-			description, value = split_encoded(frame_data[4:], encoding)
-			kwargs['description'] = decode_bytestring(description, encoding)
-			kwargs['value'] = decode_bytestring(description, encoding)
+			kwargs['value'] = ID3v2UnsynchronizedLyrics(
+				language=decode_bytestring(frame_data[1:4]),
+				description=decode_bytestring(description, encoding),
+				text=decode_bytestring(text, encoding)
+			)
 		elif frame_type is ID3v2URLLinkFrame:
 			kwargs['value'] = unquote(decode_bytestring(frame_data))
 		elif frame_type is ID3v2UserTextFrame:

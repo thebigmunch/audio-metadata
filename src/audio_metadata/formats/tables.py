@@ -4,6 +4,8 @@ __all__ = [
 	'ID3Version',
 	'ID3v1Genres',
 	'ID3v2FrameIDs',
+	'ID3v2LyricsContentType',
+	'ID3v2LyricsTimestampFormat',
 	'ID3v2UnofficialFrameIDs',
 	'LAMEBitrateMode',
 	'LAMEChannelMode',
@@ -70,6 +72,23 @@ class ID3PictureType(_BaseIntEnum):
 	BAND_LOGOTYPE = 19
 	PUBLISHER_LOGOTYPE = 20
 	STUDIO_LOGOTYPE = 20
+
+
+class ID3v2LyricsContentType(_BaseIntEnum):
+	OTHER = 0
+	LYRICS = 1
+	TRANSCRIPTION = 2
+	MOVEMENT = 3
+	EVENTS = 4
+	CHORD = 5
+	TRIVIA = 6
+	WEBPAGES = 7
+	IMAGES = 8
+
+
+class ID3v2LyricsTimestampFormat(_BaseIntEnum):
+	MPEG_FRAMES = 0
+	MILLISECONDS = 1
 
 
 class ID3Version(_BaseEnum):
