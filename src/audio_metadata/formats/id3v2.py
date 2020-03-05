@@ -15,7 +15,6 @@ from attr import (
 	attrib,
 	attrs,
 )
-from bidict import frozenbidict
 from tbm_utils import (
 	AttrMapping,
 	datareader,
@@ -24,6 +23,7 @@ from tbm_utils import (
 from .id3v2_frames import *
 from .tables import (
 	ID3Version,
+	ID3v2FrameAliases,
 	ID3v2FrameIDs,
 	ID3v2UnofficialFrameIDs,
 )
@@ -43,175 +43,12 @@ except ImportError:
 
 # Mappings based on https://picard.musicbrainz.org/docs/mappings/
 class ID3v2Frames(Tags):
-	_v22_FIELD_MAP = frozenbidict(
-		{
-			'album': 'TAL',
-			'albumsort': 'TSA',
-			'albumartist': 'TP2',
-			'albumartistsort': 'TS2',
-			'artist': 'TP1',
-			'artistsort': 'TSP',
-			'audiodelay': 'TDY',
-			'audiolength': 'TLE',
-			'audiosize': 'TSI',
-			'bpm': 'TBP',
-			'comment': 'COM',
-			'compilation': 'TCP',
-			'composer': 'TCM',
-			'composersort': 'TSC',
-			'conductor': 'TP3',
-			'copyright': 'TCR',
-			'date': 'TYE',
-			'discnumber': 'TPA',
-			'encodedby': 'TEN',
-			'encodersettings': 'TSS',
-			'genre': 'TCO',
-			'grouping': 'TT1',
-			'isrc': 'TRC',
-			'key': 'TKE',
-			'label': 'TPB',
-			'language': 'TLA',
-			'license': 'WCP',
-			'lyricist': 'TXT',
-			'lyrics': 'ULT',
-			'media': 'TMT',
-			'originalalbum': 'TOT',
-			'originalartist': 'TOA',
-			'originaldate': 'TOR',
-			'originalfilename': 'TOF',
-			'originallyricist': 'TOL',
-			'people': 'IPL',
-			'pictures': 'PIC',
-			'playcount': 'CNT',
-			'rating': 'POP',
-			'remixer': 'TP4',
-			'subtitle': 'TT3',
-			'title': 'TT2',
-			'titlesort': 'TST',
-			'tracknumber': 'TRK',
-			'usertext': 'TXX',
-			'userurl': 'WXX',
-		},
-	)
-
-	_v23_FIELD_MAP = frozenbidict(
-		{
-			'album': 'TALB',
-			'albumsort': 'TSOA',
-			'albumartist': 'TPE2',
-			'albumartistsort': 'TSO2',
-			'artist': 'TPE1',
-			'artistsort': 'TSOP',
-			'audiodelay': 'TDLY',
-			'audiolength': 'TLEN',
-			'audiosize': 'TSIZ',
-			'bpm': 'TBPM',
-			'comment': 'COMM',
-			'compilation': 'TCMP',
-			'composer': 'TCOM',
-			'composersort': 'TSOC',
-			'conductor': 'TPE3',
-			'copyright': 'TCOP',
-			'date': 'TYER',
-			'discnumber': 'TPOS',
-			'encodedby': 'TENC',
-			'encodersettings': 'TSSE',
-			'genre': 'TCON',
-			'grouping': 'TIT1',
-			'isrc': 'TSRC',
-			'key': 'TKEY',
-			'label': 'TPUB',
-			'language': 'TLAN',
-			'license': 'WCOP',
-			'lyricist': 'TEXT',
-			'lyrics': 'USLT',
-			'media': 'TMED',
-			'originalalbum': 'TOAL',
-			'originalartist': 'TOPE',
-			'originaldate': 'TORY',
-			'originalfilename': 'TOFN',
-			'originallyricist': 'TOLY',
-			'people': 'IPLS',
-			'pictures': 'APIC',
-			'playcount': 'PCNT',
-			'private': 'PRIV',
-			'rating': 'POPM',
-			'remixer': 'TPE4',
-			'subtitle': 'TIT3',
-			'title': 'TIT2',
-			'titlesort': 'TSOT',
-			'tracknumber': 'TRCK',
-			'usertext': 'TXXX',
-			'userurl': 'WXXX',
-		},
-	)
-
-	_v24_FIELD_MAP = frozenbidict(
-		{
-			'album': 'TALB',
-			'albumsort': 'TSOA',
-			'albumartist': 'TPE2',
-			'albumartistsort': 'TSO2',
-			'artist': 'TPE1',
-			'artistsort': 'TSOP',
-			'audiodelay': 'TDLY',
-			'audiolength': 'TLEN',
-			'audiosize': 'TSIZ',
-			'bpm': 'TBPM',
-			'comment': 'COMM',
-			'compilation': 'TCMP',
-			'composer': 'TCOM',
-			'composersort': 'TSOC',
-			'conductor': 'TPE3',
-			'copyright': 'TCOP',
-			'date': 'TDRC',
-			'discnumber': 'TPOS',
-			'discsubtitle': 'TSST',
-			'encodedby': 'TENC',
-			'encodersettings': 'TSSE',
-			'genre': 'TCON',
-			'grouping': 'TIT1',
-			'isrc': 'TSRC',
-			'key': 'TKEY',
-			'label': 'TPUB',
-			'language': 'TLAN',
-			'license': 'WCOP',
-			'lyricist': 'TEXT',
-			'lyrics': 'USLT',
-			'media': 'TMED',
-			'movementnumber': 'MVIN',
-			'mood': 'TMOO',
-			'originalalbum': 'TOAL',
-			'originalartist': 'TOPE',
-			'originaldate': 'TDOR',
-			'originalfilename': 'TOFN',
-			'originallyricist': 'TOLY',
-			'people': 'TIPL',
-			'performers': 'TMCL',
-			'pictures': 'APIC',
-			'playcount': 'PCNT',
-			'private': 'PRIV',
-			'rating': 'POPM',
-			'remixer': 'TPE4',
-			'subtitle': 'TIT3',
-			'title': 'TIT2',
-			'titlesort': 'TSOT',
-			'tracknumber': 'TRCK',
-			'usertext': 'TXXX',
-			'userurl': 'WXXX',
-		},
-	)
-
 	def __init__(self, mapping=None, *, id3_version=ID3Version.v24, **kwargs):
 		self._version = ID3Version(id3_version)
 
-		if self._version is ID3Version.v22:
-			self.FIELD_MAP = ID3v2Frames._v22_FIELD_MAP
-		elif self._version is ID3Version.v23:
-			self.FIELD_MAP = ID3v2Frames._v23_FIELD_MAP
-		elif self._version is ID3Version.v24:
-			self.FIELD_MAP = ID3v2Frames._v24_FIELD_MAP
-		else:
+		try:
+			self.FIELD_MAP = ID3v2FrameAliases[self._version]
+		except KeyError:
 			raise ValueError(f"Unsupported ID3 version: {id3_version}")
 
 		super().__init__(mapping, **kwargs)

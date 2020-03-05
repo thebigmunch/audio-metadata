@@ -8,6 +8,7 @@ from ward import (
 
 from audio_metadata import (
 	ID3Version,
+	ID3v2FrameAliases,
 	ID3v2Flags,
 	ID3v2Frames,
 	ID3v2Header,
@@ -55,15 +56,17 @@ def _():
 
 	default_frames = ID3v2Frames()
 
-	assert v22_frames_init._version == v22_frames_init_tuple._version == v22_frames_load._version == ID3Version.v22
-	assert v22_frames_init.FIELD_MAP == v22_frames_init_tuple.FIELD_MAP == v22_frames_load.FIELD_MAP == ID3v2Frames._v22_FIELD_MAP
+	assert v22_frames_init == v22_frames_init_tuple
+	assert v22_frames_load._version == ID3Version.v22
+	assert v22_frames_load.FIELD_MAP == ID3v2FrameAliases[ID3Version.v22]
 
-	assert v23_frames_init._version == v23_frames_init_tuple._version == v23_frames_load._version == ID3Version.v23
-	assert v23_frames_init.FIELD_MAP == v23_frames_init_tuple.FIELD_MAP == v23_frames_load.FIELD_MAP == ID3v2Frames._v23_FIELD_MAP
+	assert v23_frames_init == v23_frames_init_tuple
+	assert v23_frames_load._version == ID3Version.v23
+	assert v23_frames_load.FIELD_MAP == ID3v2FrameAliases[ID3Version.v23]
 
-	assert v24_frames_init._version == v24_frames_init_tuple._version == v24_frames_load._version == default_frames._version == ID3Version.v24
-	assert v24_frames_init.FIELD_MAP == v24_frames_init_tuple.FIELD_MAP == ID3v2Frames._v24_FIELD_MAP
-	assert v24_frames_load.FIELD_MAP == default_frames.FIELD_MAP == ID3v2Frames._v24_FIELD_MAP
+	assert v24_frames_init == v24_frames_init_tuple == default_frames
+	assert v24_frames_load._version == ID3Version.v24
+	assert v24_frames_load.FIELD_MAP == ID3v2FrameAliases[ID3Version.v24]
 
 
 @test(
