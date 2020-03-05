@@ -607,7 +607,7 @@ class ID3v2Frame(ID3v2BaseFrame):
 		if frame_type is ID3v2BinaryDataFrame:
 			kwargs['value'] = frame_data
 		elif frame_type is ID3v2CommentFrame:
-			encoding = determine_encoding(frame_data[0:1])
+			encoding = determine_encoding(frame_data)
 
 			values = split_encoded(frame_data[4:], encoding)
 			# Ignore empty comments.
@@ -622,7 +622,7 @@ class ID3v2Frame(ID3v2BaseFrame):
 
 			kwargs['value'] = comment
 		elif frame_type is ID3v2MappingListFrame:
-			encoding = determine_encoding(frame_data[0:1])
+			encoding = determine_encoding(frame_data)
 
 			values = []
 			tail = frame_data[1:]
@@ -654,7 +654,7 @@ class ID3v2Frame(ID3v2BaseFrame):
 
 			kwargs['value'] = mapping_list
 		elif frame_type is ID3v2GEOBFrame:
-			encoding = determine_encoding(frame_data[0:1])
+			encoding = determine_encoding(frame_data)
 
 			mime_type, remainder = split_encoded(frame_data[1:], encoding)
 			filename, remainder = split_encoded(remainder, encoding)
@@ -667,7 +667,7 @@ class ID3v2Frame(ID3v2BaseFrame):
 				value=value,
 			)
 		elif frame_type is ID3v2GenreFrame:
-			encoding = determine_encoding(frame_data[0:1])
+			encoding = determine_encoding(frame_data)
 
 			remainder = frame_data[1:]
 			values = []
@@ -711,7 +711,7 @@ class ID3v2Frame(ID3v2BaseFrame):
 				data=frame_data[owner_end + 1:],
 			)
 		elif frame_type is ID3v2UnsynchronizedLyricsFrame:
-			encoding = determine_encoding(frame_data[0:1])
+			encoding = determine_encoding(frame_data)
 
 			kwargs['language'] = decode_bytestring(frame_data[1:4])
 
@@ -737,7 +737,7 @@ class ID3v2Frame(ID3v2BaseFrame):
 				url=unquote(decode_bytestring(url)),
 			)
 		elif issubclass(frame_type, ID3v2NumberFrame):
-			encoding = determine_encoding(frame_data[0:1])
+			encoding = determine_encoding(frame_data)
 			kwargs['value'] = decode_bytestring(frame_data[1:], encoding)
 		elif issubclass(
 			frame_type,
@@ -747,7 +747,7 @@ class ID3v2Frame(ID3v2BaseFrame):
 				ID3v2TimestampFrame,
 			),
 		):
-			encoding = determine_encoding(frame_data[0:1])
+			encoding = determine_encoding(frame_data)
 			values = [
 				decode_bytestring(value, encoding)
 				for value in split_encoded(frame_data[1:], encoding)

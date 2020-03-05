@@ -86,6 +86,7 @@ This project adheres to [Semantic Versioning](https://semver.org).
 ### Fixed
 
 * Apply CBR bitrate mode check to MP3s with non-LAME Xing headers.
+* Properly determine UTF-16 encodings in ID3v2 frames.
 
 
 ## [0.7.0](https://github.com/thebigmunch/audio-metadata/releases/tag/0.7.0) (2020-02-17)

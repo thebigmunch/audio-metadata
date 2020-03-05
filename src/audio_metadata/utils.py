@@ -21,7 +21,7 @@ def decode_bytestring(b, encoding='iso-8859-1'):
 		return ''
 
 	if encoding.startswith('utf-16'):
-		if len(b) % 2 != 0 and b[-1:] == b'\x00':
+		if len(b) % 2 and b[-1:] == b'\x00':
 			b = b[:-1]
 
 		if b.startswith((BOM_UTF16_BE, BOM_UTF16_LE)):  # pragma: nobranch
