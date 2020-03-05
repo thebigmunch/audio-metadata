@@ -8,8 +8,8 @@ from ward import (
 
 from audio_metadata import (
 	ID3Version,
-	ID3v2FrameAliases,
 	ID3v2Flags,
+	ID3v2FrameAliases,
 	ID3v2Frames,
 	ID3v2Header,
 	InvalidHeader,
