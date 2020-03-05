@@ -89,6 +89,8 @@ class ID3v2Frames(Tags):
 			'title': 'TT2',
 			'titlesort': 'TST',
 			'tracknumber': 'TRK',
+			'usertext': 'TXX',
+			'userurl': 'WXX',
 		},
 	)
 
@@ -132,12 +134,15 @@ class ID3v2Frames(Tags):
 			'people': 'IPLS',
 			'pictures': 'APIC',
 			'playcount': 'PCNT',
+			'private': 'PRIV',
 			'rating': 'POPM',
 			'remixer': 'TPE4',
 			'subtitle': 'TIT3',
 			'title': 'TIT2',
 			'titlesort': 'TSOT',
 			'tracknumber': 'TRCK',
+			'usertext': 'TXXX',
+			'userurl': 'WXXX',
 		},
 	)
 
@@ -185,12 +190,15 @@ class ID3v2Frames(Tags):
 			'performers': 'TMCL',
 			'pictures': 'APIC',
 			'playcount': 'PCNT',
+			'private': 'PRIV',
 			'rating': 'POPM',
 			'remixer': 'TPE4',
 			'subtitle': 'TIT3',
 			'title': 'TIT2',
 			'titlesort': 'TSOT',
 			'tracknumber': 'TRCK',
+			'usertext': 'TXXX',
+			'userurl': 'WXXX',
 		},
 	)
 
