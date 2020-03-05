@@ -6,6 +6,7 @@ __all__ = [
 	'ID3v2Comment',
 	'ID3v2CommentFrame',
 	'ID3v2Frame',
+	'ID3v2FrameTypes',
 	'ID3v2GEOBFrame',
 	'ID3v2GeneralEncapsulatedObject',
 	'ID3v2GenreFrame',
@@ -433,194 +434,194 @@ class ID3v2TIMEFrame(ID3v2NumericTextFrame):
 			)
 
 
+# TODO:ID3v2.2
+# TODO: BUF, CNT, CRA, CRM, ETC, EQU, LNK, MCI, MLL, PCS,
+# TODO: POP, REV, RVA, STC, UFI
+
+# TODO: ID3v2.3
+# TODO: AENC, COMR, ENCR, EQUA, ETCO, GRID, LINK, MLLT, OWNE
+# TODO: PCNT, PCST, POPM, POSS, RBUF, RGAD, RVAD, RVRB, SYTC,
+# TODO: UFID, USER, XRVA
+
+# TODO: ID3v2.4
+# TODO: ASPI, EQU2, PCST, RGAD, RVA2, SEEK, SIGN,
+# TODO: TPRO, XRVA
+ID3v2FrameTypes = {
+	# Binary data frames
+	'MCDI': ID3v2BinaryDataFrame,
+	'NCON': ID3v2BinaryDataFrame,
+
+	# Complex Text Frames
+	'COM': ID3v2CommentFrame,
+	'GEO': ID3v2GEOBFrame,
+	'IPL': ID3v2MappingListFrame,
+	'TXX': ID3v2UserTextFrame,
+
+	'COMM': ID3v2CommentFrame,
+	'GEOB': ID3v2GEOBFrame,
+	'IPLS': ID3v2MappingListFrame,
+	'PRIV': ID3v2PrivateFrame,
+	'TIPL': ID3v2MappingListFrame,
+	'TMCL': ID3v2MappingListFrame,
+	'TXXX': ID3v2UserTextFrame,
+
+	# Genre Frame
+	'TCO': ID3v2GenreFrame,
+
+	'TCON': ID3v2GenreFrame,
+
+	# Lyrics Frames
+	'SLT': ID3v2SynchronizedLyricsFrame,
+	'ULT': ID3v2UnsynchronizedLyricsFrame,
+
+	'SYLT': ID3v2SynchronizedLyricsFrame,
+	'USLT': ID3v2UnsynchronizedLyricsFrame,
+
+	# Number Frames
+	'TPA': ID3v2NumberFrame,
+	'TRK': ID3v2NumberFrame,
+
+	'TPOS': ID3v2NumberFrame,
+	'TRCK': ID3v2NumberFrame,
+
+	# Numeric Text Frames
+	'TBP': ID3v2NumericTextFrame,
+	'TDA': ID3v2TDATFrame,
+	'TDY': ID3v2NumericTextFrame,
+	'TIM': ID3v2TIMEFrame,
+	'TLE': ID3v2NumericTextFrame,
+	'TOR': ID3v2YearFrame,
+	'TSI': ID3v2NumericTextFrame,
+	'TYE': ID3v2YearFrame,
+
+	'TBPM': ID3v2NumericTextFrame,
+	'TDAT': ID3v2TDATFrame,
+	'TDLY': ID3v2NumericTextFrame,
+	'TIME': ID3v2TIMEFrame,
+	'TLEN': ID3v2NumericTextFrame,
+	'TORY': ID3v2YearFrame,
+	'TSIZ': ID3v2NumericTextFrame,
+	'TYER': ID3v2YearFrame,
+
+	# Picture Frames
+	'PIC': ID3v2PictureFrame,
+
+	'APIC': ID3v2PictureFrame,
+
+	# Text Frames
+	'TAL': ID3v2TextFrame,
+	'TCM': ID3v2TextFrame,
+	'TCR': ID3v2TextFrame,
+	'TDS': ID3v2TextFrame,
+	'TEN': ID3v2TextFrame,
+	'TFT': ID3v2TextFrame,
+	'TKE': ID3v2TextFrame,
+	'TLA': ID3v2TextFrame,
+	'TMT': ID3v2TextFrame,
+	'TOA': ID3v2TextFrame,
+	'TOF': ID3v2TextFrame,
+	'TOL': ID3v2TextFrame,
+	'TOT': ID3v2TextFrame,
+	'TP1': ID3v2TextFrame,
+	'TP2': ID3v2TextFrame,
+	'TP3': ID3v2TextFrame,
+	'TP4': ID3v2TextFrame,
+	'TPB': ID3v2TextFrame,
+	'TRC': ID3v2TextFrame,
+	'TRD': ID3v2TextFrame,
+	'TS2': ID3v2TextFrame,
+	'TSA': ID3v2TextFrame,
+	'TSC': ID3v2TextFrame,
+	'TSP': ID3v2TextFrame,
+	'TSS': ID3v2TextFrame,
+	'TST': ID3v2TextFrame,
+	'TT1': ID3v2TextFrame,
+	'TT2': ID3v2TextFrame,
+	'TT3': ID3v2TextFrame,
+	'TXT': ID3v2TextFrame,
+
+	'TALB': ID3v2TextFrame,
+	'TCMP': ID3v2TextFrame,
+	'TCOM': ID3v2TextFrame,
+	'TCOP': ID3v2TextFrame,
+	'TDES': ID3v2TextFrame,
+	'TENC': ID3v2TextFrame,
+	'TEXT': ID3v2TextFrame,
+	'TFLT': ID3v2TextFrame,
+	'TIT1': ID3v2TextFrame,
+	'TIT2': ID3v2TextFrame,
+	'TIT3': ID3v2TextFrame,
+	'TKEY': ID3v2TextFrame,
+	'TKWD': ID3v2TextFrame,
+	'TLAN': ID3v2TextFrame,
+	'TMED': ID3v2TextFrame,
+	'TMOO': ID3v2TextFrame,
+	'TOAL': ID3v2TextFrame,
+	'TOFN': ID3v2TextFrame,
+	'TOLY': ID3v2TextFrame,
+	'TOPE': ID3v2TextFrame,
+	'TOWN': ID3v2TextFrame,
+	'TPE1': ID3v2TextFrame,
+	'TPE2': ID3v2TextFrame,
+	'TPE3': ID3v2TextFrame,
+	'TPE4': ID3v2TextFrame,
+	'TPUB': ID3v2TextFrame,
+	'TRDA': ID3v2TextFrame,
+	'TRSN': ID3v2TextFrame,
+	'TRSO': ID3v2TextFrame,
+	'TSO2': ID3v2TextFrame,
+	'TSOA': ID3v2TextFrame,
+	'TSOC': ID3v2TextFrame,
+	'TSOP': ID3v2TextFrame,
+	'TSOT': ID3v2TextFrame,
+	'TSRC': ID3v2TextFrame,
+	'TSSE': ID3v2TextFrame,
+	'TSST': ID3v2TextFrame,
+	'XSOA': ID3v2TextFrame,
+	'XSOP': ID3v2TextFrame,
+	'XSOT': ID3v2TextFrame,
+
+	# Timestamp Frames
+	'TDR': ID3v2TimestampFrame,
+
+	'TDEN': ID3v2TimestampFrame,
+	'TDOR': ID3v2TimestampFrame,
+	'TDRC': ID3v2TimestampFrame,
+	'TDRL': ID3v2TimestampFrame,
+	'TDTG': ID3v2TimestampFrame,
+	'XDOR': ID3v2TimestampFrame,
+
+	# URL Link Frames
+	'TID': ID3v2URLLinkFrame,
+	'WAF': ID3v2URLLinkFrame,
+	'WAR': ID3v2URLLinkFrame,
+	'WAS': ID3v2URLLinkFrame,
+	'WCM': ID3v2URLLinkFrame,
+	'WCP': ID3v2URLLinkFrame,
+	'WFD': ID3v2URLLinkFrame,
+	'WPB': ID3v2URLLinkFrame,
+	'WXX': ID3v2UserURLLinkFrame,
+
+	'TGID': ID3v2URLLinkFrame,
+	'WCOM': ID3v2URLLinkFrame,
+	'WCOP': ID3v2URLLinkFrame,
+	'WFED': ID3v2URLLinkFrame,
+	'WOAF': ID3v2URLLinkFrame,
+	'WOAR': ID3v2URLLinkFrame,
+	'WOAS': ID3v2URLLinkFrame,
+	'WORS': ID3v2URLLinkFrame,
+	'WPAY': ID3v2URLLinkFrame,
+	'WPUB': ID3v2URLLinkFrame,
+	'WXXX': ID3v2UserURLLinkFrame,
+}
+
+
 @attrs(
 	repr=False,
 	kw_only=True,
 )
 class ID3v2Frame(ID3v2BaseFrame):
 	value = attrib()
-
-	# TODO:ID3v2.2
-	# TODO: BUF, CNT, CRA, CRM, ETC, EQU, LNK, MCI, MLL, PCS,
-	# TODO: POP, REV, RVA, STC, UFI
-
-	# TODO: ID3v2.3
-	# TODO: AENC, COMR, ENCR, EQUA, ETCO, GRID, LINK, MLLT, OWNE
-	# TODO: PCNT, PCST, POPM, POSS, RBUF, RGAD, RVAD, RVRB, SYTC,
-	# TODO: UFID, USER, XRVA
-
-	# TODO: ID3v2.4
-	# TODO: ASPI, EQU2, PCST, RGAD, RVA2, SEEK, SIGN,
-	# TODO: TPRO, XRVA
-
-	_FRAME_TYPES = {
-		# Binary data frames
-		'MCDI': ID3v2BinaryDataFrame,
-		'NCON': ID3v2BinaryDataFrame,
-
-		# Complex Text Frames
-		'COM': ID3v2CommentFrame,
-		'GEO': ID3v2GEOBFrame,
-		'IPL': ID3v2MappingListFrame,
-		'TXX': ID3v2UserTextFrame,
-
-		'COMM': ID3v2CommentFrame,
-		'GEOB': ID3v2GEOBFrame,
-		'IPLS': ID3v2MappingListFrame,
-		'PRIV': ID3v2PrivateFrame,
-		'TIPL': ID3v2MappingListFrame,
-		'TMCL': ID3v2MappingListFrame,
-		'TXXX': ID3v2UserTextFrame,
-
-		# Genre Frame
-		'TCO': ID3v2GenreFrame,
-
-		'TCON': ID3v2GenreFrame,
-
-		# Lyrics Frames
-		'SLT': ID3v2SynchronizedLyricsFrame,
-		'ULT': ID3v2UnsynchronizedLyricsFrame,
-
-		'SYLT': ID3v2SynchronizedLyricsFrame,
-		'USLT': ID3v2UnsynchronizedLyricsFrame,
-
-		# Number Frames
-		'TPA': ID3v2NumberFrame,
-		'TRK': ID3v2NumberFrame,
-
-		'TPOS': ID3v2NumberFrame,
-		'TRCK': ID3v2NumberFrame,
-
-		# Numeric Text Frames
-		'TBP': ID3v2NumericTextFrame,
-		'TDA': ID3v2TDATFrame,
-		'TDY': ID3v2NumericTextFrame,
-		'TIM': ID3v2TIMEFrame,
-		'TLE': ID3v2NumericTextFrame,
-		'TOR': ID3v2YearFrame,
-		'TSI': ID3v2NumericTextFrame,
-		'TYE': ID3v2YearFrame,
-
-		'TBPM': ID3v2NumericTextFrame,
-		'TDAT': ID3v2TDATFrame,
-		'TDLY': ID3v2NumericTextFrame,
-		'TIME': ID3v2TIMEFrame,
-		'TLEN': ID3v2NumericTextFrame,
-		'TORY': ID3v2YearFrame,
-		'TSIZ': ID3v2NumericTextFrame,
-		'TYER': ID3v2YearFrame,
-
-		# Picture Frames
-		'PIC': ID3v2PictureFrame,
-
-		'APIC': ID3v2PictureFrame,
-
-		# Text Frames
-		'TAL': ID3v2TextFrame,
-		'TCM': ID3v2TextFrame,
-		'TCR': ID3v2TextFrame,
-		'TDS': ID3v2TextFrame,
-		'TEN': ID3v2TextFrame,
-		'TFT': ID3v2TextFrame,
-		'TKE': ID3v2TextFrame,
-		'TLA': ID3v2TextFrame,
-		'TMT': ID3v2TextFrame,
-		'TOA': ID3v2TextFrame,
-		'TOF': ID3v2TextFrame,
-		'TOL': ID3v2TextFrame,
-		'TOT': ID3v2TextFrame,
-		'TP1': ID3v2TextFrame,
-		'TP2': ID3v2TextFrame,
-		'TP3': ID3v2TextFrame,
-		'TP4': ID3v2TextFrame,
-		'TPB': ID3v2TextFrame,
-		'TRC': ID3v2TextFrame,
-		'TRD': ID3v2TextFrame,
-		'TS2': ID3v2TextFrame,
-		'TSA': ID3v2TextFrame,
-		'TSC': ID3v2TextFrame,
-		'TSP': ID3v2TextFrame,
-		'TSS': ID3v2TextFrame,
-		'TST': ID3v2TextFrame,
-		'TT1': ID3v2TextFrame,
-		'TT2': ID3v2TextFrame,
-		'TT3': ID3v2TextFrame,
-		'TXT': ID3v2TextFrame,
-
-		'TALB': ID3v2TextFrame,
-		'TCMP': ID3v2TextFrame,
-		'TCOM': ID3v2TextFrame,
-		'TCOP': ID3v2TextFrame,
-		'TDES': ID3v2TextFrame,
-		'TENC': ID3v2TextFrame,
-		'TEXT': ID3v2TextFrame,
-		'TFLT': ID3v2TextFrame,
-		'TIT1': ID3v2TextFrame,
-		'TIT2': ID3v2TextFrame,
-		'TIT3': ID3v2TextFrame,
-		'TKEY': ID3v2TextFrame,
-		'TKWD': ID3v2TextFrame,
-		'TLAN': ID3v2TextFrame,
-		'TMED': ID3v2TextFrame,
-		'TMOO': ID3v2TextFrame,
-		'TOAL': ID3v2TextFrame,
-		'TOFN': ID3v2TextFrame,
-		'TOLY': ID3v2TextFrame,
-		'TOPE': ID3v2TextFrame,
-		'TOWN': ID3v2TextFrame,
-		'TPE1': ID3v2TextFrame,
-		'TPE2': ID3v2TextFrame,
-		'TPE3': ID3v2TextFrame,
-		'TPE4': ID3v2TextFrame,
-		'TPUB': ID3v2TextFrame,
-		'TRDA': ID3v2TextFrame,
-		'TRSN': ID3v2TextFrame,
-		'TRSO': ID3v2TextFrame,
-		'TSO2': ID3v2TextFrame,
-		'TSOA': ID3v2TextFrame,
-		'TSOC': ID3v2TextFrame,
-		'TSOP': ID3v2TextFrame,
-		'TSOT': ID3v2TextFrame,
-		'TSRC': ID3v2TextFrame,
-		'TSSE': ID3v2TextFrame,
-		'TSST': ID3v2TextFrame,
-		'XSOA': ID3v2TextFrame,
-		'XSOP': ID3v2TextFrame,
-		'XSOT': ID3v2TextFrame,
-
-		# Timestamp Frames
-		'TDR': ID3v2TimestampFrame,
-
-		'TDEN': ID3v2TimestampFrame,
-		'TDOR': ID3v2TimestampFrame,
-		'TDRC': ID3v2TimestampFrame,
-		'TDRL': ID3v2TimestampFrame,
-		'TDTG': ID3v2TimestampFrame,
-		'XDOR': ID3v2TimestampFrame,
-
-		# URL Link Frames
-		'TID': ID3v2URLLinkFrame,
-		'WAF': ID3v2URLLinkFrame,
-		'WAR': ID3v2URLLinkFrame,
-		'WAS': ID3v2URLLinkFrame,
-		'WCM': ID3v2URLLinkFrame,
-		'WCP': ID3v2URLLinkFrame,
-		'WFD': ID3v2URLLinkFrame,
-		'WPB': ID3v2URLLinkFrame,
-		'WXX': ID3v2UserURLLinkFrame,
-
-		'TGID': ID3v2URLLinkFrame,
-		'WCOM': ID3v2URLLinkFrame,
-		'WCOP': ID3v2URLLinkFrame,
-		'WFED': ID3v2URLLinkFrame,
-		'WOAF': ID3v2URLLinkFrame,
-		'WOAR': ID3v2URLLinkFrame,
-		'WOAS': ID3v2URLLinkFrame,
-		'WORS': ID3v2URLLinkFrame,
-		'WPAY': ID3v2URLLinkFrame,
-		'WPUB': ID3v2URLLinkFrame,
-		'WXXX': ID3v2UserURLLinkFrame,
-	}
 
 	@datareader
 	@classmethod
@@ -635,7 +636,7 @@ class ID3v2Frame(ID3v2BaseFrame):
 			raise InvalidFrame("Not a valid ID3v2 frame")
 
 		frame_id = frame[0].decode('iso-8859-1')
-		frame_type = ID3v2Frame._FRAME_TYPES.get(frame_id, cls)
+		frame_type = ID3v2FrameTypes.get(frame_id, cls)
 		frame_data = data.read(frame_size)
 
 		# TODO: Move logic into frame classes?

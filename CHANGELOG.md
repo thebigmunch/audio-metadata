@@ -49,6 +49,7 @@ This project adheres to [Semantic Versioning](https://semver.org).
 * ``ID3v2LyricsContentType``.
 * ``ID3v2LyricsTimestampFormat``.
 * ``ID3v2FrameAliases``.
+* ``ID3v2FrameTypes``.
 
 
 ### Changed
@@ -96,6 +97,7 @@ This project adheres to [Semantic Versioning](https://semver.org).
 	* Change ``ID3v2Frames`` to present a list of lyrics
 		objects for ``SYLT``/``USLT`` keys.
 * Move ID3v2 frame alias map out of ``ID3v2Frames``.
+* Move ID3v2 frame type map out of ``ID3v2Frame``.
 
 ### Removed
 
