@@ -89,7 +89,7 @@ class ID3v2GeneralEncapsulatedObject(AttrMapping):
 	mime_type = attrib()
 	filename = attrib()
 	description = attrib()
-	value = attrib()
+	object = attrib()  # noqa
 
 
 @attrs(
