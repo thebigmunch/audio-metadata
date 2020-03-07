@@ -141,7 +141,7 @@ class OggPage(AttrMapping):
 class Ogg(Format):
 	"""Ogg file format object.
 
-	Extends :class:`Format`.
+	Extends `Format`.
 
 	Base class for various formats using an Ogg container.
 	"""

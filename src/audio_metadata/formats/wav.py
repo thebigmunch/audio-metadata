@@ -116,7 +116,7 @@ class WAVStreamInfo(StreamInfo):
 class WAV(Format):
 	"""WAV file format object.
 
-	Extends :class:`Format`.
+	Extends `Format`.
 
 	Attributes:
 		pictures (list): A list of :class:`ID3v2Picture` objects.

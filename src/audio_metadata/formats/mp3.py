@@ -736,7 +736,7 @@ class MP3StreamInfo(StreamInfo):
 class MP3(Format):
 	"""MP3 file format object.
 
-	Extends :class:`Format`.
+	Extends `Format`.
 
 	Attributes:
 		pictures (list): A list of :class:`ID3v2Picture` objects.

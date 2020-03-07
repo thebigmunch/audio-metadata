@@ -55,7 +55,7 @@ except ImportError:
 	kw_only=True,
 )
 class FLACApplication(AttrMapping):
-	"""Application metadata block.
+	"""A FLAC application metadata block.
 
 	Attributes:
 		id (str): The 32-bit application identifier.
@@ -85,7 +85,7 @@ class FLACApplication(AttrMapping):
 	kw_only=True,
 )
 class FLACCueSheetIndex(AttrMapping):
-	"""A cue sheet track index point.
+	"""A FLAC cue sheet track index point.
 
 	Attributes:
 		number (int): The index point number.
@@ -144,7 +144,7 @@ class FLACCueSheetTrack(AttrMapping):
 		isrc (str): The ISRC (International Standard Recording Code) of the track.
 		type (int): ``0`` for audio, ``1`` for non-audio.
 		pre_emphasis (bool): ``True`` if contains pre-emphasis, ``False`` if not.
-		indexes (list): The index points for the track as :class:`FLACCueSheetIndex` objects.
+		indexes (list): The index points for the track as `FLACCueSheetIndex` objects.
 	"""
 
 	track_number = attrib()
@@ -193,9 +193,9 @@ class FLACCueSheetTrack(AttrMapping):
 
 
 class FLACCueSheet(LabelList):
-	"""The cue sheet metadata block.
+	"""A FLAC cue sheet metadata block.
 
-	A list-like structure of :class:`FLACCueSheetTrack` objects
+	A list-like structure of `FLACCueSheetTrack` objects
 	along with some information used in the cue sheet.
 
 	Attributes:
@@ -250,6 +250,13 @@ class FLACCueSheet(LabelList):
 	kw_only=True,
 )
 class FLACMetadataBlock(AttrMapping):
+	"""Generic FLAC metadata block.
+
+	Attributes:
+		type (int): Metadata block type index.
+		data (bytes): The binary metadata block data.
+	"""
+
 	type = attrib()  # noqa
 	data = attrib()
 
@@ -262,6 +269,12 @@ class FLACMetadataBlock(AttrMapping):
 	kw_only=True,
 )
 class FLACPadding(AttrMapping):
+	"""A FLAC padding metadata block.
+
+	Attributes:
+		size (int): The size of the padding.
+	"""
+
 	size = attrib()
 
 	def __repr__(self):
@@ -274,6 +287,25 @@ class FLACPadding(AttrMapping):
 
 
 class FLACPicture(Picture):
+	"""A FLAC picture object.
+
+	Attributes:
+		type (ID3PictureType): The picture type according to
+			the ID3v2 APIC frame format.
+		mime_type (str): The mime type of the picture.
+			May indicate that the picture data is an URL
+			of the picture instead of picture data.
+		description (str): The description of the picture.
+		width (int): The width of the picture in pixels.
+		height (int): The height of the picture in pixels.
+		bit_depth (int): The color depth of the picture
+			in bits-per-pixel.
+		colors (int): For indexed-color pictures (e.g. GIF),
+			the number of colors used.
+			Should be 0 for non-indexed-color pictures.
+		data (bytes): The binary picture data.
+	"""
+
 	@datareader
 	@classmethod
 	def parse(cls, data):
@@ -283,7 +315,7 @@ class FLACPicture(Picture):
 		desc_length = struct.unpack('>I', data.read(4))[0]
 		description = data.read(desc_length).decode('utf-8', 'replace')
 
-		width, height, depth, colors = struct.unpack('>4I', data.read(16))
+		width, height, bit_depth, colors = struct.unpack('>4I', data.read(16))
 
 		data_length = struct.unpack('>I', data.read(4))[0]
 		data = data.read(data_length)
@@ -294,7 +326,7 @@ class FLACPicture(Picture):
 			description=description,
 			width=width,
 			height=height,
-			depth=depth,
+			bit_depth=bit_depth,
 			colors=colors,
 			data=data,
 		)
@@ -392,11 +424,11 @@ class FLACStreamInfo(StreamInfo):
 class FLAC(Format):
 	"""FLAC file format object.
 
-	Extends :class:`Format`.
+	Extends `Format`.
 
 	Attributes:
 		cuesheet (FLACCueSheet): The cuesheet metadata block.
-		pictures (list): A list of :class:`FLACPicture` objects.
+		pictures (list): A list of `FLACPicture` objects.
 		seektable (FLACSeekTable): The seektable metadata block.
 		streaminfo (FLACStreamInfo): The audio stream information.
 		tags (VorbisComments): The Vorbis comment metadata block.

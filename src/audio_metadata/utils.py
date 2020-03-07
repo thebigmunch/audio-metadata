@@ -1,10 +1,3 @@
-__all__ = [
-	'decode_synchsafe_int',
-	'get_image_size',
-	'humanize_bitrate',
-	'humanize_sample_rate',
-]
-
 import os
 import struct
 from codecs import (
@@ -16,7 +9,15 @@ from functools import reduce
 from tbm_utils import datareader
 
 
+def decode_synchsafe_int(data, per_byte):
+	"""Decode synchsafe integers from ID3v2 tags."""
+
+	return reduce(lambda value, element: (value << per_byte) + element, data, 0)
+
+
 def decode_bytestring(b, encoding='iso-8859-1'):
+	"""Decode ID3v2 frame data using given encoding."""
+
 	if not b:
 		return ''
 
@@ -30,11 +31,9 @@ def decode_bytestring(b, encoding='iso-8859-1'):
 	return b.decode(encoding).rstrip('\x00')
 
 
-def decode_synchsafe_int(data, per_byte):
-	return reduce(lambda value, element: (value << per_byte) + element, data, 0)
-
-
 def determine_encoding(b):
+	"""Determine encoding of ID3v2 frame data."""
+
 	first = b[0:1]
 
 	if first == b'\x00':
@@ -51,8 +50,31 @@ def determine_encoding(b):
 	return encoding
 
 
+def split_encoded(data, encoding):
+	"""Split ID3v2 frame data according to encoding."""
+
+	try:
+		if encoding in ['iso-8859-1', 'utf-8']:
+			head, tail = data.split(b'\x00', 1)
+		else:
+			if len(data) % 2 != 0:
+				data += b'\x00'
+
+			head, tail = data.split(b'\x00\x00', 1)
+
+			if len(head) % 2 != 0:
+				head, tail = data.split(b'\x00\x00\x00', 1)
+				head += b'\x00'
+	except ValueError:
+		return (data,)
+
+	return head, tail
+
+
 @datareader
 def get_image_size(data):
+	"""Determine dimensions from image file data."""
+
 	b = data.read(56)
 	size = len(b)
 
@@ -87,6 +109,8 @@ def get_image_size(data):
 
 
 def humanize_bitrate(bitrate):
+	"""Humanize bitrate from integer."""
+
 	for divisor, symbol in [(1000 ** 1, 'Kbps'), (1, 'bps')]:
 		if bitrate >= divisor:
 			break
@@ -95,6 +119,8 @@ def humanize_bitrate(bitrate):
 
 
 def humanize_sample_rate(sample_rate):
+	"""Humanize sample rate from integer."""
+
 	for divisor, symbol in [(1000 ** 1, 'KHz'), (1, 'Hz')]:
 		if sample_rate >= divisor:
 			break
@@ -102,22 +128,3 @@ def humanize_sample_rate(sample_rate):
 	value = sample_rate / divisor
 
 	return f'{value if value.is_integer() else value:.1f} {symbol}'
-
-
-def split_encoded(data, encoding):
-	try:
-		if encoding in ['iso-8859-1', 'utf-8']:
-			head, tail = data.split(b'\x00', 1)
-		else:
-			if len(data) % 2 != 0:
-				data += b'\x00'
-
-			head, tail = data.split(b'\x00\x00', 1)
-
-			if len(head) % 2 != 0:
-				head, tail = data.split(b'\x00\x00\x00', 1)
-				head += b'\x00'
-	except ValueError:
-		return (data,)
-
-	return head, tail

@@ -22,6 +22,13 @@ from .utils import (
 
 
 class Tags(AttrMapping):
+	"""Base class for tags objects.
+
+	Attributes:
+		FIELD_MAP (frozenbidict): A mapping of format-specific
+			field names to common aliases.
+	"""
+
 	FIELD_MAP = frozenbidict()
 
 	def __getitem__(self, key):
@@ -62,8 +69,8 @@ class Format(AttrMapping):
 	Attributes:
 		filepath (str): Path to audio file, if applicable.
 		filesize (int): Size of audio file.
-		pictures (list): A list of :class:`Picture` objects.
-		tags (Tags): A :class:`Tags` object.
+		pictures (list): A list of `Picture` objects.
+		tags (Tags): A `Tags` object.
 	"""
 
 	tags_type = Tags
@@ -105,6 +112,8 @@ class Format(AttrMapping):
 
 
 class Picture(AttrMapping):
+	"""Base class for picture objects."""
+
 	def __repr__(self):
 		repr_dict = {}
 
@@ -118,6 +127,8 @@ class Picture(AttrMapping):
 
 
 class StreamInfo(AttrMapping):
+	"""Base class for stream information objects."""
+
 	def __repr__(self):
 		repr_dict = {}
 

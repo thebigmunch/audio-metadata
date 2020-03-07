@@ -21,6 +21,10 @@ extensions = [
 	'sphinx_material',
 ]
 
+# The reST default role (used for this markup: `text`) to use for all
+# documents.
+default_role = "any"
+
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
 
@@ -76,7 +80,8 @@ todo_include_todos = True
 
 # Example configuration for intersphinx: refer to the Python standard library.
 intersphinx_mapping = {
-	'python': ('https://docs.python.org/3', None)
+	'python': ('https://docs.python.org/3', None),
+	'bidict': ('https://bidict.readthedocs.io/en/master/', None),
 }
 
 # -- Options for HTML output ----------------------------------------------

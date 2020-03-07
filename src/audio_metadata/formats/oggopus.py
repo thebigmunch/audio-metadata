@@ -82,10 +82,10 @@ class OggOpusStreamInfo(StreamInfo):
 class OggOpus(Ogg):
 	"""Ogg Opus file format object.
 
-	Extends :class:`Format`.
+	Extends `Format`.
 
 	Attributes:
-		pictures (list): A list of :class:`VorbisPicture` objects.
+		pictures (list): A list of `VorbisPicture` objects.
 		streaminfo (OggOpusStreamInfo): The audio stream information.
 		tags (OggOpusVorbisComments): The Vorbis comment metadata block.
 	"""
