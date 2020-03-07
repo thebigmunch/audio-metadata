@@ -28,4 +28,4 @@ del showwarning
 
 
 class AudioMetadataWarning(UserWarning):
-	pass
+	"""Base warning class."""
