@@ -204,7 +204,7 @@ class ID3v2BaseFrame(AttrMapping):
 	repr=False,
 	kw_only=True,
 )
-class ID3v2BinaryDataFrame(AttrMapping):
+class ID3v2BinaryDataFrame(ID3v2BaseFrame):
 	value = attrib()
 
 

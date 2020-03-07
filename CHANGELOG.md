@@ -13,6 +13,10 @@ This project adheres to [Semantic Versioning](https://semver.org).
 
 * Rename ``value`` attribute of ``ID3v2GeneralEncapsulatedObject`` to ``object``.
 
+### Fixed
+
+* ``ID3v2BinaryDataFrame`` not inheriting from ``ID3v2BaseFrame``.
+
 
 ## [0.8.0](https://github.com/thebigmunch/audio-metadata/releases/tag/0.8.0) (2020-03-05)
 
