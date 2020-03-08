@@ -455,7 +455,7 @@ def _():
 		description='',
 		width=16,
 		height=16,
-		depth=32,
+		bit_depth=32,
 		colors=0,
 		data=image_data[41:],
 	)
