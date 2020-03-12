@@ -262,6 +262,67 @@ ID3v2FrameAliases = {
 }
 
 
+ID3v2FrameIDs = {
+	# http://id3.org/id3v2-00
+	ID3Version.v22: {
+		'BUF', 'CNT', 'COM', 'CRA', 'CRM', 'ETC', 'EQU', 'IPL',
+		'LNK', 'MCI', 'MLL', 'PIC', 'POP', 'REV', 'RVA', 'SLT',
+		'STC', 'TAL', 'TBP', 'TCM', 'TCO', 'TCR', 'TDA', 'TDY',
+		'TEN', 'TFT', 'TIM', 'TKE', 'TLA', 'TLE', 'TMT', 'TOA',
+		'TOF', 'TOL', 'TOR', 'TOT', 'TP1', 'TP2', 'TP3', 'TP4',
+		'TPA', 'TPB', 'TRC', 'TRD', 'TRK', 'TSI', 'TSS', 'TT1',
+		'TT2', 'TT3', 'TXT', 'TXX', 'TYE', 'UFI', 'ULT', 'WAF',
+		'WAR', 'WAS', 'WCM', 'WCP', 'WPB', 'WXX',
+	},
+	# http://id3.org/id3v2.3.0#Declared_ID3v2_frames
+	ID3Version.v23: {
+		'AENC', 'APIC', 'COMM', 'COMR', 'ENCR', 'EQUA', 'ETCO',
+		'GEOB', 'GRID', 'IPLS', 'LINK', 'MCDI', 'MLLT', 'OWNE',
+		'PRIV', 'PCNT', 'POPM', 'POSS', 'RBUF', 'RVAD', 'RVRB',
+		'SYLT', 'SYTC', 'TALB', 'TBPM', 'TCOM', 'TCON', 'TCOP',
+		'TDAT', 'TDLY', 'TENC', 'TEXT', 'TFLT', 'TIME', 'TIT1',
+		'TIT2', 'TIT3', 'TKEY', 'TLAN', 'TLEN', 'TMED', 'TOAL',
+		'TOFN', 'TOLY', 'TOPE', 'TORY', 'TOWN', 'TPE1', 'TPE2',
+		'TPE3', 'TPE4', 'TPOS', 'TPUB', 'TRCK', 'TRDA', 'TRSN',
+		'TRSO', 'TSIZ', 'TSRC', 'TSSE', 'TYER', 'TXXX', 'UFID',
+		'USER', 'USLT', 'WCOM', 'WCOP', 'WOAF', 'WOAR', 'WOAS',
+		'WORS', 'WPAY', 'WPUB', 'WXXX',
+	},
+	# http://id3.org/id3v2.4.0-frames
+	ID3Version.v24: {
+		'AENC', 'APIC', 'ASPI', 'COMM', 'COMR', 'ENCR', 'EQU2',
+		'ETCO', 'GEOB', 'GRID', 'LINK', 'MCDI', 'MLLT', 'OWNE',
+		'PRIV', 'PCNT', 'POPM', 'POSS', 'RBUF', 'RVA2', 'RVRB',
+		'SEEK', 'SIGN', 'SYLT', 'SYTC', 'TALB', 'TBPM', 'TCOM',
+		'TCON', 'TCOP', 'TDEN', 'TDLY', 'TDOR', 'TDRC', 'TDRL',
+		'TDTG', 'TENC', 'TEXT', 'TFLT', 'TIPL', 'TIT1', 'TIT2',
+		'TIT3', 'TKEY', 'TLAN', 'TLEN', 'TMCL', 'TMED', 'TMOO',
+		'TOAL', 'TOFN', 'TOLY', 'TOPE', 'TOWN', 'TPE1', 'TPE2',
+		'TPE3', 'TPE4', 'TPOS', 'TPRO', 'TPUB', 'TRCK', 'TRSN',
+		'TRSO', 'TSOA', 'TSOP', 'TSOT', 'TSRC', 'TSSE', 'TSST',
+		'TXXX', 'UFID', 'USER', 'USLT', 'WCOM', 'WCOP', 'WOAF',
+		'WOAR', 'WOAS', 'WORS', 'WPAY', 'WPUB', 'WXXX',
+	},
+}
+
+ID3v2UnofficialFrameIDs = {
+	ID3Version.v22: {
+		'CM1', 'PCS', 'TCP', 'TDR', 'TDS', 'TID', 'TS2', 'TSA',
+		'TSC', 'TSP', 'TST', 'WFD',
+	},
+	ID3Version.v23: {
+		'NCON', 'PCST', 'RGAD', 'TCMP', 'TDES', 'TGID', 'TKWD',
+		'TSO2', 'TSOC', 'WFED', 'XDOR', 'XSOA', 'XSOP', 'XSOT',
+		'XRVA',
+	},
+	ID3Version.v24: {
+		'NCON', 'PCST', 'RGAD', 'TCMP', 'TDES', 'TGID', 'TKWD',
+		'TSO2', 'TSOC', 'WFED', 'XDOR', 'XSOA', 'XSOP', 'XSOT',
+		'XRVA',
+	},
+}
+
+
 # https://en.wikipedia.org/wiki/List_of_ID3v1_Genres
 ID3v1Genres = [
 	'Blues',
@@ -456,67 +517,6 @@ ID3v1Genres = [
 	'Garage Rock',
 	'Psybient',
 ]
-
-
-ID3v2FrameIDs = {
-	# http://id3.org/id3v2-00
-	ID3Version.v22: {
-		'BUF', 'CNT', 'COM', 'CRA', 'CRM', 'ETC', 'EQU', 'IPL',
-		'LNK', 'MCI', 'MLL', 'PIC', 'POP', 'REV', 'RVA', 'SLT',
-		'STC', 'TAL', 'TBP', 'TCM', 'TCO', 'TCR', 'TDA', 'TDY',
-		'TEN', 'TFT', 'TIM', 'TKE', 'TLA', 'TLE', 'TMT', 'TOA',
-		'TOF', 'TOL', 'TOR', 'TOT', 'TP1', 'TP2', 'TP3', 'TP4',
-		'TPA', 'TPB', 'TRC', 'TRD', 'TRK', 'TSI', 'TSS', 'TT1',
-		'TT2', 'TT3', 'TXT', 'TXX', 'TYE', 'UFI', 'ULT', 'WAF',
-		'WAR', 'WAS', 'WCM', 'WCP', 'WPB', 'WXX',
-	},
-	# http://id3.org/id3v2.3.0#Declared_ID3v2_frames
-	ID3Version.v23: {
-		'AENC', 'APIC', 'COMM', 'COMR', 'ENCR', 'EQUA', 'ETCO',
-		'GEOB', 'GRID', 'IPLS', 'LINK', 'MCDI', 'MLLT', 'OWNE',
-		'PRIV', 'PCNT', 'POPM', 'POSS', 'RBUF', 'RVAD', 'RVRB',
-		'SYLT', 'SYTC', 'TALB', 'TBPM', 'TCOM', 'TCON', 'TCOP',
-		'TDAT', 'TDLY', 'TENC', 'TEXT', 'TFLT', 'TIME', 'TIT1',
-		'TIT2', 'TIT3', 'TKEY', 'TLAN', 'TLEN', 'TMED', 'TOAL',
-		'TOFN', 'TOLY', 'TOPE', 'TORY', 'TOWN', 'TPE1', 'TPE2',
-		'TPE3', 'TPE4', 'TPOS', 'TPUB', 'TRCK', 'TRDA', 'TRSN',
-		'TRSO', 'TSIZ', 'TSRC', 'TSSE', 'TYER', 'TXXX', 'UFID',
-		'USER', 'USLT', 'WCOM', 'WCOP', 'WOAF', 'WOAR', 'WOAS',
-		'WORS', 'WPAY', 'WPUB', 'WXXX',
-	},
-	# http://id3.org/id3v2.4.0-frames
-	ID3Version.v24: {
-		'AENC', 'APIC', 'ASPI', 'COMM', 'COMR', 'ENCR', 'EQU2',
-		'ETCO', 'GEOB', 'GRID', 'LINK', 'MCDI', 'MLLT', 'OWNE',
-		'PRIV', 'PCNT', 'POPM', 'POSS', 'RBUF', 'RVA2', 'RVRB',
-		'SEEK', 'SIGN', 'SYLT', 'SYTC', 'TALB', 'TBPM', 'TCOM',
-		'TCON', 'TCOP', 'TDEN', 'TDLY', 'TDOR', 'TDRC', 'TDRL',
-		'TDTG', 'TENC', 'TEXT', 'TFLT', 'TIPL', 'TIT1', 'TIT2',
-		'TIT3', 'TKEY', 'TLAN', 'TLEN', 'TMCL', 'TMED', 'TMOO',
-		'TOAL', 'TOFN', 'TOLY', 'TOPE', 'TOWN', 'TPE1', 'TPE2',
-		'TPE3', 'TPE4', 'TPOS', 'TPRO', 'TPUB', 'TRCK', 'TRSN',
-		'TRSO', 'TSOA', 'TSOP', 'TSOT', 'TSRC', 'TSSE', 'TSST',
-		'TXXX', 'UFID', 'USER', 'USLT', 'WCOM', 'WCOP', 'WOAF',
-		'WOAR', 'WOAS', 'WORS', 'WPAY', 'WPUB', 'WXXX',
-	},
-}
-
-ID3v2UnofficialFrameIDs = {
-	ID3Version.v22: {
-		'CM1', 'PCS', 'TCP', 'TDR', 'TDS', 'TID', 'TS2', 'TSA',
-		'TSC', 'TSP', 'TST', 'WFD',
-	},
-	ID3Version.v23: {
-		'NCON', 'PCST', 'RGAD', 'TCMP', 'TDES', 'TGID', 'TKWD',
-		'TSO2', 'TSOC', 'WFED', 'XDOR', 'XSOA', 'XSOP', 'XSOT',
-		'XRVA',
-	},
-	ID3Version.v24: {
-		'NCON', 'PCST', 'RGAD', 'TCMP', 'TDES', 'TGID', 'TKWD',
-		'TSO2', 'TSOC', 'WFED', 'XDOR', 'XSOA', 'XSOP', 'XSOT',
-		'XRVA',
-	},
-}
 
 
 class LAMEBitrateMode(_BaseIntEnum):
