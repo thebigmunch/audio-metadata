@@ -9,22 +9,21 @@ import struct
 from collections import defaultdict
 
 from attr import attrib, attrs
-from tbm_utils import (
-	AttrMapping,
-	datareader,
-)
+from tbm_utils import datareader
 
 from ..exceptions import InvalidComment
-from ..models import Tags
+from ..models import (
+	Tag,
+	Tags,
+)
 
 
 @attrs(
 	repr=False,
 	kw_only=True,
 )
-class VorbisComment(AttrMapping):
+class VorbisComment(Tag):
 	name = attrib(converter=lambda n: n.lower())
-	value = attrib()
 
 	@datareader
 	@classmethod

@@ -15,6 +15,7 @@ This project adheres to [Semantic Versioning](https://semver.org).
 ### Changed
 
 * Rename ``value`` attribute of ``ID3v2GeneralEncapsulatedObject`` to ``object``.
+* Make ``VorbisComment`` subclass ``Tag``.
 
 ### Fixed
 
