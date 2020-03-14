@@ -8,6 +8,9 @@ This project adheres to [Semantic Versioning](https://semver.org).
 
 [Commits](https://github.com/thebigmunch/audio-metadata/compare/0.8.0...master)
 
+### Added
+
+* ``Tag``.
 
 ### Changed
 

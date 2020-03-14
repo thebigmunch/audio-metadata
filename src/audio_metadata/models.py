@@ -2,11 +2,16 @@ __all__ = [
 	'Format',
 	'Picture',
 	'StreamInfo',
+	'Tag',
 	'Tags',
 ]
 
 import os
 
+from attr import (
+	attrib,
+	attrs,
+)
 from bidict import frozenbidict
 from tbm_utils import (
 	AttrMapping,
@@ -19,6 +24,15 @@ from .utils import (
 	humanize_bitrate,
 	humanize_sample_rate,
 )
+
+
+@attrs(
+	repr=False,
+	kw_only=True,
+)
+class Tag(AttrMapping):
+	name = attrib()
+	value = attrib()
 
 
 class Tags(AttrMapping):
