@@ -23,6 +23,8 @@ __all__ = [
 	'ID3v2PrivateInfo',
 	'ID3v2SynchronizedLyrics',
 	'ID3v2SynchronizedLyricsFrame',
+	'ID3v2TDATFrame',
+	'ID3v2TIMEFrame',
 	'ID3v2TextFrame',
 	'ID3v2TimestampFrame',
 	'ID3v2UnsynchronizedLyrics',
