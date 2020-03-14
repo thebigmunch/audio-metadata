@@ -2,6 +2,7 @@
 # http://www-mmsp.ece.mcgill.ca/Documents/AudioFormats/WAVE/WAVE.html
 
 __all__ = [
+	'RIFFTag',
 	'RIFFTags',
 	'WAV',
 	'WAVStreamInfo',
@@ -26,8 +27,23 @@ from ..exceptions import (
 from ..models import (
 	Format,
 	StreamInfo,
+	Tag,
 	Tags,
 )
+
+
+class RIFFTag(Tag):
+	@datareader
+	@classmethod
+	def parse(cls, data):
+		name = data.read(4).decode('utf-8')
+		size = struct.unpack('I', data.read(4))[0]
+		value = data.read(size).strip(b'\x00').decode('utf-8')
+
+		return cls(
+			name=name,
+			value=value,
+		)
 
 
 # https://www.recordingblogs.com/wiki/list-chunk-of-a-wave-file
@@ -56,11 +72,10 @@ class RIFFTags(Tags):
 
 		fields = {}
 
-		field = data.read(4)
-		while len(field):
-			size = struct.unpack('I', data.read(4))[0]
-			value = data.read(size).strip(b'\x00').decode('utf-8')
-			fields[field.decode('utf-8')] = [value]
+		name = data.peek(4)
+		while len(name):
+			field = RIFFTag.parse(data)
+			fields[field.name] = [field.value]
 
 			b = data.read(1)
 			while b == b'\x00':
@@ -69,7 +84,7 @@ class RIFFTags(Tags):
 			if b:
 				data.seek(-1, os.SEEK_CUR)
 
-			field = data.read(4)
+			name = data.peek(4)
 
 		return cls(fields)
 
