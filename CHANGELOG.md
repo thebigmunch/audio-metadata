@@ -12,11 +12,28 @@ This project adheres to [Semantic Versioning](https://semver.org).
 
 * ``Tag``.
 * ``RIFFTag``.
+* ``ID3v1Field``.
+* ``ID3v1AlbumField``.
+* ``ID3v2ArtistField``.
+* ``ID3v1CommentField``.
+* ``ID3v1GenreField``.
+* ``ID3v1TitleField``.
+* ``ID3v1TrackNumberField``.
+* ``ID3v1YearField``.
 
 ### Changed
 
 * Rename ``value`` attribute of ``ID3v2GeneralEncapsulatedObject`` to ``object``.
 * Make ``VorbisComment`` subclass ``Tag``.
+* Refactor ID3v1 to use tag classes:
+	* ``ID3v1Field``.
+	* ``ID3v1AlbumField``.
+	* ``ID3v2ArtistField``.
+	* ``ID3v1CommentField``.
+	* ``ID3v1GenreField``.
+	* ``ID3v1TitleField``.
+	* ``ID3v1TrackNumberField``.
+	* ``ID3v1YearField``.
 
 ### Fixed
 
