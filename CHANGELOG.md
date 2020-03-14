@@ -20,12 +20,14 @@ This project adheres to [Semantic Versioning](https://semver.org).
 * ``ID3v1TitleField``.
 * ``ID3v1TrackNumberField``.
 * ``ID3v1YearField``.
+* `ID3v2InvolvedPeopleListFrame`` as subclass of ``ID3v2PeopleListFrame``.
+* ``ID3v2TMCLFrame`` as subclass of ``ID3v2PeopleListFrame``.
 
 ### Changed
 
 * Rename ``value`` attribute of ``ID3v2GeneralEncapsulatedObject`` to ``object``.
 * Make ``VorbisComment`` subclass ``Tag``.
-* Refactor ID3v1 to use tag classes:
+* Refactor ID3v1 to use tag classes.
 	* ``ID3v1Field``.
 	* ``ID3v1AlbumField``.
 	* ``ID3v2ArtistField``.
@@ -34,6 +36,17 @@ This project adheres to [Semantic Versioning](https://semver.org).
 	* ``ID3v1TitleField``.
 	* ``ID3v1TrackNumberField``.
 	* ``ID3v1YearField``.
+* Rename ``ID3v2MappingListFrame`` to ``ID3v2PeopleListFrame``.
+* Use ``ID3v2Frame`` as base class for all ID3v2 frame classes.
+* Make ``ID3v2Frame`` subclass ``Tag``.
+* Refactor ID3v2 frame parsing.
+	* Add ``_parse_frame_header`` helper method on ``ID3v2Frame``.
+	* Add ``_parse_frame_data`` helper method to all ID3v2 frame classes.
+	* ``ID3v2Frame.parse`` calls into helper methods for appropriate subclass.
+
+### Removed
+
+* ``ID3v2BaseFrame``.
 
 ### Fixed
 

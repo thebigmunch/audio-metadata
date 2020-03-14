@@ -1,7 +1,6 @@
 # http://id3.org/Developer%20Information
 
 __all__ = [
-	'ID3v2BaseFrame',
 	'ID3v2BinaryDataFrame',
 	'ID3v2Comment',
 	'ID3v2CommentFrame',
@@ -10,12 +9,13 @@ __all__ = [
 	'ID3v2GEOBFrame',
 	'ID3v2GeneralEncapsulatedObject',
 	'ID3v2GenreFrame',
+	'ID3v2InvolvedPeopleListFrame',
 	'ID3v2InvolvedPerson',
 	'ID3v2Lyrics',
 	'ID3v2LyricsFrame',
-	'ID3v2MappingListFrame',
 	'ID3v2NumberFrame',
 	'ID3v2NumericTextFrame',
+	'ID3v2PeopleListFrame',
 	'ID3v2Performer',
 	'ID3v2Picture',
 	'ID3v2PictureFrame',
@@ -25,6 +25,7 @@ __all__ = [
 	'ID3v2SynchronizedLyricsFrame',
 	'ID3v2TDATFrame',
 	'ID3v2TIMEFrame',
+	'ID3v2TMCLFrame',
 	'ID3v2TextFrame',
 	'ID3v2TimestampFrame',
 	'ID3v2UnsynchronizedLyrics',
@@ -61,7 +62,10 @@ from .tables import (
 	ID3v2LyricsTimestampFormat,
 )
 from ..exceptions import InvalidFrame
-from ..models import Picture
+from ..models import (
+	Picture,
+	Tag,
+)
 from ..utils import (
 	decode_bytestring,
 	decode_synchsafe_int,
@@ -131,6 +135,34 @@ class ID3v2Lyrics(AttrMapping):
 	text = attrib()
 
 
+class ID3v2Picture(Picture):
+	@datareader
+	@classmethod
+	def parse(cls, data):
+		data = data.read()
+
+		encoding = determine_encoding(data[0:1])
+		mime_start = 1
+		mime_end = data.index(b'\x00', 1)
+		mime_type = decode_bytestring(data[mime_start:mime_end])
+
+		type_ = ID3PictureType(data[mime_end + 1])
+
+		desc_start = mime_end + 2
+		description, image_data = split_encoded(data[desc_start:], encoding)
+		description = decode_bytestring(description, encoding)
+		width, height = get_image_size(image_data)
+
+		return cls(
+			type=type_,
+			mime_type=mime_type,
+			description=description,
+			width=width,
+			height=height,
+			data=image_data,
+		)
+
+
 @attrs(
 	repr=False,
 	kw_only=True,
@@ -166,31 +198,70 @@ class ID3v2UserURLLink(AttrMapping):
 	url = attrib()
 
 
-class ID3v2Picture(Picture):
+@attrs(
+	repr=False,
+	kw_only=True,
+)
+class ID3v2Frame(Tag):
+	encoding = attrib(default=None)
+
 	@datareader
 	@classmethod
-	def parse(cls, data):
-		data = data.read()
+	def _parse_frame_data(cls, data, frame_size):
+		return (
+			data.read(frame_size),
+			None,
+		)
 
-		encoding = determine_encoding(data[0:1])
-		mime_start = 1
-		mime_end = data.index(b'\x00', 1)
-		mime_type = decode_bytestring(data[mime_start:mime_end])
+	@datareader
+	@staticmethod
+	def _parse_frame_header(data, struct_pattern, size_len, per_byte):
+		try:
+			frame = struct.unpack(struct_pattern, data.read(struct.calcsize(struct_pattern)))
+		except struct.error:
+			raise InvalidFrame("Not enough data.")
 
-		type_ = ID3PictureType(data[mime_end + 1])
+		frame_id = frame[0].decode('iso-8859-1')
+		frame_size = decode_synchsafe_int(frame[1:1 + size_len], per_byte)
+		if frame_size == 0:
+			raise InvalidFrame("Not a valid ID3v2 frame")
 
-		desc_start = mime_end + 2
-		description, image_data = split_encoded(data[desc_start:], encoding)
-		description = decode_bytestring(description, encoding)
-		width, height = get_image_size(image_data)
+		return frame_id, frame_size
 
-		return cls(
-			type=type_,
-			mime_type=mime_type,
-			description=description,
-			width=width,
-			height=height,
-			data=image_data,
+	@datareader
+	@classmethod
+	def parse(cls, data, struct_pattern, size_len, per_byte):
+		frame_id, frame_size = ID3v2Frame._parse_frame_header(
+			data,
+			struct_pattern,
+			size_len,
+			per_byte,
+		)
+
+		frame_type = ID3v2FrameTypes.get(frame_id, ID3v2Frame)
+		frame_value, frame_encoding = frame_type._parse_frame_data(data, frame_size)
+
+		try:
+			return frame_type(
+				name=frame_id,
+				value=frame_value,
+				encoding=frame_encoding,
+			)
+		except (TypeError, ValueError):  # Bad frame value.
+			return None
+
+
+@attrs(
+	repr=False,
+	kw_only=True,
+)
+class ID3v2BinaryDataFrame(ID3v2Frame):
+	@datareader
+	@classmethod
+	def _parse_frame_data(cls, data, frame_size):
+		return (
+			data.read(frame_size),
+			None,
 		)
 
 
@@ -198,63 +269,93 @@ class ID3v2Picture(Picture):
 	repr=False,
 	kw_only=True,
 )
-class ID3v2BaseFrame(AttrMapping):
-	id = attrib()  # noqa
+class ID3v2CommentFrame(ID3v2Frame):
+	@datareader
+	@classmethod
+	def _parse_frame_data(cls, data, frame_size):
+		frame_data = data.read(frame_size)
+
+		encoding = determine_encoding(frame_data)
+
+		values = split_encoded(frame_data[4:], encoding)
+		# Ignore empty comments.
+		if len(values) < 2:
+			return None
+
+		comment = ID3v2Comment(
+			language=decode_bytestring(frame_data[1:4]),
+			description=decode_bytestring(values[0], encoding),
+			text=decode_bytestring(values[1], encoding),
+		)
+
+		return (
+			comment,
+			encoding,
+		)
 
 
 @attrs(
 	repr=False,
 	kw_only=True,
 )
-class ID3v2BinaryDataFrame(ID3v2BaseFrame):
-	value = attrib()
+class ID3v2GenreFrame(ID3v2Frame):
+	@datareader
+	@classmethod
+	def _parse_frame_data(cls, data, frame_size):
+		frame_data = data.read(frame_size)
+
+		encoding = determine_encoding(frame_data)
+
+		remainder = frame_data[1:]
+		values = []
+		while True:
+			split = split_encoded(remainder, encoding)
+			values.extend(
+				decode_bytestring(v, encoding)
+				for v in split
+			)
+
+			if len(split) < 2:
+				break
+
+			remainder = split[1]
+
+		genres = []
+		for value in values:
+			match = _genre_re.match(value)
+
+			if match['name']:
+				genres.append(match['name'])
+			elif match['id']:
+				if match['id'].isdigit() and int(match['id']):
+					try:
+						genres.append(ID3v1Genres[int(match['id'])])
+					except IndexError:
+						genres.append(value)
+				elif match['id'] == 'CR':
+					genres.append('Cover')
+				elif match['id'] == 'RX':
+					genres.append('Remix')
+
+		return (
+			genres,
+			encoding,
+		)
 
 
 @attrs(
 	repr=False,
 	kw_only=True,
 )
-class ID3v2CommentFrame(ID3v2BaseFrame):
-	value = attrib()
+class ID3v2LyricsFrame(ID3v2Frame):
+	pass
 
 
 @attrs(
 	repr=False,
 	kw_only=True,
 )
-class ID3v2GenreFrame(ID3v2BaseFrame):
-	value = attrib()
-
-
-@attrs(
-	repr=False,
-	kw_only=True,
-)
-class ID3v2GEOBFrame(ID3v2BaseFrame):
-	value = attrib()
-
-
-@attrs(
-	repr=False,
-	kw_only=True,
-)
-class ID3v2LyricsFrame(ID3v2BaseFrame):
-	value = attrib()
-
-
-@attrs(
-	repr=False,
-	kw_only=True,
-)
-class ID3v2MappingListFrame(ID3v2BaseFrame):
-	value = attrib()
-
-
-@attrs(
-	repr=False,
-	kw_only=True,
-)
-class ID3v2NumberFrame(ID3v2BaseFrame):
+class ID3v2NumberFrame(ID3v2Frame):
 	value = attrib()
 
 	@value.validator
@@ -263,6 +364,18 @@ class ID3v2NumberFrame(ID3v2BaseFrame):
 			raise ValueError(
 				"Number frame values must consist only of digits and '/'.",
 			)
+
+	@datareader
+	@classmethod
+	def _parse_frame_data(cls, data, frame_size):
+		frame_data = data.read(frame_size)
+
+		encoding = determine_encoding(frame_data)
+
+		return (
+			decode_bytestring(frame_data[1:], encoding),
+			encoding,
+		)
 
 	@property
 	def number(self):
@@ -282,7 +395,7 @@ class ID3v2NumberFrame(ID3v2BaseFrame):
 	repr=False,
 	kw_only=True,
 )
-class ID3v2NumericTextFrame(ID3v2BaseFrame):
+class ID3v2NumericTextFrame(ID3v2Frame):
 	value = attrib()
 
 	@value.validator
@@ -290,28 +403,29 @@ class ID3v2NumericTextFrame(ID3v2BaseFrame):
 		if not all(v.isdigit() for v in value):
 			raise ValueError("Numeric text frame values must consist only of digits.")
 
+	@datareader
+	@classmethod
+	def _parse_frame_data(cls, data, frame_size):
+		frame_data = data.read(frame_size)
+
+		encoding = determine_encoding(frame_data)
+		values = [
+			decode_bytestring(value, encoding)
+			for value in split_encoded(frame_data[1:], encoding)
+			if value
+		]
+
+		return (
+			values,
+			encoding,
+		)
+
 
 @attrs(
 	repr=False,
 	kw_only=True,
 )
-class ID3v2PictureFrame(ID3v2BaseFrame):
-	value = attrib(converter=ID3v2Picture.parse)
-
-
-@attrs(
-	repr=False,
-	kw_only=True,
-)
-class ID3v2PrivateFrame(ID3v2BaseFrame):
-	value = attrib()
-
-
-@attrs(
-	repr=False,
-	kw_only=True,
-)
-class ID3v2SynchronizedLyricsFrame(ID3v2LyricsFrame):
+class ID3v2PeopleListFrame(ID3v2Frame):
 	pass
 
 
@@ -319,15 +433,91 @@ class ID3v2SynchronizedLyricsFrame(ID3v2LyricsFrame):
 	repr=False,
 	kw_only=True,
 )
-class ID3v2TextFrame(ID3v2BaseFrame):
-	value = attrib()
+class ID3v2PictureFrame(ID3v2Frame):
+	@datareader
+	@classmethod
+	def _parse_frame_data(cls, data, frame_size):
+		frame_data = data.read(frame_size)
+
+		return (
+			ID3v2Picture.parse(frame_data),
+			None,
+		)
 
 
 @attrs(
 	repr=False,
 	kw_only=True,
 )
-class ID3v2TimestampFrame(ID3v2BaseFrame):
+class ID3v2PrivateFrame(ID3v2Frame):
+	@datareader
+	@classmethod
+	def _parse_frame_data(cls, data, frame_size):
+		frame_data = data.read(frame_size)
+		owner_end = frame_data.index(b'\x00')
+
+		return (
+			ID3v2PrivateInfo(
+				owner=frame_data[0:owner_end].decode('iso-8859-1'),
+				data=frame_data[owner_end + 1:],
+			),
+			None,
+		)
+
+
+@attrs(
+	repr=False,
+	kw_only=True,
+)
+class ID3v2SynchronizedLyricsFrame(ID3v2LyricsFrame):
+	@datareader
+	@classmethod
+	def _parse_frame_data(cls, data, frame_size):
+		frame_data = data.read(frame_size)
+
+		encoding = determine_encoding(frame_data)
+		description, text = split_encoded(frame_data[6:], encoding)
+
+		return (
+			ID3v2SynchronizedLyrics(
+				language=decode_bytestring(frame_data[1:4]),
+				description=decode_bytestring(description, encoding),
+				text=decode_bytestring(text, encoding),
+				timestamp_format=frame_data[4],
+				content_type=frame_data[5],
+			),
+			encoding,
+		)
+
+
+@attrs(
+	repr=False,
+	kw_only=True,
+)
+class ID3v2TextFrame(ID3v2Frame):
+	@datareader
+	@classmethod
+	def _parse_frame_data(cls, data, frame_size):
+		frame_data = data.read(frame_size)
+
+		encoding = determine_encoding(frame_data)
+		values = [
+			decode_bytestring(value, encoding)
+			for value in split_encoded(frame_data[1:], encoding)
+			if value
+		]
+
+		return (
+			values,
+			encoding,
+		)
+
+
+@attrs(
+	repr=False,
+	kw_only=True,
+)
+class ID3v2TimestampFrame(ID3v2Frame):
 	value = attrib()
 
 	@value.validator
@@ -338,37 +528,105 @@ class ID3v2TimestampFrame(ID3v2BaseFrame):
 			except ParserError:
 				raise ValueError("Timestamp frame values must conform to the ID3v2-compliant subset of ISO 8601.")
 
+	@datareader
+	@classmethod
+	def _parse_frame_data(cls, data, frame_size):
+		frame_data = data.read(frame_size)
+
+		encoding = determine_encoding(frame_data)
+		values = [
+			decode_bytestring(value, encoding)
+			for value in split_encoded(frame_data[1:], encoding)
+			if value
+		]
+
+		return (
+			values,
+			encoding,
+		)
+
+
+@attrs(
+	repr=False,
+	kw_only=True,
+)
+class ID3v2URLLinkFrame(ID3v2Frame):
+	@datareader
+	@classmethod
+	def _parse_frame_data(cls, data, frame_size):
+		frame_data = data.read(frame_size)
+
+		return (
+			unquote(decode_bytestring(frame_data)),
+			None,
+		)
+
 
 @attrs(
 	repr=False,
 	kw_only=True,
 )
 class ID3v2UnsynchronizedLyricsFrame(ID3v2LyricsFrame):
-	pass
+	@datareader
+	@classmethod
+	def _parse_frame_data(cls, data, frame_size):
+		frame_data = data.read(frame_size)
+
+		encoding = determine_encoding(frame_data)
+		description, text = split_encoded(frame_data[4:], encoding)
+
+		return (
+			ID3v2UnsynchronizedLyrics(
+				language=decode_bytestring(frame_data[1:4]),
+				description=decode_bytestring(description, encoding),
+				text=decode_bytestring(text, encoding)
+			),
+			encoding,
+		)
 
 
 @attrs(
 	repr=False,
 	kw_only=True,
 )
-class ID3v2URLLinkFrame(ID3v2BaseFrame):
-	value = attrib()
+class ID3v2UserURLLinkFrame(ID3v2Frame):
+	@datareader
+	@classmethod
+	def _parse_frame_data(cls, data, frame_size):
+		frame_data = data.read(frame_size)
+
+		encoding = determine_encoding(frame_data)
+		description, url = split_encoded(frame_data[1:], encoding)
+
+		return (
+			ID3v2UserURLLink(
+				description=decode_bytestring(description, encoding),
+				url=unquote(decode_bytestring(url)),
+			),
+			encoding,
+		)
 
 
 @attrs(
 	repr=False,
 	kw_only=True,
 )
-class ID3v2UserURLLinkFrame(ID3v2BaseFrame):
-	value = attrib()
+class ID3v2UserTextFrame(ID3v2Frame):
+	@datareader
+	@classmethod
+	def _parse_frame_data(cls, data, frame_size):
+		frame_data = data.read(frame_size)
 
+		encoding = determine_encoding(frame_data)
+		description, text = split_encoded(frame_data[1:], encoding)
 
-@attrs(
-	repr=False,
-	kw_only=True,
-)
-class ID3v2UserTextFrame(ID3v2BaseFrame):
-	value = attrib()
+		return (
+			ID3v2UserText(
+				description=decode_bytestring(description, encoding),
+				text=decode_bytestring(text, encoding),
+			),
+			encoding,
+		)
 
 
 @attrs(
@@ -388,6 +646,107 @@ class ID3v2YearFrame(ID3v2NumericTextFrame):
 			for v in value
 		):
 			raise ValueError("Year frame values must be 4-character number strings.")
+
+
+@attrs(
+	repr=False,
+	kw_only=True,
+)
+class ID3v2GEOBFrame(ID3v2Frame):
+	@datareader
+	@classmethod
+	def _parse_frame_data(cls, data, frame_size):
+		frame_data = data.read(frame_size)
+
+		encoding = determine_encoding(frame_data)
+
+		mime_type, remainder = split_encoded(frame_data[1:], encoding)
+		filename, remainder = split_encoded(remainder, encoding)
+		description, value = split_encoded(remainder, encoding)
+
+		return (
+			ID3v2GeneralEncapsulatedObject(
+				mime_type=mime_type,
+				filename=filename,
+				description=description,
+				value=value,
+			),
+			encoding,
+		)
+
+
+@attrs(
+	repr=False,
+	kw_only=True,
+)
+class ID3v2InvolvedPeopleListFrame(ID3v2PeopleListFrame):
+	@datareader
+	@classmethod
+	def _parse_frame_data(cls, data, frame_size):
+		frame_data = data.read(frame_size)
+
+		encoding = determine_encoding(frame_data)
+
+		values = []
+		tail = frame_data[1:]
+
+		while tail:
+			head, tail = split_encoded(tail, encoding)
+			values.append(head)
+
+		people = [
+			ID3v2InvolvedPerson(
+				involvement=decode_bytestring(involvement, encoding),
+				name=decode_bytestring(name, encoding),
+			)
+			for involvement, name in more_itertools.chunked(values, 2)
+		]
+
+		# Ignore empty people list.
+		if len(values) < 1:
+			return None
+
+		return (
+			people,
+			encoding,
+		)
+
+
+@attrs(
+	repr=False,
+	kw_only=True,
+)
+class ID3v2TMCLFrame(ID3v2InvolvedPeopleListFrame):
+	@datareader
+	@classmethod
+	def _parse_frame_data(cls, data, frame_size):
+		frame_data = data.read(frame_size)
+
+		encoding = determine_encoding(frame_data)
+
+		values = []
+		tail = frame_data[1:]
+
+		while tail:
+			head, tail = split_encoded(tail, encoding)
+			values.append(head)
+
+		performers = [
+			ID3v2Performer(
+				instrument=decode_bytestring(instrument, encoding),
+				name=decode_bytestring(name, encoding),
+			)
+			for instrument, name in more_itertools.chunked(values, 2)
+		]
+
+		# Ignore empty people list.
+		if len(values) < 1:
+			return None
+
+		return (
+			performers,
+			encoding,
+		)
 
 
 @attrs(
@@ -456,15 +815,15 @@ ID3v2FrameTypes = {
 	# Complex Text Frames
 	'COM': ID3v2CommentFrame,
 	'GEO': ID3v2GEOBFrame,
-	'IPL': ID3v2MappingListFrame,
+	'IPL': ID3v2InvolvedPeopleListFrame,
 	'TXX': ID3v2UserTextFrame,
 
 	'COMM': ID3v2CommentFrame,
 	'GEOB': ID3v2GEOBFrame,
-	'IPLS': ID3v2MappingListFrame,
+	'IPLS': ID3v2InvolvedPeopleListFrame,
 	'PRIV': ID3v2PrivateFrame,
-	'TIPL': ID3v2MappingListFrame,
-	'TMCL': ID3v2MappingListFrame,
+	'TIPL': ID3v2InvolvedPeopleListFrame,
+	'TMCL': ID3v2TMCLFrame,
 	'TXXX': ID3v2UserTextFrame,
 
 	# Genre Frame
@@ -616,203 +975,3 @@ ID3v2FrameTypes = {
 	'WPUB': ID3v2URLLinkFrame,
 	'WXXX': ID3v2UserURLLinkFrame,
 }
-
-
-@attrs(
-	repr=False,
-	kw_only=True,
-)
-class ID3v2Frame(ID3v2BaseFrame):
-	value = attrib()
-
-	@datareader
-	@classmethod
-	def parse(cls, data, struct_pattern, size_len, per_byte):
-		try:
-			frame = struct.unpack(struct_pattern, data.read(struct.calcsize(struct_pattern)))
-		except struct.error:
-			raise InvalidFrame("Not enough data.")
-
-		frame_size = decode_synchsafe_int(frame[1:1 + size_len], per_byte)
-		if frame_size == 0:
-			raise InvalidFrame("Not a valid ID3v2 frame")
-
-		frame_id = frame[0].decode('iso-8859-1')
-		frame_type = ID3v2FrameTypes.get(frame_id, cls)
-		frame_data = data.read(frame_size)
-
-		# TODO: Move logic into frame classes?
-		kwargs = {'id': frame_id}
-		if frame_type is ID3v2BinaryDataFrame:
-			kwargs['value'] = frame_data
-		elif frame_type is ID3v2CommentFrame:
-			encoding = determine_encoding(frame_data)
-
-			values = split_encoded(frame_data[4:], encoding)
-			# Ignore empty comments.
-			if len(values) < 2:
-				return None
-
-			comment = ID3v2Comment(
-				language=decode_bytestring(frame_data[1:4]),
-				description=decode_bytestring(values[0], encoding),
-				text=decode_bytestring(values[1], encoding),
-			)
-
-			kwargs['value'] = comment
-		elif frame_type is ID3v2MappingListFrame:
-			encoding = determine_encoding(frame_data)
-
-			values = []
-			tail = frame_data[1:]
-
-			while tail:
-				head, tail = split_encoded(tail, encoding)
-				values.append(head)
-
-			if frame_id == 'TMCL':
-				mapping_list = [
-					ID3v2Performer(
-						instrument=decode_bytestring(instrument, encoding),
-						name=decode_bytestring(name, encoding),
-					)
-					for instrument, name in more_itertools.chunked(values, 2)
-				]
-			else:
-				mapping_list = [
-					ID3v2InvolvedPerson(
-						involvement=decode_bytestring(involvement, encoding),
-						name=decode_bytestring(name, encoding),
-					)
-					for involvement, name in more_itertools.chunked(values, 2)
-				]
-
-			# Ignore empty people list.
-			if len(values) < 1:
-				return None
-
-			kwargs['value'] = mapping_list
-		elif frame_type is ID3v2GEOBFrame:
-			encoding = determine_encoding(frame_data)
-
-			mime_type, remainder = split_encoded(frame_data[1:], encoding)
-			filename, remainder = split_encoded(remainder, encoding)
-			description, value = split_encoded(remainder, encoding)
-
-			kwargs['value'] = ID3v2GeneralEncapsulatedObject(
-				mime_type=mime_type,
-				filename=filename,
-				description=description,
-				value=value,
-			)
-		elif frame_type is ID3v2GenreFrame:
-			encoding = determine_encoding(frame_data)
-
-			remainder = frame_data[1:]
-			values = []
-			while True:
-				split = split_encoded(remainder, encoding)
-				values.extend(
-					decode_bytestring(v, encoding)
-					for v in split
-				)
-
-				if len(split) < 2:
-					break
-
-				remainder = split[1]
-
-			genres = []
-			for value in values:
-				match = _genre_re.match(value)
-
-				if match['name']:
-					genres.append(match['name'])
-				elif match['id']:
-					if match['id'].isdigit() and int(match['id']):
-						try:
-							genres.append(ID3v1Genres[int(match['id'])])
-						except IndexError:
-							genres.append(value)
-					elif match['id'] == 'CR':
-						genres.append('Cover')
-					elif match['id'] == 'RX':
-						genres.append('Remix')
-
-			kwargs['value'] = genres
-		elif frame_type is ID3v2PictureFrame:
-			kwargs['value'] = frame_data
-		elif frame_type is ID3v2PrivateFrame:
-			owner_end = frame_data.index(b'\x00')
-
-			kwargs['value'] = ID3v2PrivateInfo(
-				owner=frame_data[0:owner_end].decode('iso-8859-1'),
-				data=frame_data[owner_end + 1:],
-			)
-		elif frame_type is ID3v2SynchronizedLyricsFrame:
-			encoding = determine_encoding(frame_data)
-
-			description, text = split_encoded(frame_data[6:], encoding)
-
-			kwargs['value'] = ID3v2SynchronizedLyrics(
-				language=decode_bytestring(frame_data[1:4]),
-				description=decode_bytestring(description, encoding),
-				text=decode_bytestring(text, encoding),
-				timestamp_format=frame_data[4],
-				content_type=frame_data[5],
-			)
-		elif frame_type is ID3v2UnsynchronizedLyricsFrame:
-			encoding = determine_encoding(frame_data)
-
-			description, text = split_encoded(frame_data[4:], encoding)
-
-			kwargs['value'] = ID3v2UnsynchronizedLyrics(
-				language=decode_bytestring(frame_data[1:4]),
-				description=decode_bytestring(description, encoding),
-				text=decode_bytestring(text, encoding)
-			)
-		elif frame_type is ID3v2URLLinkFrame:
-			kwargs['value'] = unquote(decode_bytestring(frame_data))
-		elif frame_type is ID3v2UserTextFrame:
-			encoding = determine_encoding(frame_data)
-
-			description, text = split_encoded(frame_data[1:], encoding)
-			kwargs['value'] = ID3v2UserText(
-				description=decode_bytestring(description, encoding),
-				text=decode_bytestring(text, encoding),
-			)
-		elif frame_type is ID3v2UserURLLinkFrame:
-			encoding = determine_encoding(frame_data)
-
-			description, url = split_encoded(frame_data[1:], encoding)
-			kwargs['value'] = ID3v2UserURLLink(
-				description=decode_bytestring(description, encoding),
-				url=unquote(decode_bytestring(url)),
-			)
-		elif issubclass(frame_type, ID3v2NumberFrame):
-			encoding = determine_encoding(frame_data)
-			kwargs['value'] = decode_bytestring(frame_data[1:], encoding)
-		elif issubclass(
-			frame_type,
-			(
-				ID3v2NumericTextFrame,
-				ID3v2TextFrame,
-				ID3v2TimestampFrame,
-			),
-		):
-			encoding = determine_encoding(frame_data)
-			values = [
-				decode_bytestring(value, encoding)
-				for value in split_encoded(frame_data[1:], encoding)
-				if value
-			]
-			kwargs['value'] = values
-		elif frame_type is ID3v2Frame:
-			kwargs['value'] = frame_data
-		else:
-			kwargs['value'] = decode_bytestring(frame_data)
-
-		try:
-			return frame_type(**kwargs)
-		except (TypeError, ValueError):  # Bad frame value.
-			return None

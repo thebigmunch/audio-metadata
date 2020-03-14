@@ -20,7 +20,14 @@ from tbm_utils import (
 	datareader,
 )
 
-from .id3v2_frames import *
+from .id3v2_frames import (
+	ID3v2Frame,
+	ID3v2GenreFrame,
+	ID3v2NumericTextFrame,
+	ID3v2PeopleListFrame,
+	ID3v2TextFrame,
+	ID3v2TimestampFrame,
+)
 from .tables import (
 	ID3Version,
 	ID3v2FrameAliases,
@@ -87,13 +94,13 @@ class ID3v2Frames(Tags):
 			# Allow unofficial frames to load (3 character frames only load for ID3v2.2).
 			# Warn user and encourage reporting.
 			if (
-				frame.id not in ID3v2FrameIDs[id3_version]
-				and frame.id not in ID3v2UnofficialFrameIDs[id3_version]
+				frame.name not in ID3v2FrameIDs[id3_version]
+				and frame.name not in ID3v2UnofficialFrameIDs[id3_version]
 			):
 				warnings.warn(
 					(
-						f"Ignoring '{frame.id}' frame with value '{frame.value}'.\n"
-						f"'{frame.id}' is not supported in the ID3v2.{id3_version.value[1]} specification.\n"
+						f"Ignoring '{frame.name}' frame with value '{frame.value}'.\n"
+						f"'{frame.name}' is not supported in the ID3v2.{id3_version.value[1]} specification.\n"
 					),
 					AudioMetadataWarning,
 				)
@@ -105,15 +112,15 @@ class ID3v2Frames(Tags):
 				frame,
 				(
 					ID3v2GenreFrame,
-					ID3v2MappingListFrame,
 					ID3v2NumericTextFrame,
+					ID3v2PeopleListFrame,
 					ID3v2TextFrame,
 					ID3v2TimestampFrame,
 				),
 			):
-				frames[frame.id] = frame.value
+				frames[frame.name] = frame.value
 			else:
-				frames[frame.id].append(frame.value)
+				frames[frame.name].append(frame.value)
 
 		return cls(frames, id3_version=id3_version)
 
