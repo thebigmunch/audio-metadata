@@ -36,21 +36,21 @@ def _():
 	v22_frames_init = ID3v2Frames(id3_version=ID3Version.v22)
 	v22_frames_init_tuple = ID3v2Frames(id3_version=(2, 2))
 	v22_frames_load = ID3v2Frames.parse(
-		(Path(__file__).parent / 'files' / 'audio' / 'test-mp3-id3v22.mp3').read_bytes()[10:],
+		(Path(__file__).parent / 'audio' / 'mp3-id3v22.mp3').read_bytes()[10:],
 		ID3Version.v22,
 	)
 
 	v23_frames_init = ID3v2Frames(id3_version=ID3Version.v23)
 	v23_frames_init_tuple = ID3v2Frames(id3_version=(2, 3))
 	v23_frames_load = ID3v2Frames.parse(
-		(Path(__file__).parent / 'files' / 'audio' / 'test-mp3-id3v23.mp3').read_bytes()[10:],
+		(Path(__file__).parent / 'audio' / 'mp3-id3v23.mp3').read_bytes()[10:],
 		ID3Version.v23,
 	)
 
 	v24_frames_init = ID3v2Frames(id3_version=ID3Version.v24)
 	v24_frames_init_tuple = ID3v2Frames(id3_version=(2, 4))
 	v24_frames_load = ID3v2Frames.parse(
-		(Path(__file__).parent / 'files' / 'audio' / 'test-mp3-id3v24.mp3').read_bytes()[10:],
+		(Path(__file__).parent / 'audio' / 'mp3-id3v24.mp3').read_bytes()[10:],
 		ID3Version.v24,
 	)
 
@@ -118,7 +118,7 @@ def _(
 	tags=['unit', 'id3', 'id3v2', 'ID3v2Header'],
 )
 def test_ID3v2Header():
-	v24_header_load = ID3v2Header.parse(Path(__file__).parent / 'files' / 'audio' / 'test-mp3-id3v24.mp3')
+	v24_header_load = ID3v2Header.parse(Path(__file__).parent / 'audio' / 'mp3-id3v24.mp3')
 	v24_header_init = ID3v2Header(
 		size=2254,
 		flags=ID3v2Flags(
@@ -132,7 +132,7 @@ def test_ID3v2Header():
 
 	assert v24_header_load == v24_header_init
 
-	v24_header_load = ID3v2Header.parse(Path(__file__).parent / 'files' / 'audio' / 'test-mp3-id3v24-unsync.mp3')
+	v24_header_load = ID3v2Header.parse(Path(__file__).parent / 'audio' / 'mp3-id3v24-unsync.mp3')
 	v24_header_init = ID3v2Header(
 		size=2254,
 		flags=ID3v2Flags(
@@ -148,5 +148,5 @@ def test_ID3v2Header():
 
 	with raises(InvalidHeader):
 		ID3v2Header.parse(
-			(Path(__file__).parent / 'files' / 'audio' / 'test-mp3-id3v24.mp3').read_bytes()[3:]
+			(Path(__file__).parent / 'audio' / 'mp3-id3v24.mp3').read_bytes()[3:]
 		)

@@ -9,7 +9,7 @@ from ward import (
 import audio_metadata
 from audio_metadata import UnsupportedFormat
 
-audio_filepaths = list((Path(__file__).parent / 'files' / 'audio').iterdir())
+audio_filepaths = list((Path(__file__).parent / 'audio').iterdir())
 
 
 @test(

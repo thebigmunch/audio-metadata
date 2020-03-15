@@ -465,7 +465,7 @@ def _():
 	tags=['unit', 'mp3', 'MP3StreamInfo']
 )
 def _():
-	data = DataReader(Path(__file__).parent / 'files' / 'audio' / 'test-mp3-lame-vbr.mp3')
+	data = DataReader(Path(__file__).parent / 'audio' / 'mp3-lame-vbr.mp3')
 	assert MP3StreamInfo.count_mpeg_frames(data) == 193
 
 	data.seek(0)
@@ -473,7 +473,7 @@ def _():
 	assert len(frames) == 1
 	assert frames[0]._xing
 
-	data = DataReader(Path(__file__).parent / 'files' / 'audio' / 'test-mp3-cbr-2-frames.mp3')
+	data = DataReader(Path(__file__).parent / 'audio' / 'mp3-cbr-2-frames.mp3')
 	assert MP3StreamInfo.count_mpeg_frames(data) == 2
 
 	data.seek(0)
@@ -481,7 +481,7 @@ def _():
 	assert len(frames) == 2
 	assert frames[0]._xing is None
 
-	data = DataReader(Path(__file__).parent / 'files' / 'audio' / 'test-mp3-sync-branch.mp3')
+	data = DataReader(Path(__file__).parent / 'audio' / 'mp3-sync-branch.mp3')
 	assert MP3StreamInfo.count_mpeg_frames(data) == 192
 
 	data.seek(0)
@@ -489,7 +489,7 @@ def _():
 	assert len(frames) == 4
 	assert frames[0]._xing is None
 
-	data = DataReader(Path(__file__).parent / 'files' / 'audio' / 'test-flac-vorbis.flac')
+	data = DataReader(Path(__file__).parent / 'audio' / 'flac-vorbis.flac')
 	assert MP3StreamInfo.count_mpeg_frames(data) == 0
 
 	data.seek(0)

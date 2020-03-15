@@ -16,7 +16,7 @@ from audio_metadata.utils import (
 	split_encoded
 )
 
-images = (Path(__file__).parent / 'files' / 'image').glob('*.*')
+images = (Path(__file__).parent / 'image').glob('*.*')
 
 
 @test(

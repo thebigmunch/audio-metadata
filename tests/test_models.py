@@ -13,7 +13,7 @@ from audio_metadata.models import (
 from tests.utils import strip_repr
 
 
-test_image = (Path(__file__).parent / 'files' / 'image' / 'test.png').resolve()
+test_image = (Path(__file__).parent / 'image' / 'test.png').resolve()
 
 
 @test(
