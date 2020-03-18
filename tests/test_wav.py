@@ -1,6 +1,7 @@
 from ward import (
 	raises,
 	test,
+	using,
 )
 
 from audio_metadata import (
@@ -9,15 +10,23 @@ from audio_metadata import (
 	InvalidHeader,
 	RIFFTags
 )
+from tests.fixtures import (
+	null,
+	riff_tags,
+)
 
 
 @test(
 	"RIFFTags",
 	tags=['unit', 'wav', 'RIFFTags']
 )
-def _():
+@using(
+	null=null,
+	riff_tags=riff_tags,
+)
+def _(null, riff_tags):
 	with raises(InvalidChunk):
-		RIFFTags.parse(b'NOTINFO')
+		RIFFTags.parse(null)
 
 	riff_tags_init = RIFFTags(
 		album=['test-album'],
@@ -29,15 +38,7 @@ def _():
 		tracknumber=['1'],
 	)
 
-	riff_tags_load = RIFFTags.parse(
-		b'INFOIPRD\x0b\x00\x00\x00test-album\x00\x00'
-		b'IART\x0c\x00\x00\x00test-artist\x00'
-		b'IGNR\x0b\x00\x00\x00test-genre\x00\x00'
-		b'ICMT\r\x00\x00\x00test-comment\x00\x00'
-		b'INAM\x0b\x00\x00\x00test-title\x00\x00'
-		b'ITRK\x02\x00\x00\x001\x00'
-		b'ICRD\x05\x00\x00\x002000\x00\x00'
-	)
+	riff_tags_load = RIFFTags.parse(riff_tags)
 
 	assert riff_tags_init == riff_tags_load
 
@@ -46,13 +47,14 @@ def _():
 	"Invalid header",
 	tags=['unit', 'wav', 'WAV']
 )
-def _():
+@using(null=null)
+def _(null):
 	with raises(InvalidHeader) as ctx:
-		WAV.parse(b'TEST0000WAVE')
+		WAV.parse(null)
 	assert str(ctx.raised) == "Valid WAVE header not found."
 
 	with raises(InvalidHeader):
-		WAV.parse(b'RIFF0000TEST')
+		WAV.parse(null)
 
 
 @test(

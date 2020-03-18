@@ -1,11 +1,10 @@
 import struct
-from pathlib import Path
 
-from tbm_utils import DataReader
 from ward import (
 	each,
 	raises,
 	test,
+	using,
 )
 
 from audio_metadata import (
@@ -29,15 +28,39 @@ from audio_metadata import (
 	XingHeader,
 	XingToC,
 )
+from tests.fixtures import (
+	flac_vorbis,
+	lame_header,
+	lame_replay_gain,
+	lame_replay_gain_negative,
+	lame_replay_gain_null,
+	mp3_cbr_2_frames,
+	mp3_lame_vbr,
+	mp3_sync_branch,
+	mpeg_frame,
+	null,
+	vbri_header,
+	xing_header_no_lame,
+	xing_toc,
+)
 from tests.utils import strip_repr
 
 
 @test(
 	"LAMEReplayGain",
-	tags=['unit', 'mp3', 'lame', 'LAMEReplayGain']
+	tags=['unit', 'mp3', 'lame', 'LAMEReplayGain'],
 )
-def _():
-	replay_gain_load = LAMEReplayGain.parse(b'\x00\x1b\xfa\x05,D\x00\x00')
+@using(
+	lame_replay_gain=lame_replay_gain,
+	lame_replay_gain_null=lame_replay_gain_null,
+	lame_replay_gain_negative=lame_replay_gain_negative,
+)
+def _(
+	lame_replay_gain,
+	lame_replay_gain_null,
+	lame_replay_gain_negative,
+):
+	replay_gain_load = LAMEReplayGain.parse(lame_replay_gain)
 	replay_gain_init = LAMEReplayGain(
 		peak=0.21856749057769775,
 		track_type=1,
@@ -57,7 +80,7 @@ def _():
 	assert replay_gain_load.album_origin == replay_gain_init.album_origin == 0
 	assert replay_gain_load.album_adjustment == replay_gain_init.album_adjustment == 0.0
 
-	replay_gain_load = LAMEReplayGain.parse(b'\x00\x00\x00\x00\x00\x00\x00\x00')
+	replay_gain_load = LAMEReplayGain.parse(lame_replay_gain_null)
 	replay_gain_init = LAMEReplayGain(
 		peak=None,
 		track_type=0,
@@ -77,7 +100,7 @@ def _():
 	assert replay_gain_load.album_origin == replay_gain_init.album_origin == 0
 	assert replay_gain_load.album_adjustment == replay_gain_init.album_adjustment == 0.0
 
-	replay_gain_load = LAMEReplayGain.parse(b'\x00\x1b\xfa\x05.D\x02\x00')
+	replay_gain_load = LAMEReplayGain.parse(lame_replay_gain_negative)
 	replay_gain_init = LAMEReplayGain(
 		peak=0.21856749057769775,
 		track_type=1,
@@ -100,7 +123,7 @@ def _():
 
 @test(
 	"LAMEEncodingFlags",
-	tags=['unit', 'mp3', 'lame', 'LAMEEncodingFlags']
+	tags=['unit', 'mp3', 'lame', 'LAMEEncodingFlags'],
 )
 def _(
 	flags=each(
@@ -146,13 +169,12 @@ def _(
 	"LAMEHeader",
 	tags=['unit', 'mp3', 'lame', 'LAMEHeader']
 )
-def _():
-	lame_data = (
-		b'LAME3.99r\x04\xdd\x00\x00\x00\x00\x00\x00\x00\x00'
-		b'5 $\x04\xecM\x00\x01\xf4\x00\x00P\t:\xe9\x1d|'
-	)
-
-	lame_header_load = LAMEHeader.parse(lame_data, 100)
+@using(
+	null=null,
+	lame_header=lame_header,
+)
+def _(null, lame_header):
+	lame_header_load = LAMEHeader.parse(lame_header, 100)
 	lame_header_init = LAMEHeader(
 		crc=b'\x1d|',
 		ath_type=5,
@@ -190,7 +212,7 @@ def _():
 	)
 
 	with raises(InvalidHeader):
-		LAMEHeader.parse(lame_data[9:], 100)
+		LAMEHeader.parse(null, 100)
 
 	assert lame_header_load == lame_header_init
 	assert lame_header_load._crc == lame_header_init._crc == b'\x1d|'
@@ -241,33 +263,23 @@ def _():
 
 @test(
 	"XingHeader",
-	tags=['unit', 'mp3', 'xing', 'XingHeader']
+	tags=['unit', 'mp3', 'xing', 'XingHeader'],
 )
-def _():
-	xing_data = (
-		b'Xing'
-		b'\x00\x00\x00\x0f'
-		b'\x00\x00\x00\xc1'
-		b'\x00\x00P\t'
-		b'\x00\x02\x05\x07\n\r\x0f\x12\x15\x17\x1a\x1d\x1f'
-		b'"%&)+.1369;>@CFHJLORTWZ\\_bdgjlnpsvx{~\x80\x83\x85'
-		b'\x88\x8b\x8d\x90\x93\x94\x97\x99\x9c\x9f\xa1\xa4\xa7'
-		b'\xa9\xac\xaf\xb1\xb4\xb7\xb8\xbb\xbd\xc0\xc2\xc5\xc8'
-		b'\xca\xcd\xd0\xd2\xd5\xd8\xda\xdc\xde\xe1\xe4\xe6\xe9'
-		b'\xec\xee\xf1\xf4\xf6\xf9\xfc\xfe'
-		b'\x00\x00\x00d'
-	)
-
+@using(
+	null=null,
+	xing_header_no_lame=xing_header_no_lame,
+)
+def _(null, xing_header_no_lame):
 	with raises(InvalidHeader):
-		XingHeader.parse(xing_data[4:])
+		XingHeader.parse(null)
 
-	xing_header_load = XingHeader.parse(xing_data)
+	xing_header_load = XingHeader.parse(xing_header_no_lame)
 	xing_header_init = XingHeader(
 		lame=None,
 		num_bytes=20489,
 		num_frames=193,
 		quality=100,
-		toc=XingToC(bytearray(xing_data[16:116]))
+		toc=XingToC(bytearray(xing_header_no_lame[16:116]))
 	)
 
 	assert xing_header_load == xing_header_init
@@ -275,41 +287,20 @@ def _():
 	assert xing_header_load.num_bytes == xing_header_init.num_bytes == 20489
 	assert xing_header_load.num_frames == xing_header_init.num_frames == 193
 	assert xing_header_load.quality == xing_header_init.quality == 100
-	assert xing_header_load.toc == xing_header_init.toc == XingToC(bytearray(xing_data[16:116]))
+	assert xing_header_load.toc == xing_header_init.toc == XingToC(bytearray(xing_header_no_lame[16:116]))
 
 
 @test(
 	"VBRIHeader",
-	tags=['unit', 'mp3', 'vbri', 'VBRIHeader']
+	tags=['unit', 'mp3', 'vbri', 'VBRIHeader'],
 )
-def _():
-	vbri_data = (
-		b'VBRI\x00\x01\t1\x00K\x00\x00Pr\x00\x00\x00\xc2\x00\xc1'
-		b'\x00\x01\x00\x02\x00\x01\x02\n\x00h\x00h\x00h\x00h\x00h'
-		b'\x00h\x00h\x00h\x00h\x00h\x00h\x00h\x00h\x00h\x00h\x00h'
-		b'\x00h\x00h\x00h\x00h\x00h\x00h\x00h\x00h\x00h\x00h\x00h'
-		b'\x00h\x00h\x00h\x00h\x00h\x00h\x00h\x00h\x00h\x00h\x00h'
-		b'\x00h\x00h\x00h\x00h\x00h\x00h\x00h\x00h\x00h\x00h\x00h'
-		b'\x00h\x00h\x00h\x00h\x00h\x00h\x00h\x00h\x00h\x00h\x00h'
-		b'\x00h\x00h\x00h\x00h\x00h\x00h\x00h\x00h\x00h\x00h\x00h'
-		b'\x00h\x00h\x00h\x00h\x00h\x00h\x00h\x00h\x00h\x00h\x00h'
-		b'\x00h\x00h\x00h\x00h\x00h\x00h\x00h\x00h\x00h\x00h\x00h'
-		b'\x00h\x00h\x00h\x00h\x00h\x00h\x00h\x00h\x00h\x00h\x00h'
-		b'\x00h\x00h\x00h\x00h\x00h\x00h\x00h\x00h\x00h\x00h\x00h'
-		b'\x00h\x00h\x00h\x00h\x00h\x00h\x00h\x00h\x00h\x00h\x00h'
-		b'\x00h\x00h\x00h\x00h\x00h\x00h\x00h\x00h\x00h\x00h\x00h'
-		b'\x00h\x00h\x00h\x00h\x00h\x00h\x00h\x00h\x00h\x00h\x00h'
-		b'\x00h\x00h\x00h\x00h\x00h\x00h\x00h\x00h\x00h\x00h\x00h'
-		b'\x00h\x00h\x00h\x00h\x00h\x00h\x00h\x00h\x00h\x00h\x00h'
-		b'\x00h\x00h\x00h\x00h\x00h\x00h\x00h\x00h\x00h\x00h\x00h'
-		b'\x00h\x00h\x00h\x00h\x00h\x00h\x00h\x00h\x00h\x00h\x00h'
-	)
+@using(vbri_header=vbri_header)
+def _(vbri_header):
+	with raises(InvalidHeader):
+		VBRIHeader.parse(vbri_header[4:])
 
 	with raises(InvalidHeader):
-		VBRIHeader.parse(vbri_data[4:])
-
-	with raises(InvalidHeader):
-		VBRIHeader.parse(vbri_data[:23] + b'\x01' + vbri_data[24:])
+		VBRIHeader.parse(vbri_header[:23] + b'\x01' + vbri_header[24:])
 
 	toc_entries = []
 	i = 26
@@ -317,12 +308,12 @@ def _():
 		toc_entries.append(
 			struct.unpack(
 				'>H',
-				vbri_data[i : i + 2]
+				vbri_header[i : i + 2]
 			)[0]
 		)
 		i += 2
 
-	vbri_header_load = VBRIHeader.parse(vbri_data)
+	vbri_header_load = VBRIHeader.parse(vbri_header)
 	vbri_header_init = VBRIHeader(
 		delay=0.00015842914581298828,
 		num_bytes=20594,
@@ -351,34 +342,20 @@ def _():
 
 @test(
 	"MPEGFrameHeader",
-	tags=['unit', 'mp3', 'MPEGFrameHeader']
+	tags=['unit', 'mp3', 'MPEGFrameHeader'],
 )
-def _():
-	mpeg_frame_data = (
-		b'\xff\xfb\x90d\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-		b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00Xing\x00\x00\x00\x0f\x00\x00\x00\xc1\x00\x00P\t\x00\x02'
-		b'\x05\x07\n\r\x0f\x12\x15\x17\x1a\x1d\x1f"%&)+.1369;>@CFHJLORTWZ\\_bdgjlnpsvx{~\x80\x83\x85\x88\x8b'
-		b'\x8d\x90\x93\x94\x97\x99\x9c\x9f\xa1\xa4\xa7\xa9\xac\xaf\xb1\xb4\xb7\xb8\xbb\xbd\xc0\xc2\xc5\xc8\xca'
-		b'\xcd\xd0\xd2\xd5\xd8\xda\xdc\xde\xe1\xe4\xe6\xe9\xec\xee\xf1\xf4\xf6\xf9\xfc\xfe\x00\x00\x00dLAME3.99r'
-		b'\x04\xdd\x00\x00\x00\x00\x00\x00\x00\x005 $\x04\xecM\x00\x01\xf4\x00\x00P\t:\xe9\x1d|\x00\x00\x00\x00'
-		b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-		b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-		b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-		b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-		b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-		b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-		b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-		b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-		b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-	)
+@using(
+	mpeg_frame=mpeg_frame,
+	xing_toc=xing_toc,
+)
+def _(mpeg_frame, xing_toc):
+	with raises(InvalidFrame):
+		MPEGFrameHeader.parse(mpeg_frame[2:])
 
 	with raises(InvalidFrame):
-		MPEGFrameHeader.parse(mpeg_frame_data[2:])
+		MPEGFrameHeader.parse(mpeg_frame[0:1] + b'\xee' + mpeg_frame[2:])
 
-	with raises(InvalidFrame):
-		MPEGFrameHeader.parse(mpeg_frame_data[0:1] + b'\xee' + mpeg_frame_data[2:])
-
-	mpeg_frame_load = MPEGFrameHeader.parse(mpeg_frame_data)
+	mpeg_frame_load = MPEGFrameHeader.parse(mpeg_frame)
 	mpeg_frame_init = MPEGFrameHeader(
 		start=0,
 		size=417,
@@ -422,16 +399,7 @@ def _():
 			num_bytes=20489,
 			num_frames=193,
 			quality=100,
-			toc=XingToC(
-				bytearray(
-					b'\x00\x02\x05\x07\n\r\x0f\x12\x15\x17\x1a\x1d\x1f'
-					b'"%&)+.1369;>@CFHJLORTWZ\\_bdgjlnpsvx{~\x80\x83\x85'
-					b'\x88\x8b\x8d\x90\x93\x94\x97\x99\x9c\x9f\xa1\xa4\xa7'
-					b'\xa9\xac\xaf\xb1\xb4\xb7\xb8\xbb\xbd\xc0\xc2\xc5\xc8'
-					b'\xca\xcd\xd0\xd2\xd5\xd8\xda\xdc\xde\xe1\xe4\xe6\xe9'
-					b'\xec\xee\xf1\xf4\xf6\xf9\xfc\xfe'
-				)
-			),
+			toc=XingToC(xing_toc),
 		),
 		bitrate=128000,
 		channel_mode=MP3ChannelMode.JOINT_STEREO,
@@ -461,37 +429,54 @@ def _():
 
 
 @test(
-	"MP3StreamInfo",
-	tags=['unit', 'mp3', 'MP3StreamInfo']
+	"MP3StreamInfo.count_mpeg_frames",
+	tags=['unit', 'mp3', 'MP3StreamInfo', 'count_mpeg_frames'],
 )
-def _():
-	data = DataReader(Path(__file__).parent / 'audio' / 'mp3-lame-vbr.mp3')
-	assert MP3StreamInfo.count_mpeg_frames(data) == 193
+@using(
+	mp3_lame_vbr=mp3_lame_vbr,
+	mp3_cbr_2_frames=mp3_cbr_2_frames,
+	mp3_sync_branch=mp3_sync_branch,
+	flac_vorbis=flac_vorbis,
+)
+def _(
+	mp3_lame_vbr,
+	mp3_cbr_2_frames,
+	mp3_sync_branch,
+	flac_vorbis,
+):
+	assert MP3StreamInfo.count_mpeg_frames(mp3_lame_vbr) == 193
+	assert MP3StreamInfo.count_mpeg_frames(mp3_cbr_2_frames) == 2
+	assert MP3StreamInfo.count_mpeg_frames(mp3_sync_branch) == 192
+	assert MP3StreamInfo.count_mpeg_frames(flac_vorbis) == 0
 
-	data.seek(0)
-	frames = MP3StreamInfo.find_mpeg_frames(data)
+
+@test(
+	"MP3StreamInfo.find_mpeg_frames",
+	tags=['unit', 'mp3', 'MP3StreamInfo', 'find_mpeg_frames'],
+)
+@using(
+	mp3_lame_vbr=mp3_lame_vbr,
+	mp3_cbr_2_frames=mp3_cbr_2_frames,
+	mp3_sync_branch=mp3_sync_branch,
+	flac_vorbis=flac_vorbis,
+)
+def _(
+	mp3_lame_vbr,
+	mp3_cbr_2_frames,
+	mp3_sync_branch,
+	flac_vorbis,
+):
+	frames = MP3StreamInfo.find_mpeg_frames(mp3_lame_vbr)
 	assert len(frames) == 1
-	assert frames[0]._xing
+	assert frames[0]._xing is not None
 
-	data = DataReader(Path(__file__).parent / 'audio' / 'mp3-cbr-2-frames.mp3')
-	assert MP3StreamInfo.count_mpeg_frames(data) == 2
-
-	data.seek(0)
-	frames = MP3StreamInfo.find_mpeg_frames(data)
+	frames = MP3StreamInfo.find_mpeg_frames(mp3_cbr_2_frames)
 	assert len(frames) == 2
 	assert frames[0]._xing is None
 
-	data = DataReader(Path(__file__).parent / 'audio' / 'mp3-sync-branch.mp3')
-	assert MP3StreamInfo.count_mpeg_frames(data) == 192
-
-	data.seek(0)
-	frames = MP3StreamInfo.find_mpeg_frames(data)
+	frames = MP3StreamInfo.find_mpeg_frames(mp3_sync_branch)
 	assert len(frames) == 4
 	assert frames[0]._xing is None
 
-	data = DataReader(Path(__file__).parent / 'audio' / 'flac-vorbis.flac')
-	assert MP3StreamInfo.count_mpeg_frames(data) == 0
-
-	data.seek(0)
 	with raises(InvalidFormat):
-		MP3StreamInfo.find_mpeg_frames(data)
+		MP3StreamInfo.find_mpeg_frames(flac_vorbis)

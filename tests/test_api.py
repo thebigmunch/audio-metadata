@@ -4,22 +4,23 @@ from ward import (
 	each,
 	raises,
 	test,
+	using,
 )
 
 import audio_metadata
 from audio_metadata import UnsupportedFormat
+from tests.fixtures import id3v2_header
 
-audio_filepaths = list((Path(__file__).parent / 'audio').iterdir())
+AUDIO_FILEPATHS = list((Path(__file__).parent / 'audio').iterdir())
 
 
 @test(
 	"ID3v2-only is None",
 	tags=['unit', 'api', 'determine_format'],
 )
-def _():
-	assert audio_metadata.determine_format(
-		b'ID3\x04\x00\x80\x00\x00\x00\x00\x00\xff\xfb'
-	) is None
+@using(id3v2_header=id3v2_header)
+def _(id3v2_header):
+	assert audio_metadata.determine_format(id3v2_header) is None
 
 
 @test(
@@ -42,7 +43,7 @@ def _():
 	"Bytes ({fp.name})",
 	tags=['integration', 'api', 'determine_format']
 )
-def _(fp=each(*audio_filepaths)):
+def _(fp=each(*AUDIO_FILEPATHS)):
 	assert issubclass(
 		audio_metadata.determine_format(fp.read_bytes()),
 		audio_metadata.Format
@@ -54,7 +55,7 @@ def _(fp=each(*audio_filepaths)):
 	tags=['integration', 'api', 'determine_format']
 
 )
-def _(fp=each(*audio_filepaths)):
+def _(fp=each(*AUDIO_FILEPATHS)):
 	assert issubclass(
 		audio_metadata.determine_format(str(fp)),
 		audio_metadata.Format
@@ -65,7 +66,7 @@ def _(fp=each(*audio_filepaths)):
 	"File-like object ({fp.name})",
 	tags=['integration', 'api', 'determine_format']
 )
-def _(fp=each(*audio_filepaths)):
+def _(fp=each(*AUDIO_FILEPATHS)):
 	assert issubclass(
 		audio_metadata.determine_format(fp.open('rb')),
 		audio_metadata.Format
@@ -76,7 +77,7 @@ def _(fp=each(*audio_filepaths)):
 	"Path object ({fp.name})",
 	tags=['integration', 'api', 'determine_format']
 )
-def _(fp=each(*audio_filepaths)):
+def _(fp=each(*AUDIO_FILEPATHS)):
 	assert issubclass(
 		audio_metadata.determine_format(fp),
 		audio_metadata.Format
@@ -105,7 +106,7 @@ def _():
 	"Filepath ({fp.name})",
 	tags=['integration', 'api', 'load'],
 )
-def _(fp=each(*audio_filepaths)):
+def _(fp=each(*AUDIO_FILEPATHS)):
 	audio_metadata.load(str(fp))
 
 
@@ -113,7 +114,7 @@ def _(fp=each(*audio_filepaths)):
 	"File-like object ({fp.name})",
 	tags=['integration', 'api', 'load'],
 )
-def _(fp=each(*audio_filepaths)):
+def _(fp=each(*AUDIO_FILEPATHS)):
 	with open(fp, 'rb') as f:
 		audio_metadata.load(f)
 
@@ -122,7 +123,7 @@ def _(fp=each(*audio_filepaths)):
 	"Path object ({fp.name})",
 	tags=['integration', 'api', 'load'],
 )
-def _(fp=each(*audio_filepaths)):
+def _(fp=each(*AUDIO_FILEPATHS)):
 	audio_metadata.load(fp)
 
 
@@ -149,7 +150,7 @@ def _():
 	"Bytes ({fp.name})",
 	tags=['integration', 'api', 'loads'],
 )
-def _(fp=each(*audio_filepaths)):
+def _(fp=each(*AUDIO_FILEPATHS)):
 	audio_metadata.loads(fp.read_bytes())
 
 
@@ -157,7 +158,7 @@ def _(fp=each(*audio_filepaths)):
 	"Bytearray ({fp.name})",
 	tags=['integration', 'api', 'loads'],
 )
-def _(fp=each(*audio_filepaths)):
+def _(fp=each(*AUDIO_FILEPATHS)):
 	audio_metadata.loads(bytearray(fp.read_bytes()))
 
 
@@ -165,5 +166,5 @@ def _(fp=each(*audio_filepaths)):
 	"Memory view ({fp.name})",
 	tags=['integration', 'api', 'loads'],
 )
-def _(fp=each(*audio_filepaths)):
+def _(fp=each(*AUDIO_FILEPATHS)):
 	audio_metadata.loads(memoryview(fp.read_bytes()))
