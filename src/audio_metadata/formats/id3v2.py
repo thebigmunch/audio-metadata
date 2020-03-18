@@ -122,7 +122,10 @@ class ID3v2Frames(Tags):
 			else:
 				frames[frame.name].append(frame.value)
 
-		return cls(frames, id3_version=id3_version)
+		return cls(
+			frames,
+			id3_version=id3_version,
+		)
 
 
 @attrs(

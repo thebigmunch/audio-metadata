@@ -239,9 +239,9 @@ class FLACCueSheet(LabelList):
 
 		return cls(
 			tracks,
-			catalog_number,
-			lead_in_samples,
-			compact_disc,
+			catalog_number=catalog_number,
+			lead_in_samples=lead_in_samples,
+			compact_disc=compact_disc,
 		)
 
 

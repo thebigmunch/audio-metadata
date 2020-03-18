@@ -58,6 +58,6 @@ class VorbisComments(Tags):
 			fields[comment.name].append(comment.value)
 
 		return cls(
+			fields,
 			_vendor=vendor,
-			**fields,
 		)
