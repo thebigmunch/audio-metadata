@@ -89,8 +89,9 @@ def _(fp=each(*AUDIO_FILEPATHS)):
 	tags=['unit', 'api', 'load'],
 )
 def _():
-	with raises(UnsupportedFormat):
+	with raises(UnsupportedFormat) as exc:
 		audio_metadata.load(__file__)
+	assert str(exc.raised) == "Supported format signature not found."
 
 
 @test(
@@ -98,8 +99,9 @@ def _():
 	tags=['unit', 'api', 'load'],
 )
 def _():
-	with raises(ValueError):
+	with raises(ValueError) as exc:
 		audio_metadata.load(b'test')
+	assert str(exc.raised) == "Not a valid filepath or file-like object."
 
 
 @test(
@@ -132,9 +134,10 @@ def _(fp=each(*AUDIO_FILEPATHS)):
 	tags=['unit', 'api', 'loads'],
 )
 def _():
-	with raises(UnsupportedFormat):
+	with raises(UnsupportedFormat) as exc:
 		with open(__file__, 'rb') as f:
 			audio_metadata.loads(f.read())
+	assert str(exc.raised) == "Supported format signature not found."
 
 
 @test(
@@ -142,8 +145,9 @@ def _():
 	tags=['unit', 'api', 'loads'],
 )
 def _():
-	with raises(ValueError):
+	with raises(ValueError) as exc:
 		audio_metadata.loads(__file__)
+	assert str(exc.raised) == "Not a valid bytes-like object."
 
 
 @test(

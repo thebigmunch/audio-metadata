@@ -34,10 +34,7 @@ from .tables import (
 	ID3PictureType,
 )
 from .vorbis_comments import VorbisComments
-from ..exceptions import (
-	InvalidBlock,
-	InvalidHeader,
-)
+from ..exceptions import FormatError
 from ..models import (
 	Format,
 	Picture,
@@ -449,7 +446,7 @@ class FLAC(Format):
 			ID3v2.parse(self._obj)
 
 		if self._obj.read(4) != b'fLaC':
-			raise InvalidHeader("Valid FLAC header not found.")
+			raise FormatError("Valid FLAC header not found.")
 
 		header_data = self._obj.read(4)
 
@@ -491,7 +488,7 @@ class FLAC(Format):
 				self.pictures.append(picture)
 				self._blocks.append(picture)
 			elif block_type >= 127:
-				raise InvalidBlock(f"{block_type} is not a valid FLAC metadata block type.")
+				raise FormatError(f"{block_type} is not a valid FLAC metadata block type.")
 			else:
 				self._blocks.append(
 					FLACMetadataBlock(

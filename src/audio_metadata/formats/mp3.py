@@ -49,11 +49,7 @@ from .tables import (
 	MP3SampleRates,
 	MP3SamplesPerFrame,
 )
-from ..exceptions import (
-	InvalidFormat,
-	InvalidFrame,
-	InvalidHeader,
-)
+from ..exceptions import FormatError
 from ..models import (
 	Format,
 	StreamInfo,
@@ -186,7 +182,7 @@ class LAMEHeader(AttrMapping):
 	def parse(cls, data, xing_quality):
 		encoder = data.read(9)
 		if not encoder.startswith(b'LAME'):
-			raise InvalidHeader('Valid LAME header not found.')
+			raise FormatError("Valid LAME header not found.")
 
 		version = None
 		version_match = re.search(rb'LAME(\d+)\.(\d+)', encoder)
@@ -304,7 +300,7 @@ class XingHeader(AttrMapping):
 	@classmethod
 	def parse(cls, data):
 		if data.read(4) not in [b'Xing', b'Info']:
-			raise InvalidHeader('Valid Xing header not found.')
+			raise FormatError("Valid Xing header not found.")
 
 		flags = struct.unpack('>i', data.read(4))[0]
 
@@ -358,7 +354,7 @@ class VBRIHeader(AttrMapping):
 	@classmethod
 	def parse(cls, data):
 		if data.read(4) not in [b'VBRI']:
-			raise InvalidHeader('Valid VBRI header not found.')
+			raise FormatError("Valid VBRI header not found.")
 
 		version = struct.unpack('>H', data.read(2))[0]
 		delay = struct.unpack('>e', data.read(2))[0]
@@ -371,7 +367,7 @@ class VBRIHeader(AttrMapping):
 		toc_entry_num_frames = struct.unpack('>H', data.read(2))[0]
 
 		if toc_entry_num_bytes not in [2, 4]:
-			raise InvalidHeader('Invalid VBRI TOC entry size.')
+			raise FormatError("Invalid VBRI TOC entry size.")
 
 		if toc_entry_num_bytes == 2:
 			pattern = '>H'
@@ -439,7 +435,7 @@ class MPEGFrameHeader(AttrMapping):
 		)
 
 		if sync != 2047:
-			raise InvalidFrame('Not a valid MPEG audio frame.')
+			raise FormatError("Invalid MPEG frame sync.")
 
 		version = [2.5, None, 2, 1][version_id]
 
@@ -459,7 +455,7 @@ class MPEGFrameHeader(AttrMapping):
 			or bitrate_index == 15
 			or sample_rate_index == 3
 		):
-			raise InvalidFrame('Not a valid MPEG audio frame.')
+			raise FormatError("Invalid MPEG audio frame.")
 
 		channel_mode = MP3ChannelMode(bitstruct.unpack('u2', data.read(1))[0])
 		channels = 1 if channel_mode == 3 else 2
@@ -548,7 +544,7 @@ class MP3StreamInfo(StreamInfo):
 					frame = MPEGFrameHeader.parse(data)
 					num_frames += 1
 					data.seek(frame._start + frame._size, os.SEEK_SET)
-				except (InvalidFrame, *bitstruct.Error):  # pragma: nocover
+				except (FormatError, *bitstruct.Error):  # pragma: nocover
 					data.seek(1, os.SEEK_CUR)
 			else:
 				data.seek(buffer_size, os.SEEK_CUR)
@@ -580,7 +576,7 @@ class MP3StreamInfo(StreamInfo):
 							if frame._xing and frame._xing.num_frames:
 								break
 							data.seek(frame._start + frame._size, os.SEEK_SET)
-						except (InvalidFrame, *bitstruct.Error):
+						except (FormatError, *bitstruct.Error):
 							data.seek(1, os.SEEK_CUR)
 							break
 				else:
@@ -617,7 +613,7 @@ class MP3StreamInfo(StreamInfo):
 			):
 				frames = cached_frames
 			else:
-				raise InvalidFormat("No XING header and insufficient MPEG frames.")
+				raise FormatError("No XING header and insufficient MPEG frames.")
 
 		return frames
 
@@ -754,7 +750,7 @@ class MP3(Format):
 			self._id3 = ID3v2.parse(self._obj)
 			self.pictures = self._id3.pictures
 			self.tags = self._id3.tags
-		except (InvalidFrame, InvalidHeader):
+		except FormatError:
 			self._obj.seek(0, os.SEEK_SET)
 
 		self.streaminfo = MP3StreamInfo.parse(self._obj)

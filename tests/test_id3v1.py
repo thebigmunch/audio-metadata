@@ -5,9 +5,9 @@ from ward import (
 )
 
 from audio_metadata import (
+	FormatError,
 	ID3v1,
 	ID3v1Fields,
-	InvalidHeader
 )
 from tests.fixtures import (
 	id3v1,
@@ -36,13 +36,14 @@ def _(id3v1):
 
 
 @test(
-	"Missing 'TAG' raises InvalidHeader",
+	"Missing ``TAG`` raises FormatError",
 	tags=['unit', 'id3', 'id3v1', 'ID3v1'],
 )
 @using(null=null)
 def _(null):
-	with raises(InvalidHeader):
+	with raises(FormatError) as exc:
 		ID3v1.parse(null)
+	assert str(exc.raised) == "Valid ID3v1 header not found."
 
 
 @test(

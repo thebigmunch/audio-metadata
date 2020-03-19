@@ -11,7 +11,7 @@ from collections import defaultdict
 from attr import attrib, attrs
 from tbm_utils import datareader
 
-from ..exceptions import InvalidComment
+from ..exceptions import FormatError
 from ..models import (
 	Tag,
 	Tags,
@@ -32,7 +32,7 @@ class VorbisComment(Tag):
 		comment = data.read(length).decode('utf-8', 'replace')
 
 		if '=' not in comment:
-			raise InvalidComment("Vorbis comment must contain an '='.")
+			raise FormatError("Vorbis comment must contain an ``=``.")
 
 		name, value = comment.split('=', 1)
 

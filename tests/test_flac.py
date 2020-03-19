@@ -15,9 +15,8 @@ from audio_metadata import (
 	FLACPicture,
 	FLACSeekPoint,
 	FLACSeekTable,
+	FormatError,
 	ID3PictureType,
-	InvalidBlock,
-	InvalidHeader,
 )
 from tests.fixtures import (
 	flac_0_duration,
@@ -129,23 +128,23 @@ def _(flac_0_duration):
 
 
 @test(
-	"No FLAC header raises InvalidHeader",
+	"No FLAC header raises FormatError",
 	tags=['unit', 'flac', 'FLAC'],
 )
 @using(null=null)
 def _(null):
-	with raises(InvalidHeader) as ctx:
+	with raises(FormatError) as ctx:
 		FLAC.parse(null)
 	assert str(ctx.raised) == "Valid FLAC header not found."
 
 
 @test(
-	"Invalid block type raises InvalidBlock",
+	"Invalid block type raises FormatError",
 	tags=['unit', 'flac', 'FLAC'],
 )
 @using(flac_invalid_block=flac_invalid_block)
 def _(flac_invalid_block):
-	with raises(InvalidBlock) as ctx:
+	with raises(FormatError) as ctx:
 		FLAC.parse(flac_invalid_block)
 	assert str(ctx.raised) == "127 is not a valid FLAC metadata block type."
 

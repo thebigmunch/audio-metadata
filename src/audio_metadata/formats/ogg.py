@@ -21,7 +21,7 @@ from tbm_utils import (
 )
 
 from ..exceptions import (
-	InvalidHeader,
+	FormatError,
 	UnsupportedFormat,
 )
 from ..models import Format
@@ -58,7 +58,7 @@ class OggPageHeader(AttrMapping):
 		)
 
 		if oggs != b'OggS':
-			raise InvalidHeader("Valid Ogg page header not found.")
+			raise FormatError("Valid Ogg page header not found.")
 
 		if version != 0:
 			raise UnsupportedFormat(f"Ogg version '{version}' is not supported.")

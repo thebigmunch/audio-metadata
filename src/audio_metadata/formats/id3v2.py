@@ -35,12 +35,12 @@ from .tables import (
 	ID3v2UnofficialFrameIDs,
 )
 from ..exceptions import (
-	InvalidFrame,
-	InvalidHeader,
+	AudioMetadataWarning,
+	FormatError,
+	UnsupportedFormat,
 )
 from ..models import Tags
 from ..utils import decode_synchsafe_int
-from ..warnings import AudioMetadataWarning
 
 try:
 	import bitstruct.c as bitstruct
@@ -56,7 +56,7 @@ class ID3v2Frames(Tags):
 		try:
 			self.FIELD_MAP = ID3v2FrameAliases[self._version]
 		except KeyError:
-			raise ValueError(f"Unsupported ID3 version: {id3_version}")
+			raise ValueError(f"Unsupported ID3 version: {id3_version}.") from None
 
 		super().__init__(mapping, **kwargs)
 
@@ -77,13 +77,13 @@ class ID3v2Frames(Tags):
 			size_len = 4
 			per_byte = 7
 		else:
-			raise ValueError(f"Unsupported ID3 version: {id3_version}")  # pragma: nocover
+			raise ValueError(f"Unsupported ID3 version: {id3_version}.")  # pragma: nocover
 
 		frames = defaultdict(list)
 		while True:
 			try:
 				frame = ID3v2Frame.parse(data, struct_pattern, size_len, per_byte)
-			except InvalidFrame:
+			except FormatError:
 				break
 
 			# Ignore oddities/bad frames.
@@ -161,14 +161,14 @@ class ID3v2Header(AttrMapping):
 	@classmethod
 	def parse(cls, data):
 		if data.read(3) != b"ID3":
-			raise InvalidHeader("Valid ID3v2 header not found.")
+			raise FormatError("Valid ID3v2 header not found.")
 
 		major, revision, flags_, sync_size = struct.unpack('BBs4s', data.read(7))
 
 		try:
 			version = ID3Version((2, major))
 		except ValueError:  # pragma: nocover
-			raise ValueError(f"Unsupported ID3 version (2.{major}).")
+			raise UnsupportedFormat(f"Unsupported ID3 version (2.{major}).")
 
 		flags = bitstruct.unpack_dict(
 			'b1 b1 b1 b1',
@@ -204,7 +204,7 @@ class ID3v2(AttrMapping):
 	@classmethod
 	def parse(cls, data):
 		if data.peek(3) != b"ID3":
-			raise InvalidHeader("Valid ID3v2 header not found.")
+			raise FormatError("Valid ID3v2 header not found.")
 
 		self = cls()
 

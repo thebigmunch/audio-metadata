@@ -6,8 +6,7 @@ from ward import (
 
 from audio_metadata import (
 	WAV,
-	InvalidChunk,
-	InvalidHeader,
+	FormatError,
 	RIFFTags
 )
 from tests.fixtures import (
@@ -25,8 +24,9 @@ from tests.fixtures import (
 	riff_tags=riff_tags,
 )
 def _(null, riff_tags):
-	with raises(InvalidChunk):
+	with raises(FormatError) as exc:
 		RIFFTags.parse(null)
+	assert str(exc.raised) == "Valid RIFF INFO chunk not found."
 
 	riff_tags_init = RIFFTags(
 		album=['test-album'],
@@ -49,12 +49,9 @@ def _(null, riff_tags):
 )
 @using(null=null)
 def _(null):
-	with raises(InvalidHeader) as ctx:
+	with raises(FormatError) as exc:
 		WAV.parse(null)
-	assert str(ctx.raised) == "Valid WAVE header not found."
-
-	with raises(InvalidHeader):
-		WAV.parse(null)
+	assert str(exc.raised) == "Valid WAVE header not found."
 
 
 @test(
@@ -62,8 +59,9 @@ def _(null):
 	tags=['unit', 'wav', 'WAV']
 )
 def _():
-	with raises(InvalidHeader):
+	with raises(FormatError) as exc:
 		WAV.parse(b'RIFF0000WAVEid3 1234')
+	assert str(exc.raised) == "Valid ID3v2 header not found."
 
 
 @test(
@@ -71,6 +69,6 @@ def _():
 	tags=['unit', 'wav', 'WAV']
 )
 def _():
-	with raises(InvalidHeader) as ctx:
+	with raises(FormatError) as exc:
 		WAV.parse(b'RIFF0000WAVE')
-	assert str(ctx.raised) == "Valid WAVE stream info not found."
+	assert str(exc.raised) == "Valid WAVE stream info not found."

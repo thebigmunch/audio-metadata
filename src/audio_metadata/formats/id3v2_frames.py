@@ -61,7 +61,10 @@ from .tables import (
 	ID3v2LyricsContentType,
 	ID3v2LyricsTimestampFormat,
 )
-from ..exceptions import InvalidFrame
+from ..exceptions import (
+	FormatError,
+	TagError,
+)
 from ..models import (
 	Picture,
 	Tag,
@@ -219,12 +222,12 @@ class ID3v2Frame(Tag):
 		try:
 			frame = struct.unpack(struct_pattern, data.read(struct.calcsize(struct_pattern)))
 		except struct.error:
-			raise InvalidFrame("Not enough data.")
+			raise FormatError("Not enough data.")
 
 		frame_id = frame[0].decode('iso-8859-1')
 		frame_size = decode_synchsafe_int(frame[1:1 + size_len], per_byte)
 		if frame_size == 0:
-			raise InvalidFrame("Not a valid ID3v2 frame")
+			raise FormatError("Not a valid ID3v2 frame")
 
 		return frame_id, frame_size
 
@@ -247,7 +250,7 @@ class ID3v2Frame(Tag):
 				value=frame_value,
 				encoding=frame_encoding,
 			)
-		except (TypeError, ValueError):  # Bad frame value.
+		except (TypeError, TagError):  # Bad frame value.
 			return None
 
 
@@ -361,7 +364,7 @@ class ID3v2NumberFrame(ID3v2Frame):
 	@value.validator
 	def validate_value(self, attribute, value):
 		if not all(char in [*string.digits, '/'] for char in value):
-			raise ValueError(
+			raise TagError(
 				"Number frame values must consist only of digits and '/'.",
 			)
 
@@ -401,7 +404,7 @@ class ID3v2NumericTextFrame(ID3v2Frame):
 	@value.validator
 	def validate_value(self, attribute, value):
 		if not all(v.isdigit() for v in value):
-			raise ValueError("Numeric text frame values must consist only of digits.")
+			raise TagError("Numeric text frame values must consist only of digits.")
 
 	@datareader
 	@classmethod
@@ -526,7 +529,7 @@ class ID3v2TimestampFrame(ID3v2Frame):
 			try:
 				parse_iso8601(v)
 			except ParserError:
-				raise ValueError("Timestamp frame values must conform to the ID3v2-compliant subset of ISO 8601.")
+				raise TagError("Timestamp frame values must conform to the ID3v2-compliant subset of ISO 8601.")
 
 	@datareader
 	@classmethod
@@ -645,7 +648,7 @@ class ID3v2YearFrame(ID3v2NumericTextFrame):
 			)
 			for v in value
 		):
-			raise ValueError("Year frame values must be 4-character number strings.")
+			raise TagError("Year frame values must be 4-character number strings.")
 
 
 @attrs(
@@ -767,7 +770,7 @@ class ID3v2TDATFrame(ID3v2NumericTextFrame):
 			)
 			for v in value
 		):
-			raise ValueError(
+			raise TagError(
 				"TDAT frame values must be a 4-character number string in the DDMM format.",
 			)
 
@@ -790,7 +793,7 @@ class ID3v2TIMEFrame(ID3v2NumericTextFrame):
 			)
 			for v in value
 		):
-			raise ValueError(
+			raise TagError(
 				"TIME frame values must be a 4-character number string in the HHMM format.",
 			)
 

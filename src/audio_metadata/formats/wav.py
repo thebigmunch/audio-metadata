@@ -19,11 +19,7 @@ from bidict import frozenbidict
 from tbm_utils import datareader
 
 from .id3v2 import ID3v2
-from ..exceptions import (
-	InvalidChunk,
-	InvalidFrame,
-	InvalidHeader,
-)
+from ..exceptions import FormatError
 from ..models import (
 	Format,
 	StreamInfo,
@@ -68,7 +64,7 @@ class RIFFTags(Tags):
 	@classmethod
 	def parse(cls, data):
 		if data.read(4) != b'INFO':
-			raise InvalidChunk('Valid RIFF INFO chunk not found.')
+			raise FormatError("Valid RIFF INFO chunk not found.")
 
 		fields = {}
 
@@ -153,7 +149,7 @@ class WAV(Format):
 		format_ = self._obj.read(4)
 
 		if chunk_id != b'RIFF' or format_ != b'WAVE':
-			raise InvalidHeader("Valid WAVE header not found.")
+			raise FormatError("Valid WAVE header not found.")
 
 		subchunk_header = self._obj.read(8)
 		while len(subchunk_header) == 8:
@@ -177,7 +173,7 @@ class WAV(Format):
 			elif subchunk_id.lower() == b'id3 ':
 				try:
 					id3 = ID3v2.parse(self._obj)
-				except (InvalidFrame, InvalidHeader):
+				except FormatError:
 					raise
 				else:
 					self._id3 = id3
@@ -198,7 +194,7 @@ class WAV(Format):
 			self.streaminfo._size = audio_size
 			self.streaminfo.duration = self.streaminfo._size / self.streaminfo.bitrate / 8
 		except UnboundLocalError:
-			raise InvalidHeader("Valid WAVE stream info not found.")
+			raise FormatError("Valid WAVE stream info not found.")
 
 		self._obj.close()
 

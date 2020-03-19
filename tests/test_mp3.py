@@ -8,9 +8,7 @@ from ward import (
 )
 
 from audio_metadata import (
-	InvalidFormat,
-	InvalidFrame,
-	InvalidHeader,
+	FormatError,
 	LAMEBitrateMode,
 	LAMEChannelMode,
 	LAMEEncodingFlags,
@@ -174,6 +172,10 @@ def _(
 	lame_header=lame_header,
 )
 def _(null, lame_header):
+	with raises(FormatError) as exc:
+		LAMEHeader.parse(null, 100)
+	assert str(exc.raised) == "Valid LAME header not found."
+
 	lame_header_load = LAMEHeader.parse(lame_header, 100)
 	lame_header_init = LAMEHeader(
 		crc=b'\x1d|',
@@ -210,9 +212,6 @@ def _(null, lame_header):
 		unwise_settings_used=False,
 		version=(3, 99),
 	)
-
-	with raises(InvalidHeader):
-		LAMEHeader.parse(null, 100)
 
 	assert lame_header_load == lame_header_init
 	assert lame_header_load._crc == lame_header_init._crc == b'\x1d|'
@@ -270,8 +269,9 @@ def _(null, lame_header):
 	xing_header_no_lame=xing_header_no_lame,
 )
 def _(null, xing_header_no_lame):
-	with raises(InvalidHeader):
+	with raises(FormatError) as exc:
 		XingHeader.parse(null)
+	assert str(exc.raised) == "Valid Xing header not found."
 
 	xing_header_load = XingHeader.parse(xing_header_no_lame)
 	xing_header_init = XingHeader(
@@ -296,11 +296,13 @@ def _(null, xing_header_no_lame):
 )
 @using(vbri_header=vbri_header)
 def _(vbri_header):
-	with raises(InvalidHeader):
+	with raises(FormatError) as exc:
 		VBRIHeader.parse(vbri_header[4:])
+	assert str(exc.raised) == "Valid VBRI header not found."
 
-	with raises(InvalidHeader):
+	with raises(FormatError) as exc:
 		VBRIHeader.parse(vbri_header[:23] + b'\x01' + vbri_header[24:])
+	assert str(exc.raised) == "Invalid VBRI TOC entry size."
 
 	toc_entries = []
 	i = 26
@@ -349,11 +351,13 @@ def _(vbri_header):
 	xing_toc=xing_toc,
 )
 def _(mpeg_frame, xing_toc):
-	with raises(InvalidFrame):
+	with raises(FormatError) as exc:
 		MPEGFrameHeader.parse(mpeg_frame[2:])
+	assert str(exc.raised) == "Invalid MPEG frame sync."
 
-	with raises(InvalidFrame):
-		MPEGFrameHeader.parse(mpeg_frame[0:1] + b'\xee' + mpeg_frame[2:])
+	with raises(FormatError) as exc:
+		MPEGFrameHeader.parse(mpeg_frame[0:1] + b'\xEE' + mpeg_frame[2:])
+	assert str(exc.raised) == "Invalid MPEG audio frame."
 
 	mpeg_frame_load = MPEGFrameHeader.parse(mpeg_frame)
 	mpeg_frame_init = MPEGFrameHeader(
@@ -478,5 +482,6 @@ def _(
 	assert len(frames) == 4
 	assert frames[0]._xing is None
 
-	with raises(InvalidFormat):
+	with raises(FormatError) as exc:
 		MP3StreamInfo.find_mpeg_frames(flac_vorbis)
+	assert str(exc.raised) == "No XING header and insufficient MPEG frames."

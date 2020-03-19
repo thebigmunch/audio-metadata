@@ -13,7 +13,7 @@ from io import (
 from tbm_utils import DataReader
 
 from .exceptions import (
-	InvalidFormat,
+	FormatError,
 	UnsupportedFormat,
 )
 from .formats import (
@@ -76,7 +76,7 @@ def determine_format(data):
 
 	try:
 		MP3StreamInfo.find_mpeg_frames(data)
-	except InvalidFormat:
+	except FormatError:
 		return None
 	else:
 		return MP3

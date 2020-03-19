@@ -6,12 +6,12 @@ from ward import (
 )
 
 from audio_metadata import (
+	FormatError,
 	ID3Version,
 	ID3v2Flags,
 	ID3v2FrameAliases,
 	ID3v2Frames,
 	ID3v2Header,
-	InvalidHeader,
 )
 from tests.fixtures import (
 	id3v22,
@@ -33,17 +33,21 @@ from tests.fixtures import (
 	id3v24=id3v24,
 )
 def _(null, id3v22, id3v23, id3v24):
-	with raises(ValueError):
+	with raises(ValueError) as exc:
 		ID3v2Frames(id3_version=(1, 0))
+	assert str(exc.raised) == "Unsupported ID3 version: (1, 0)."
 
-	with raises(ValueError):
+	with raises(ValueError) as exc:
 		ID3v2Frames(id3_version=None)
+	assert str(exc.raised) == "None is not a valid ID3Version"
 
-	with raises(ValueError):
+	with raises(ValueError) as exc:
 		ID3v2Frames.parse(null, (1, 0))
+	assert str(exc.raised) == "Unsupported ID3 version: ID3Version.v10."
 
-	with raises(ValueError):
-		ID3v2Frames.parse(b'data', None)
+	with raises(ValueError) as exc:
+		ID3v2Frames.parse(null, None)
+	assert str(exc.raised) == "None is not a valid ID3Version"
 
 	v22_frames_init = ID3v2Frames(id3_version=ID3Version.v22)
 	v22_frames_init_tuple = ID3v2Frames(id3_version=(2, 2))
@@ -135,6 +139,10 @@ def _(
 	id3v24_unsync=id3v24_unsync
 )
 def _(null, id3v24, id3v24_unsync):
+	with raises(FormatError) as exc:
+		ID3v2Header.parse(null)
+	assert str(exc.raised) == "Valid ID3v2 header not found."
+
 	v24_header_load = ID3v2Header.parse(id3v24)
 	v24_header_init = ID3v2Header(
 		size=2254,
@@ -162,6 +170,3 @@ def _(null, id3v24, id3v24_unsync):
 	)
 
 	assert v24_header_load == v24_header_init
-
-	with raises(InvalidHeader):
-		ID3v2Header.parse(null)

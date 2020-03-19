@@ -23,7 +23,7 @@ from tbm_utils import (
 )
 
 from .tables import ID3v1Genres
-from ..exceptions import InvalidHeader
+from ..exceptions import FormatError
 from ..models import (
 	Tag,
 	Tags,
@@ -184,7 +184,7 @@ class ID3v1(AttrMapping):
 	@classmethod
 	def parse(cls, data):
 		if data.read(3) != b"TAG":
-			raise InvalidHeader("Valid ID3v1 header not found.")
+			raise FormatError("Valid ID3v1 header not found.")
 
 		self = cls()
 		self.tags = ID3v1Fields.parse(data)

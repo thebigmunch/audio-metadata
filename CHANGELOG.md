@@ -22,6 +22,8 @@ This project adheres to [Semantic Versioning](https://semver.org).
 * ``ID3v1YearField``.
 * `ID3v2InvolvedPeopleListFrame`` as subclass of ``ID3v2PeopleListFrame``.
 * ``ID3v2TMCLFrame`` as subclass of ``ID3v2PeopleListFrame``.
+* ``FormatError``.
+* ``TagError``.
 
 ### Changed
 
@@ -43,10 +45,17 @@ This project adheres to [Semantic Versioning](https://semver.org).
 	* Add ``_parse_frame_header`` helper method on ``ID3v2Frame``.
 	* Add ``_parse_frame_data`` helper method to all ID3v2 frame classes.
 	* ``ID3v2Frame.parse`` calls into helper methods for appropriate subclass.
+* Revise exceptions.
 
 ### Removed
 
 * ``ID3v2BaseFrame``.
+* ``InvalidBlock``.
+* ``InvalidChunk``.
+* ``InvalidComment``.
+* ``InvalidFormat``.
+* ``InvalidFrame``.
+* ``InvalidHeader``.
 
 ### Fixed
 

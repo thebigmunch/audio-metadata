@@ -6,7 +6,7 @@ from ward import (
 )
 
 from audio_metadata import (
-	InvalidComment,
+	FormatError,
 	VorbisComment,
 	VorbisComments,
 )
@@ -67,12 +67,13 @@ def _(
 
 
 @test(
-	"Invalid '=' in Vorbis comment raises InvalidComment",
+	"Invalid ``=`` in Vorbis comment raises FormatError",
 	tags=['unit', 'vorbis', 'comments', 'VorbisComment'],
 )
 def _():
-	with raises(InvalidComment):
+	with raises(FormatError) as exc:
 		VorbisComment.parse(b'\x09\x00\x00\x00albumtest-album')
+	assert str(exc.raised) == "Vorbis comment must contain an ``=``."
 
 
 @test(

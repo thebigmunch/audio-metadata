@@ -17,7 +17,7 @@ from tbm_utils import datareader
 from .flac import FLACPicture
 from .ogg import Ogg
 from .vorbis_comments import VorbisComments
-from ..exceptions import InvalidFormat
+from ..exceptions import FormatError
 from ..models import StreamInfo
 
 
@@ -98,12 +98,12 @@ class OggOpus(Ogg):
 
 		self._obj.seek(0, os.SEEK_SET)
 		if self._obj.peek(4) != b'OggS':
-			raise InvalidFormat("Valid Ogg page header not found.")
+			raise FormatError("Valid Ogg page header not found.")
 
 		page = next(self.parse_pages())
 
 		if not page.segments[0].startswith(b'OpusHead'):
-			raise InvalidFormat(f"'OpusHead' must be first page in Ogg Opus.")
+			raise FormatError(f"``OpusHead`` must be first page in Ogg Opus.")
 		else:
 			self.streaminfo = OggOpusStreamInfo.parse(page.segments[0])
 			info_serial = page.serial_number
