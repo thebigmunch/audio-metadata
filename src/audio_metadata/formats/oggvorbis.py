@@ -11,6 +11,7 @@ import os
 import struct
 from base64 import b64decode
 
+import bitstruct
 from attr import attrib, attrs
 from tbm_utils import datareader
 
@@ -28,7 +29,12 @@ class OggVorbisComments(VorbisComments):
 		if data.read(7) != b'\x03vorbis':
 			raise Exception  # TODO
 
-		return super().parse(data)
+		comments = super().parse(data)
+
+		if bitstruct.unpack('p7 b1', data.read(1))[0] is False:
+			raise FormatError("Ogg Vorbis comments framing bit unset.")
+
+		return comments
 
 
 # TODO: Bitrate mode based
