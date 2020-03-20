@@ -24,6 +24,7 @@ This project adheres to [Semantic Versioning](https://semver.org).
 * ``ID3v2TMCLFrame`` as subclass of ``ID3v2PeopleListFrame``.
 * ``FormatError``.
 * ``TagError``.
+* ``FLACVorbisComments``.
 
 ### Changed
 

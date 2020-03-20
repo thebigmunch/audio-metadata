@@ -12,6 +12,7 @@ __all__ = [
 	'FLACSeekPoint',
 	'FLACSeekTable',
 	'FLACStreamInfo',
+	'FLACVorbisComments',
 ]
 
 import binascii
@@ -365,6 +366,13 @@ class FLACSeekTable(LabelList):
 		return cls(seekpoints)
 
 
+class FLACVorbisComments(VorbisComments):
+	@datareader
+	@classmethod
+	def parse(cls, data):
+		return super().parse(data)
+
+
 @attrs(
 	repr=False,
 	kw_only=True,
@@ -476,7 +484,7 @@ class FLAC(Format):
 				self.seektable = seektable
 				self._blocks.append(seektable)
 			elif block_type == FLACMetadataBlockType.VORBIS_COMMENT:
-				comment_block = VorbisComments.parse(metadata_block_data)
+				comment_block = FLACVorbisComments.parse(metadata_block_data)
 				self.tags = comment_block
 				self._blocks.append(comment_block)
 			elif block_type == FLACMetadataBlockType.CUESHEET:
