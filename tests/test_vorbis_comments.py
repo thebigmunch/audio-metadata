@@ -7,6 +7,7 @@ from ward import (
 
 from audio_metadata import (
 	FormatError,
+	TagError,
 	VorbisComment,
 	VorbisComments,
 )
@@ -15,7 +16,7 @@ from tests.fixtures import vorbis_comments
 
 @test(
 	"VorbisComment",
-	tags=['unit', 'vorbis', 'comments', 'VorbisComment'],
+	tags=['unit', 'vorbis', 'comment', 'comments', 'VorbisComment'],
 )
 def _(
 	data=each(
@@ -68,7 +69,7 @@ def _(
 
 @test(
 	"Invalid ``=`` in Vorbis comment raises FormatError",
-	tags=['unit', 'vorbis', 'comments', 'VorbisComment'],
+	tags=['unit', 'vorbis', 'comment', 'comments', 'VorbisComment'],
 )
 def _():
 	with raises(FormatError) as exc:
@@ -77,8 +78,18 @@ def _():
 
 
 @test(
+	"Invalid character in Vorbis comment name raises TagError",
+	tags=['unit', 'vorbis', 'comment', 'comments', 'VorbisComment'],
+)
+def _():
+	with raises(TagError) as exc:
+		VorbisComment.parse(b'\x10\x00\x00\x00albu~=test-album')
+	assert str(exc.raised) == "Invalid character in Vorbis comment name: ``albu~``."
+
+
+@test(
 	"VorbisComments",
-	tags=['unit', 'vorbis', 'comments', 'VorbisComments'],
+	tags=['unit', 'vorbis', 'comment', 'comments', 'VorbisComments'],
 )
 @using(data=vorbis_comments)
 def _(data):
@@ -98,3 +109,13 @@ def _(data):
 	vorbis_comments_load = VorbisComments.parse(data)
 
 	assert vorbis_comments_init == vorbis_comments_load
+
+
+@test(
+	"Invalid character in Vorbis comment name raises TagError in VorbisComments",
+	tags=['unit', 'vorbis', 'comment', 'comments', 'VorbisComments'],
+)
+def _():
+	with raises(TagError) as exc:
+		VorbisComments({'albu~': 'test-album'})
+	assert str(exc.raised) == "Invalid character in Vorbis comment name: ``albu~``."

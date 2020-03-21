@@ -48,6 +48,7 @@ This project adheres to [Semantic Versioning](https://semver.org).
 	* ``ID3v2Frame.parse`` calls into helper methods for appropriate subclass.
 * Revise exceptions.
 * Check for framing bit in Ogg Vorbis comments.
+* Check for invalid characters in Vorbis comment field names.
 
 ### Removed
 
