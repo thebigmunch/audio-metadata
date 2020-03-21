@@ -36,7 +36,7 @@ def determine_format(data):
 			or file-like object of an audio file.
 
 	Returns:
-		Format: An audio format class if supported, else None.
+		Format: An appropriate audio format class if supported, else None.
 	"""
 
 	# Only convert if not already a DataReader.
@@ -90,11 +90,13 @@ def load(f):
 			A filepath, path-like object or file-like object of an audio file.
 
 	Returns:
-		Format: An audio format object.
+		Format: An audio format object of the appropriate type.
 
 	Raises:
-		UnsupportedFormat: If file is not of a supported format.
-		ValueError: If filepath/file-like object is not valid or readable.
+		FormatError: If the audio file is not valid.
+		UnsupportedFormat: If the audio file is not of a supported format.
+		ValueError: If ``f`` is not a valid str, path-like object,
+			file-like object, or is unreadable.
 	"""
 
 	if (
@@ -125,10 +127,12 @@ def loads(b):
 		b (bytes-like object): A bytes-like object of an audio file.
 
 	Returns:
-		Format: An audio format object.
+		Format: An audio format object of the appropriate type.
 
 	Raises:
-		UnsupportedFormat: If file is not of a supported format.
+		FormatError: If the audio file is not valid.
+		UnsupportedFormat: If the audio file is not of a supported format.
+		ValueError: If ``b`` is not a valid bytes-like object.
 	"""
 
 	try:

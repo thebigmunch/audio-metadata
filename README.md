@@ -22,7 +22,7 @@ Also, there are certain features not present in other solutions that would be pr
 Features and functionality that set it apart:
 
 * Uses the Python standard load(s)/dump(s) API.
-	* Can load filepaths, file-like objects and binary data (bytes-like objects).
+	* Can load filepaths, os.PathLike objects, file-like objects, and bytes-like objects.
 * Metadata objects look like a dict **and** act like a dict.
 	* Some common libraries shadow the representation of a dict
 	  and/or dict methods but do not behave like a dict.
