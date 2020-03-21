@@ -20,10 +20,8 @@ Exceptions
 ----------
 
 .. autoexception:: AudioMetadataException
-.. autoexception:: InvalidChunk
-.. autoexception:: InvalidComment
-.. autoexception:: InvalidFrame
-.. autoexception:: InvalidHeader
+.. autoexception:: FormatError
+.. autoexception:: TagError
 .. autoexception:: UnsupportedFormat
 
 
@@ -33,6 +31,7 @@ Base Classes
 .. autoclass:: Format
 
 .. autoclass:: Picture
+.. autoclass:: StreamInfo
 .. autoclass:: Tags
 
 
@@ -51,6 +50,7 @@ FLAC
 .. autoclass:: FLACSeekPoint
 .. autoclass:: FLACSeekTable
 .. autoclass:: FLACStreamInfo
+.. autoclass:: FLACVorbisComments
 
 
 ID3v1
@@ -85,6 +85,34 @@ MP3
 .. autoclass:: VBRIToC
 .. autoclass:: XingHeader
 .. autoclass:: XingToC
+
+
+Ogg
+---
+
+.. autoclass:: Ogg
+
+.. autoclass:: OggPage
+.. autoclass:: OggPageHeader
+.. autoclass:: OggPageSegments
+
+
+Ogg Opus
+--------
+
+.. autoclass:: OggOpus
+
+.. autoclass:: OggOpusStreamInfo
+.. autoclass:: OggOpusVorbisComments
+
+
+Ogg Opus
+--------
+
+.. autoclass:: OggVorbis
+
+.. autoclass:: OggVorbisStreamInfo
+.. autoclass:: OggVorbisComments
 
 
 Vorbis

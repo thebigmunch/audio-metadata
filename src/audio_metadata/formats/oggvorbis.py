@@ -90,7 +90,7 @@ class OggVorbis(Ogg):
 	Extends `Format`.
 
 	Attributes:
-		pictures (list): A list of `VorbisPicture` objects.
+		pictures (list): A list of `FLACPicture` objects.
 		streaminfo (OggVorbisStreamInfo): The audio stream information.
 		tags (OggVorbisComments): The Vorbis comment metadata block.
 	"""

@@ -85,7 +85,7 @@ class OggOpus(Ogg):
 	Extends `Format`.
 
 	Attributes:
-		pictures (list): A list of `VorbisPicture` objects.
+		pictures (list): A list of `FLACPicture` objects.
 		streaminfo (OggOpusStreamInfo): The audio stream information.
 		tags (OggOpusVorbisComments): The Vorbis comment metadata block.
 	"""
