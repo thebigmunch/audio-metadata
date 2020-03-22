@@ -634,6 +634,38 @@ class ID3v2UnsynchronizedLyricsFrame(ID3v2LyricsFrame):
 	repr=False,
 	kw_only=True,
 )
+class ID3v2UserTextFrame(ID3v2Frame):
+	@datareader
+	@classmethod
+	def _parse_frame_data(cls, data, frame_size):
+		frame_data = data.read(frame_size)
+
+		encoding = determine_encoding(frame_data)
+		description, tail = split_encoded(frame_data[1:], encoding)
+
+		text = []
+		while True:
+			try:
+				head, tail = split_encoded(tail, encoding)
+			except ValueError:
+				text.append(decode_bytestring(tail, encoding))
+				break
+			else:
+				text.append(decode_bytestring(head, encoding))
+
+		return (
+			ID3v2UserText(
+				description=decode_bytestring(description, encoding),
+				text=text,
+			),
+			encoding,
+		)
+
+
+@attrs(
+	repr=False,
+	kw_only=True,
+)
 class ID3v2UserURLLinkFrame(ID3v2Frame):
 	@datareader
 	@classmethod
@@ -647,28 +679,6 @@ class ID3v2UserURLLinkFrame(ID3v2Frame):
 			ID3v2UserURLLink(
 				description=decode_bytestring(description, encoding),
 				url=unquote(decode_bytestring(url)),
-			),
-			encoding,
-		)
-
-
-@attrs(
-	repr=False,
-	kw_only=True,
-)
-class ID3v2UserTextFrame(ID3v2Frame):
-	@datareader
-	@classmethod
-	def _parse_frame_data(cls, data, frame_size):
-		frame_data = data.read(frame_size)
-
-		encoding = determine_encoding(frame_data)
-		description, text = split_encoded(frame_data[1:], encoding)
-
-		return (
-			ID3v2UserText(
-				description=decode_bytestring(description, encoding),
-				text=decode_bytestring(text, encoding),
 			),
 			encoding,
 		)

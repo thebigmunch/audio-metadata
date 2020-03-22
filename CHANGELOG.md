@@ -32,6 +32,7 @@ This project adheres to [Semantic Versioning](https://semver.org).
 	* ``ID3v2TempoTimestampFormat``,
 	* ``ID3v2SynchronizedTempoCodes``.
 	* ``ID3v2SynchronizedTempoCodesFrame``.
+* Support for multiple text strings in ID3v2 user text frames.
 
 ### Changed
 
