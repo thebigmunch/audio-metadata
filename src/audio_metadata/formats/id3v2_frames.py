@@ -28,6 +28,8 @@ __all__ = [
 	'ID3v2TMCLFrame',
 	'ID3v2TextFrame',
 	'ID3v2TimestampFrame',
+	'ID3v2UniqueFileIdentifier',
+	'ID3v2UniqueFileIdentifierFrame',
 	'ID3v2UnsynchronizedLyrics',
 	'ID3v2UnsynchronizedLyricsFrame',
 	'ID3v2URLLinkFrame',
@@ -126,6 +128,15 @@ class ID3v2Performer(AttrMapping):
 class ID3v2PrivateInfo(AttrMapping):
 	owner = attrib()
 	data = attrib()
+
+
+@attrs(
+	repr=False,
+	kw_only=True,
+)
+class ID3v2UniqueFileIdentifier(AttrMapping):
+	owner = attrib()
+	identifier = attrib()
 
 
 @attrs(
@@ -798,14 +809,37 @@ class ID3v2TIMEFrame(ID3v2NumericTextFrame):
 			)
 
 
+@attrs(
+	repr=False,
+	kw_only=True,
+)
+class ID3v2UniqueFileIdentifierFrame(ID3v2Frame):
+	@datareader
+	@classmethod
+	def _parse_frame_data(cls, data, frame_size):
+		frame_data = data.read(frame_size)
+		owner, identifier = frame_data.split(b'\x00')
+
+		if len(identifier) > 64:
+			raise TagError("ID3v2 unique file identifier must be no more than 64 bytes.")
+
+		return (
+			ID3v2UFID(
+				owner=owner.decode('iso-8859-1'),
+				identifier=identifier,
+			),
+			None,
+		)
+
+
 # TODO:ID3v2.2
 # TODO: BUF, CNT, CRA, CRM, ETC, EQU, LNK, MCI, MLL, PCS,
-# TODO: POP, REV, RVA, STC, UFI
+# TODO: POP, REV, RVA, STC
 
 # TODO: ID3v2.3
 # TODO: AENC, COMR, ENCR, EQUA, ETCO, GRID, LINK, MLLT, OWNE
 # TODO: PCNT, PCST, POPM, POSS, RBUF, RGAD, RVAD, RVRB, SYTC,
-# TODO: UFID, USER, XRVA
+# TODO: USER, XRVA
 
 # TODO: ID3v2.4
 # TODO: ASPI, EQU2, PCST, RGAD, RVA2, SEEK, SIGN,
@@ -828,6 +862,7 @@ ID3v2FrameTypes = {
 	'TIPL': ID3v2InvolvedPeopleListFrame,
 	'TMCL': ID3v2TMCLFrame,
 	'TXXX': ID3v2UserTextFrame,
+	'UFID': ID3v2UFIDFrame,
 
 	# Genre Frame
 	'TCO': ID3v2GenreFrame,

@@ -14,7 +14,7 @@ This project adheres to [Semantic Versioning](https://semver.org).
 * ``RIFFTag``.
 * ``ID3v1Field``.
 * ``ID3v1AlbumField``.
-* ``ID3v2ArtistField``.
+* ``ID3v1ArtistField``.
 * ``ID3v1CommentField``.
 * ``ID3v1GenreField``.
 * ``ID3v1TitleField``.
@@ -25,6 +25,9 @@ This project adheres to [Semantic Versioning](https://semver.org).
 * ``FormatError``.
 * ``TagError``.
 * ``FLACVorbisComments``.
+* Support for ID3v2 unique file identifier frames.
+	* ``ID3v2UniqueFileIdentifier``.
+	* ``ID3v2UniqueFileIdentifierFrame``.
 
 ### Changed
 
@@ -33,7 +36,7 @@ This project adheres to [Semantic Versioning](https://semver.org).
 * Refactor ID3v1 to use tag classes.
 	* ``ID3v1Field``.
 	* ``ID3v1AlbumField``.
-	* ``ID3v2ArtistField``.
+	* ``ID3v1ArtistField``.
 	* ``ID3v1CommentField``.
 	* ``ID3v1GenreField``.
 	* ``ID3v1TitleField``.
