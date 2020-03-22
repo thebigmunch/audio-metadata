@@ -4,10 +4,11 @@ __all__ = [
 	'ID3v2BinaryDataFrame',
 	'ID3v2Comment',
 	'ID3v2CommentFrame',
+	'ID3v2DateFrame',
 	'ID3v2Frame',
 	'ID3v2FrameTypes',
-	'ID3v2GEOBFrame',
 	'ID3v2GeneralEncapsulatedObject',
+	'ID3v2GeneralEncapsulatedObjectFrame',
 	'ID3v2GenreFrame',
 	'ID3v2InvolvedPeopleListFrame',
 	'ID3v2InvolvedPerson',
@@ -23,8 +24,7 @@ __all__ = [
 	'ID3v2PrivateInfo',
 	'ID3v2SynchronizedLyrics',
 	'ID3v2SynchronizedLyricsFrame',
-	'ID3v2TDATFrame',
-	'ID3v2TIMEFrame',
+	'ID3v2TimeFrame',
 	'ID3v2TMCLFrame',
 	'ID3v2TextFrame',
 	'ID3v2TimestampFrame',
@@ -647,6 +647,52 @@ class ID3v2UserTextFrame(ID3v2Frame):
 	repr=False,
 	kw_only=True,
 )
+class ID3v2DateFrame(ID3v2NumericTextFrame):
+	value = attrib()
+
+	@value.validator
+	def validate_value(self, attribute, value):
+		if not all(
+			(
+				v.isdigit()
+				and len(v) == 4
+				and int(v[0:2]) in range(1, 32)
+				and int(v[2:4]) in range(1, 13)
+			)
+			for v in value
+		):
+			raise TagError(
+				"ID3v2 date frame values must be a 4-character number string in the ``DDMM`` format.",
+			)
+
+
+@attrs(
+	repr=False,
+	kw_only=True,
+)
+class ID3v2TimeFrame(ID3v2NumericTextFrame):
+	value = attrib()
+
+	@value.validator
+	def validate_value(self, attribute, value):
+		if not all(
+			(
+				v.isdigit()
+				and len(v) == 4
+				and int(v[0:2]) in range(0, 24)
+				and int(v[2:4]) in range(0, 60)
+			)
+			for v in value
+		):
+			raise TagError(
+				"ID3v2 ``TIME`` frame values must be a 4-character number string in the ``HHMM`` format.",
+			)
+
+
+@attrs(
+	repr=False,
+	kw_only=True,
+)
 class ID3v2YearFrame(ID3v2NumericTextFrame):
 	value = attrib()
 
@@ -666,7 +712,7 @@ class ID3v2YearFrame(ID3v2NumericTextFrame):
 	repr=False,
 	kw_only=True,
 )
-class ID3v2GEOBFrame(ID3v2Frame):
+class ID3v2GeneralEncapsulatedObjectFrame(ID3v2Frame):
 	@datareader
 	@classmethod
 	def _parse_frame_data(cls, data, frame_size):
@@ -767,52 +813,6 @@ class ID3v2TMCLFrame(ID3v2InvolvedPeopleListFrame):
 	repr=False,
 	kw_only=True,
 )
-class ID3v2TDATFrame(ID3v2NumericTextFrame):
-	value = attrib()
-
-	@value.validator
-	def validate_value(self, attribute, value):
-		if not all(
-			(
-				v.isdigit()
-				and len(v) == 4
-				and int(v[0:2]) in range(1, 32)
-				and int(v[2:4]) in range(1, 13)
-			)
-			for v in value
-		):
-			raise TagError(
-				"TDAT frame values must be a 4-character number string in the DDMM format.",
-			)
-
-
-@attrs(
-	repr=False,
-	kw_only=True,
-)
-class ID3v2TIMEFrame(ID3v2NumericTextFrame):
-	value = attrib()
-
-	@value.validator
-	def validate_value(self, attribute, value):
-		if not all(
-			(
-				v.isdigit()
-				and len(v) == 4
-				and int(v[0:2]) in range(0, 24)
-				and int(v[2:4]) in range(0, 60)
-			)
-			for v in value
-		):
-			raise TagError(
-				"TIME frame values must be a 4-character number string in the HHMM format.",
-			)
-
-
-@attrs(
-	repr=False,
-	kw_only=True,
-)
 class ID3v2UniqueFileIdentifierFrame(ID3v2Frame):
 	@datareader
 	@classmethod
@@ -824,7 +824,7 @@ class ID3v2UniqueFileIdentifierFrame(ID3v2Frame):
 			raise TagError("ID3v2 unique file identifier must be no more than 64 bytes.")
 
 		return (
-			ID3v2UFID(
+			ID3v2UniqueFileIdentifier(
 				owner=owner.decode('iso-8859-1'),
 				identifier=identifier,
 			),
@@ -851,18 +851,19 @@ ID3v2FrameTypes = {
 
 	# Complex Text Frames
 	'COM': ID3v2CommentFrame,
-	'GEO': ID3v2GEOBFrame,
+	'GEO': ID3v2GeneralEncapsulatedObjectFrame,
 	'IPL': ID3v2InvolvedPeopleListFrame,
 	'TXX': ID3v2UserTextFrame,
+	'UFI': ID3v2UniqueFileIdentifierFrame,
 
 	'COMM': ID3v2CommentFrame,
-	'GEOB': ID3v2GEOBFrame,
+	'GEOB': ID3v2GeneralEncapsulatedObjectFrame,
 	'IPLS': ID3v2InvolvedPeopleListFrame,
 	'PRIV': ID3v2PrivateFrame,
 	'TIPL': ID3v2InvolvedPeopleListFrame,
 	'TMCL': ID3v2TMCLFrame,
 	'TXXX': ID3v2UserTextFrame,
-	'UFID': ID3v2UFIDFrame,
+	'UFID': ID3v2UniqueFileIdentifierFrame,
 
 	# Genre Frame
 	'TCO': ID3v2GenreFrame,
@@ -885,18 +886,18 @@ ID3v2FrameTypes = {
 
 	# Numeric Text Frames
 	'TBP': ID3v2NumericTextFrame,
-	'TDA': ID3v2TDATFrame,
+	'TDA': ID3v2DateFrame,
 	'TDY': ID3v2NumericTextFrame,
-	'TIM': ID3v2TIMEFrame,
+	'TIM': ID3v2TimeFrame,
 	'TLE': ID3v2NumericTextFrame,
 	'TOR': ID3v2YearFrame,
 	'TSI': ID3v2NumericTextFrame,
 	'TYE': ID3v2YearFrame,
 
 	'TBPM': ID3v2NumericTextFrame,
-	'TDAT': ID3v2TDATFrame,
+	'TDAT': ID3v2DateFrame,
 	'TDLY': ID3v2NumericTextFrame,
-	'TIME': ID3v2TIMEFrame,
+	'TIME': ID3v2TimeFrame,
 	'TLEN': ID3v2NumericTextFrame,
 	'TORY': ID3v2YearFrame,
 	'TSIZ': ID3v2NumericTextFrame,

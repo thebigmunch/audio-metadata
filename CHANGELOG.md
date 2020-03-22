@@ -52,6 +52,10 @@ This project adheres to [Semantic Versioning](https://semver.org).
 * Revise exceptions.
 * Check for framing bit in Ogg Vorbis comments.
 * Check for invalid characters in Vorbis comment field names.
+* Rename some ID3v2 frame classes:
+	* ``ID3v2GEOBFrame`` -> ``ID3v2GeneralEncapsulatedObjectFrame``.
+	* ``ID3v2TDATFrame`` -> ``ID3v2DateFrame``.
+	* ``ID3v2TIMEFrame`` -> ``ID3v2TimeFrame``.
 
 ### Removed
 
