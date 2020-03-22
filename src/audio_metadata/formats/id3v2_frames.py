@@ -340,20 +340,36 @@ class ID3v2GenreFrame(ID3v2Frame):
 
 		genres = []
 		for value in values:
-			match = _genre_re.match(value)
+			if value.isdigit():
+				try:
+					genres.append(ID3v1Genres[int(value)])
+				except IndexError:
+					genres.append(value)
+			elif value == 'CR':
+				genres.append('Cover')
+			elif value == 'RX':
+				genres.append('Remix')
+			else:
+				match = _genre_re.match(value)
 
-			if match['name']:
-				genres.append(match['name'])
-			elif match['id']:
-				if match['id'].isdigit() and int(match['id']):
-					try:
-						genres.append(ID3v1Genres[int(match['id'])])
-					except IndexError:
+				if match['id']:
+					if match['id'].isdigit():
+						try:
+							genres.append(ID3v1Genres[int(match['id'])])
+						except IndexError:
+							genres.append(value)
+					elif match['id'] == 'CR':
+						genres.append('Cover')
+					elif match['id'] == 'RX':
+						genres.append('Remix')
+					else:
 						genres.append(value)
-				elif match['id'] == 'CR':
-					genres.append('Cover')
-				elif match['id'] == 'RX':
-					genres.append('Remix')
+
+				if match['name']:
+					if match['name'].startswith("(("):
+						genres.append(match['name'][1:])
+					elif match['name'] not in genres:
+						genres.append(match['name'])
 
 		return (
 			genres,
