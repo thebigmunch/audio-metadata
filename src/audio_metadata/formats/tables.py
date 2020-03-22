@@ -7,6 +7,7 @@ __all__ = [
 	'ID3v2FrameIDs',
 	'ID3v2LyricsContentType',
 	'ID3v2LyricsTimestampFormat',
+	'ID3v2TempoTimestampFormat',
 	'ID3v2UnofficialFrameIDs',
 	'LAMEBitrateMode',
 	'LAMEChannelMode',
@@ -94,6 +95,11 @@ class ID3v2LyricsTimestampFormat(_BaseIntEnum):
 	MILLISECONDS = 1
 
 
+class ID3v2TempoTimestampFormat(_BaseIntEnum):
+	MPEG_FRAMES = 0
+	MILLISECONDS = 1
+
+
 class ID3Version(_BaseEnum):
 	v10 = (1, 0)
 	v11 = (1, 1)
@@ -146,6 +152,7 @@ ID3v2FrameAliases = {
 			'rating': 'POP',
 			'remixer': 'TP4',
 			'subtitle': 'TT3',
+			'tempo': 'STC',
 			'title': 'TT2',
 			'titlesort': 'TST',
 			'tracknumber': 'TRK',
@@ -198,6 +205,7 @@ ID3v2FrameAliases = {
 			'rating': 'POPM',
 			'remixer': 'TPE4',
 			'subtitle': 'TIT3',
+			'tempo': 'SYTC',
 			'title': 'TIT2',
 			'titlesort': 'TSOT',
 			'tracknumber': 'TRCK',
@@ -254,6 +262,7 @@ ID3v2FrameAliases = {
 			'rating': 'POPM',
 			'remixer': 'TPE4',
 			'subtitle': 'TIT3',
+			'tempo': 'SYTC',
 			'title': 'TIT2',
 			'titlesort': 'TSOT',
 			'tracknumber': 'TRCK',

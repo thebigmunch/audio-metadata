@@ -28,6 +28,10 @@ This project adheres to [Semantic Versioning](https://semver.org).
 * Support for ID3v2 unique file identifier frames.
 	* ``ID3v2UniqueFileIdentifier``.
 	* ``ID3v2UniqueFileIdentifierFrame``.
+* Support for ID3v2 synchronized tempo codes frames.
+	* ``ID3v2TempoTimestampFormat``,
+	* ``ID3v2SynchronizedTempoCodes``.
+	* ``ID3v2SynchronizedTempoCodesFrame``.
 
 ### Changed
 

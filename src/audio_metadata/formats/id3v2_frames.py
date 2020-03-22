@@ -24,6 +24,8 @@ __all__ = [
 	'ID3v2PrivateInfo',
 	'ID3v2SynchronizedLyrics',
 	'ID3v2SynchronizedLyricsFrame',
+	'ID3v2SynchronizedTempoCodes',
+	'ID3v2SynchronizedTempoCodesFrame',
 	'ID3v2TimeFrame',
 	'ID3v2TMCLFrame',
 	'ID3v2TextFrame',
@@ -62,6 +64,7 @@ from .tables import (
 	ID3v1Genres,
 	ID3v2LyricsContentType,
 	ID3v2LyricsTimestampFormat,
+	ID3v2TempoTimestampFormat,
 )
 from ..exceptions import (
 	FormatError,
@@ -182,6 +185,15 @@ class ID3v2Picture(Picture):
 )
 class ID3v2PrivateInfo(AttrMapping):
 	owner = attrib()
+	data = attrib()
+
+
+@attrs(
+	repr=False,
+	kw_only=True,
+)
+class ID3v2SynchronizedTempoCodes(AttrMapping):
+	timestamp_format = attrib(converter=ID3v2TempoTimestampFormat)
 	data = attrib()
 
 
@@ -501,6 +513,25 @@ class ID3v2SynchronizedLyricsFrame(ID3v2LyricsFrame):
 				content_type=frame_data[5],
 			),
 			encoding,
+		)
+
+
+@attrs(
+	repr=False,
+	kw_only=True,
+)
+class ID3v2SynchronizedTempoCodesFrame(ID3v2Frame):
+	@datareader
+	@classmethod
+	def _parse_frame_data(cls, data, frame_size):
+		frame_data = data.read(frame_size)
+
+		return (
+			ID3v2SynchronizedTempoCodes(
+				timestamp_format=ID3v2TempoTimestampFormat(frame_data[0]),
+				data=frame_data[1:]
+			),
+			None,
 		)
 
 
@@ -834,11 +865,11 @@ class ID3v2UniqueFileIdentifierFrame(ID3v2Frame):
 
 # TODO:ID3v2.2
 # TODO: BUF, CNT, CRA, CRM, ETC, EQU, LNK, MCI, MLL, PCS,
-# TODO: POP, REV, RVA, STC
+# TODO: POP, REV, RVA
 
 # TODO: ID3v2.3
 # TODO: AENC, COMR, ENCR, EQUA, ETCO, GRID, LINK, MLLT, OWNE
-# TODO: PCNT, PCST, POPM, POSS, RBUF, RGAD, RVAD, RVRB, SYTC,
+# TODO: PCNT, PCST, POPM, POSS, RBUF, RGAD, RVAD, RVRB,
 # TODO: USER, XRVA
 
 # TODO: ID3v2.4
@@ -849,21 +880,26 @@ ID3v2FrameTypes = {
 	'MCDI': ID3v2BinaryDataFrame,
 	'NCON': ID3v2BinaryDataFrame,
 
-	# Complex Text Frames
-	'COM': ID3v2CommentFrame,
+	# Complex binary data frames
 	'GEO': ID3v2GeneralEncapsulatedObjectFrame,
-	'IPL': ID3v2InvolvedPeopleListFrame,
-	'TXX': ID3v2UserTextFrame,
+	'STC': ID3v2SynchronizedTempoCodesFrame,
 	'UFI': ID3v2UniqueFileIdentifierFrame,
 
-	'COMM': ID3v2CommentFrame,
 	'GEOB': ID3v2GeneralEncapsulatedObjectFrame,
-	'IPLS': ID3v2InvolvedPeopleListFrame,
 	'PRIV': ID3v2PrivateFrame,
+	'SYTC': ID3v2SynchronizedTempoCodesFrame,
+	'UFID': ID3v2UniqueFileIdentifierFrame,
+
+	# Complex Text Frames
+	'COM': ID3v2CommentFrame,
+	'IPL': ID3v2InvolvedPeopleListFrame,
+	'TXX': ID3v2UserTextFrame,
+
+	'COMM': ID3v2CommentFrame,
+	'IPLS': ID3v2InvolvedPeopleListFrame,
 	'TIPL': ID3v2InvolvedPeopleListFrame,
 	'TMCL': ID3v2TMCLFrame,
 	'TXXX': ID3v2UserTextFrame,
-	'UFID': ID3v2UniqueFileIdentifierFrame,
 
 	# Genre Frame
 	'TCO': ID3v2GenreFrame,
