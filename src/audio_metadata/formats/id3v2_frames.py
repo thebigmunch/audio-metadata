@@ -116,37 +116,36 @@ class ID3v2InvolvedPerson(AttrMapping):
 	repr=False,
 	kw_only=True,
 )
-class ID3v2Performer(AttrMapping):
-	instrument = attrib()
-	name = attrib()
-
-
-@attrs(
-	repr=False,
-	kw_only=True,
-)
-class ID3v2PrivateInfo(AttrMapping):
-	owner = attrib()
-	data = attrib()
-
-
-@attrs(
-	repr=False,
-	kw_only=True,
-)
-class ID3v2UniqueFileIdentifier(AttrMapping):
-	owner = attrib()
-	identifier = attrib()
-
-
-@attrs(
-	repr=False,
-	kw_only=True,
-)
 class ID3v2Lyrics(AttrMapping):
 	language = attrib()
 	description = attrib()
 	text = attrib()
+
+
+@attrs(
+	repr=False,
+	kw_only=True,
+)
+class ID3v2SynchronizedLyrics(ID3v2Lyrics):
+	timestamp_format = attrib(converter=ID3v2LyricsTimestampFormat)
+	content_type = attrib(converter=ID3v2LyricsContentType)
+
+
+@attrs(
+	repr=False,
+	kw_only=True,
+)
+class ID3v2UnsynchronizedLyrics(ID3v2Lyrics):
+	pass
+
+
+@attrs(
+	repr=False,
+	kw_only=True,
+)
+class ID3v2Performer(AttrMapping):
+	instrument = attrib()
+	name = attrib()
 
 
 class ID3v2Picture(Picture):
@@ -181,17 +180,18 @@ class ID3v2Picture(Picture):
 	repr=False,
 	kw_only=True,
 )
-class ID3v2SynchronizedLyrics(ID3v2Lyrics):
-	timestamp_format = attrib(converter=ID3v2LyricsTimestampFormat)
-	content_type = attrib(converter=ID3v2LyricsContentType)
+class ID3v2PrivateInfo(AttrMapping):
+	owner = attrib()
+	data = attrib()
 
 
 @attrs(
 	repr=False,
 	kw_only=True,
 )
-class ID3v2UnsynchronizedLyrics(ID3v2Lyrics):
-	pass
+class ID3v2UniqueFileIdentifier(AttrMapping):
+	owner = attrib()
+	identifier = attrib()
 
 
 @attrs(
