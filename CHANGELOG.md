@@ -75,6 +75,7 @@ This project adheres to [Semantic Versioning](https://semver.org).
 ### Fixed
 
 * ``ID3v2BinaryDataFrame`` not inheriting from ``ID3v2BaseFrame``.
+* Support for ID3v2 frames with more than 2 values.
 
 
 ## [0.8.0](https://github.com/thebigmunch/audio-metadata/releases/tag/0.8.0) (2020-03-05)

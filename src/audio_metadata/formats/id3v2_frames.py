@@ -165,7 +165,7 @@ class ID3v2Picture(Picture):
 		type_ = ID3PictureType(data[mime_end + 1])
 
 		desc_start = mime_end + 2
-		description, image_data = split_encoded(data[desc_start:], encoding)
+		description, image_data = split_encoded(data[desc_start:], encoding, 1)
 		description = decode_bytestring(description, encoding)
 		width, height = get_image_size(image_data)
 
@@ -265,9 +265,10 @@ class ID3v2Frame(Tag):
 		)
 
 		frame_type = ID3v2FrameTypes.get(frame_id, ID3v2Frame)
-		frame_value, frame_encoding = frame_type._parse_frame_data(data, frame_size)
 
 		try:
+			frame_value, frame_encoding = frame_type._parse_frame_data(data, frame_size)
+
 			return frame_type(
 				name=frame_id,
 				value=frame_value,
@@ -302,16 +303,16 @@ class ID3v2CommentFrame(ID3v2Frame):
 		frame_data = data.read(frame_size)
 
 		encoding = determine_encoding(frame_data)
+		description, value = split_encoded(frame_data[4:], encoding)
 
-		values = split_encoded(frame_data[4:], encoding)
 		# Ignore empty comments.
-		if len(values) < 2:
+		if not value:
 			return None
 
 		comment = ID3v2Comment(
 			language=decode_bytestring(frame_data[1:4]),
-			description=decode_bytestring(values[0], encoding),
-			text=decode_bytestring(values[1], encoding),
+			description=decode_bytestring(description, encoding),
+			text=decode_bytestring(value, encoding),
 		)
 
 		return (
@@ -332,19 +333,10 @@ class ID3v2GenreFrame(ID3v2Frame):
 
 		encoding = determine_encoding(frame_data)
 
-		remainder = frame_data[1:]
-		values = []
-		while True:
-			split = split_encoded(remainder, encoding)
-			values.extend(
-				decode_bytestring(v, encoding)
-				for v in split
-			)
-
-			if len(split) < 2:
-				break
-
-			remainder = split[1]
+		values = [
+			decode_bytestring(value, encoding)
+			for value in split_encoded(frame_data[1:], encoding)
+		]
 
 		genres = []
 		for value in values:
@@ -641,22 +633,18 @@ class ID3v2UserTextFrame(ID3v2Frame):
 		frame_data = data.read(frame_size)
 
 		encoding = determine_encoding(frame_data)
-		description, tail = split_encoded(frame_data[1:], encoding)
+		description, *remainder = split_encoded(frame_data[1:], encoding)
 
-		text = []
-		while True:
-			try:
-				head, tail = split_encoded(tail, encoding)
-			except ValueError:
-				text.append(decode_bytestring(tail, encoding))
-				break
-			else:
-				text.append(decode_bytestring(head, encoding))
+		values = [
+			decode_bytestring(value, encoding)
+			for value in remainder
+			if value
+		]
 
 		return (
 			ID3v2UserText(
 				description=decode_bytestring(description, encoding),
-				text=text,
+				text=values,
 			),
 			encoding,
 		)
@@ -673,7 +661,7 @@ class ID3v2UserURLLinkFrame(ID3v2Frame):
 		frame_data = data.read(frame_size)
 
 		encoding = determine_encoding(frame_data)
-		description, url = split_encoded(frame_data[1:], encoding)
+		description, url = split_encoded(frame_data[1:], encoding, 1)
 
 		return (
 			ID3v2UserURLLink(
@@ -761,9 +749,7 @@ class ID3v2GeneralEncapsulatedObjectFrame(ID3v2Frame):
 
 		encoding = determine_encoding(frame_data)
 
-		mime_type, remainder = split_encoded(frame_data[1:], encoding)
-		filename, remainder = split_encoded(remainder, encoding)
-		description, value = split_encoded(remainder, encoding)
+		mime_type, filename, description, value = split_encoded(frame_data[1:], encoding)
 
 		return (
 			ID3v2GeneralEncapsulatedObject(
@@ -788,19 +774,17 @@ class ID3v2InvolvedPeopleListFrame(ID3v2PeopleListFrame):
 
 		encoding = determine_encoding(frame_data)
 
-		values = []
-		tail = frame_data[1:]
-
-		while tail:
-			head, tail = split_encoded(tail, encoding)
-			values.append(head)
+		values = more_itertools.sliced(
+			split_encoded(frame_data[1:], encoding),
+			2,
+		)
 
 		people = [
 			ID3v2InvolvedPerson(
 				involvement=decode_bytestring(involvement, encoding),
 				name=decode_bytestring(name, encoding),
 			)
-			for involvement, name in more_itertools.chunked(values, 2)
+			for involvement, name in values
 		]
 
 		# Ignore empty people list.
@@ -825,19 +809,17 @@ class ID3v2TMCLFrame(ID3v2InvolvedPeopleListFrame):
 
 		encoding = determine_encoding(frame_data)
 
-		values = []
-		tail = frame_data[1:]
-
-		while tail:
-			head, tail = split_encoded(tail, encoding)
-			values.append(head)
+		values = more_itertools.sliced(
+			split_encoded(frame_data[1:], encoding),
+			2,
+		)
 
 		performers = [
 			ID3v2Performer(
 				instrument=decode_bytestring(instrument, encoding),
 				name=decode_bytestring(name, encoding),
 			)
-			for instrument, name in more_itertools.chunked(values, 2)
+			for instrument, name in values
 		]
 
 		# Ignore empty people list.

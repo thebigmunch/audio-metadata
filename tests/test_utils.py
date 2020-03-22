@@ -152,7 +152,7 @@ def _(
 
 
 @test(
-	"split_encoded",
+	"split_encoded ({b}, {encoding})",
 	tags=['unit', 'utils', 'split_encoded']
 )
 def _(
@@ -177,14 +177,14 @@ def _(
 		'iso-9959-1',
 	),
 	expected=each(
-		(b'test', b''),
-		(b'\xff\xfe', b'\xff\xfet\x00e\x00s\x00t\x00\x00\x00'),
-		(b'\xff\xfe', b'\xff\xfet\x00e\x00s\x00t\x00\x00\x00'),
-		(b'\xff\xfet\x00e\x00s\x00t\x00', b''),
-		(b'\xfe\xff\x00t\x00e\x00s\x00t', b''),
-		(b'\xfe\xff\x00t\x00e\x00s\x00t', b''),
-		(b'test', b''),
-		(b'test',),
+		[b'test'],
+		[b'\xff\xfe', b'\xff\xfet\x00e\x00s\x00t\x00'],
+		[b'\xff\xfe', b'\xff\xfet\x00e\x00s\x00t\x00'],
+		[b'\xff\xfet\x00e\x00s\x00t\x00'],
+		[b'\xfe\xff\x00t\x00e\x00s\x00t'],
+		[b'\xfe\xff\x00t\x00e\x00s\x00t'],
+		[b'test'],
+		[b'test'],
 	),
 ):
 	assert split_encoded(b, encoding) == expected

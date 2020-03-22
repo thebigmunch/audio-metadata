@@ -50,25 +50,43 @@ def determine_encoding(b):
 	return encoding
 
 
-def split_encoded(data, encoding):
+def split_encoded(data, encoding, max_split=None):
 	"""Split ID3v2 frame data according to encoding."""
 
-	try:
-		if encoding in ['iso-8859-1', 'utf-8']:
-			head, tail = data.split(b'\x00', 1)
+	remainder = data
+
+	values = []
+	num_split = 0
+	while True:
+		try:
+			if encoding in ['iso-8859-1', 'utf-8']:
+				head, tail = remainder.split(b'\x00', 1)
+			else:
+				if len(remainder) % 2 != 0:
+					remainder += b'\x00'
+
+				head, tail = remainder.split(b'\x00\x00', 1)
+
+				if len(head) % 2 != 0:
+					head, tail = remainder.split(b'\x00\x00\x00', 1)
+					head += b'\x00'
+		except ValueError:
+			if remainder:
+				values.append(remainder)
+			break
 		else:
-			if len(data) % 2 != 0:
-				data += b'\x00'
+			values.append(head)
+			remainder = tail
 
-			head, tail = data.split(b'\x00\x00', 1)
+			num_split += 1
+			if (
+				max_split
+				and num_split >= max_split
+			):
+				values.append(tail)
+				break
 
-			if len(head) % 2 != 0:
-				head, tail = data.split(b'\x00\x00\x00', 1)
-				head += b'\x00'
-	except ValueError:
-		return (data,)
-
-	return head, tail
+	return values
 
 
 @datareader
