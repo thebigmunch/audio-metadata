@@ -26,10 +26,12 @@ __all__ = [
 	'ID3v2SynchronizedLyricsFrame',
 	'ID3v2SynchronizedTempoCodes',
 	'ID3v2SynchronizedTempoCodesFrame',
-	'ID3v2TimeFrame',
 	'ID3v2TMCLFrame',
+	'ID3v2TimeFrame',
+	'ID3v2TermsOfUse',
 	'ID3v2TextFrame',
 	'ID3v2TimestampFrame',
+	'ID3v2USERFrame',
 	'ID3v2UniqueFileIdentifier',
 	'ID3v2UniqueFileIdentifierFrame',
 	'ID3v2UnsynchronizedLyrics',
@@ -195,6 +197,15 @@ class ID3v2PrivateInfo(AttrMapping):
 class ID3v2SynchronizedTempoCodes(AttrMapping):
 	timestamp_format = attrib(converter=ID3v2TempoTimestampFormat)
 	data = attrib()
+
+
+@attrs(
+	repr=False,
+	kw_only=True,
+)
+class ID3v2TermsOfUse(AttrMapping):
+	language = attrib()
+	text = attrib()
 
 
 @attrs(
@@ -517,7 +528,7 @@ class ID3v2SynchronizedLyricsFrame(ID3v2LyricsFrame):
 				language=decode_bytestring(frame_data[1:4]),
 				description=decode_bytestring(description, encoding),
 				text=decode_bytestring(text, encoding),
-				timestamp_format=frame_data[4],
+				timestamp_format=ID3v2LyricsTimestampFormat(frame_data[4]),
 				content_type=frame_data[5],
 			),
 			encoding,
@@ -871,6 +882,27 @@ class ID3v2UniqueFileIdentifierFrame(ID3v2Frame):
 		)
 
 
+@attrs(
+	repr=False,
+	kw_only=True,
+)
+class ID3v2USERFrame(ID3v2Frame):
+	@datareader
+	@classmethod
+	def _parse_frame_data(cls, data, frame_size):
+		frame_data = data.read(frame_size)
+
+		encoding = determine_encoding(frame_data)
+
+		return (
+			ID3v2TermsOfUse(
+				language=decode_bytestring(frame_data[1:4]),
+				text=decode_bytestring(frame_data[4:], encoding),
+			),
+			encoding,
+		)
+
+
 # TODO:ID3v2.2
 # TODO: BUF, CNT, CRA, CRM, ETC, EQU, LNK, MCI, MLL, PCS,
 # TODO: POP, REV, RVA
@@ -908,6 +940,7 @@ ID3v2FrameTypes = {
 	'TIPL': ID3v2InvolvedPeopleListFrame,
 	'TMCL': ID3v2TMCLFrame,
 	'TXXX': ID3v2UserTextFrame,
+	'USER': ID3v2USERFrame,
 
 	# Genre Frame
 	'TCO': ID3v2GenreFrame,
