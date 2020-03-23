@@ -39,6 +39,9 @@ This project adheres to [Semantic Versioning](https://semver.org).
 * Support for ID3v2 ``GRID`` frames.
 	* ``ID3v2GroupID``.
 	* ``ID3v2GRIDFrame``.
+* Support for ID3v2 ``OWNE`` frames.
+	* ``ID3v2OwnershipTransaction``.
+	* ``ID3v2OWNEFrame``.
 
 ### Changed
 

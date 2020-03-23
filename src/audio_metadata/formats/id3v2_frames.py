@@ -18,6 +18,8 @@ __all__ = [
 	'ID3v2LyricsFrame',
 	'ID3v2NumberFrame',
 	'ID3v2NumericTextFrame',
+	'ID3v2OWNEFrame',
+	'ID3v2OwnershipTransaction',
 	'ID3v2PeopleListFrame',
 	'ID3v2Performer',
 	'ID3v2Picture',
@@ -154,6 +156,16 @@ class ID3v2SynchronizedLyrics(ID3v2Lyrics):
 )
 class ID3v2UnsynchronizedLyrics(ID3v2Lyrics):
 	pass
+
+
+@attrs(
+	repr=False,
+	kw_only=True,
+)
+class ID3v2OwnershipTransaction(AttrMapping):
+	price_paid = attrib()
+	date_of_purchase = attrib()
+	seller = attrib()
 
 
 @attrs(
@@ -860,6 +872,34 @@ class ID3v2InvolvedPeopleListFrame(ID3v2PeopleListFrame):
 
 		return (
 			people,
+			encoding,
+		)
+
+
+@attrs(
+	repr=False,
+	kw_only=True,
+)
+class ID3v2OWNEFrame(ID3v2Frame):
+	@datareader
+	@classmethod
+	def _parse_frame_data(cls, data, frame_size):
+		frame_data = data.read(frame_size)
+
+		encoding = determine_encoding(frame_data)
+
+		price_paid, remainder = frame_data[1:].split(b'\x00', 1)
+
+		date_of_purchase = remainder[:8].decode('iso-8859-1')
+		if not date_of_purchase.is_digit():
+			raise TagError("ID3v2 ``OWNE`` frame date of purchase must be in the form of ``YYYYMMDD``.")
+
+		return (
+			ID3v2OwnershipTransaction(
+				price_paid=price_paid.decode('iso-8859-1'),
+				date_of_purchase=date_of_purchase,
+				seller=decode_bytestring(remainder[8:], encoding),
+			),
 			encoding,
 		)
 
