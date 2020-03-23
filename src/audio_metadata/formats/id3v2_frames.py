@@ -10,6 +10,8 @@ __all__ = [
 	'ID3v2GeneralEncapsulatedObject',
 	'ID3v2GeneralEncapsulatedObjectFrame',
 	'ID3v2GenreFrame',
+	'ID3v2GRIDFrame',
+	'ID3v2GroupID',
 	'ID3v2InvolvedPeopleListFrame',
 	'ID3v2InvolvedPerson',
 	'ID3v2Lyrics',
@@ -106,6 +108,16 @@ class ID3v2GeneralEncapsulatedObject(AttrMapping):
 	filename = attrib()
 	description = attrib()
 	object = attrib()  # noqa
+
+
+@attrs(
+	repr=False,
+	kw_only=True,
+)
+class ID3v2GroupID(AttrMapping):
+	owner = attrib()
+	symbol = attrib()
+	data = attrib()
 
 
 @attrs(
@@ -793,6 +805,34 @@ class ID3v2GeneralEncapsulatedObjectFrame(ID3v2Frame):
 	repr=False,
 	kw_only=True,
 )
+class ID3v2GRIDFrame(ID3v2Frame):
+	@datareader
+	@classmethod
+	def _parse_frame_data(cls, data, frame_size):
+		frame_data = data.read(frame_size)
+		owner, remainder = frame_data.split(b'\x00', 1)
+		symbol = remainder[0:1]
+
+		if (
+			symbol < b'\x80'
+			or symbol > b'\xF0'
+		):
+			raise TagError(f"Invalid group symbol in ID3v2 ``GRID`` frame: {symbol}")
+
+		return (
+			ID3v2GroupID(
+				owner=owner.decode('iso-8859-1'),
+				symbol=symbol,
+				data=remainder[1:],
+			),
+			None,
+		)
+
+
+@attrs(
+	repr=False,
+	kw_only=True,
+)
 class ID3v2InvolvedPeopleListFrame(ID3v2PeopleListFrame):
 	@datareader
 	@classmethod
@@ -908,11 +948,11 @@ class ID3v2USERFrame(ID3v2Frame):
 # TODO: POP, REV, RVA
 
 # TODO: ID3v2.3
-# TODO: AENC, COMR, ENCR, EQUA, ETCO, GRID, LINK, MLLT, OWNE
+# TODO: AENC, COMR, ENCR, EQUA, ETCO, LINK, MLLT, OWNE
 # TODO: PCNT, PCST, POPM, POSS, RBUF, RGAD, RVAD, RVRB, XRVA
 
 # TODO: ID3v2.4
-# TODO: AENC, ASPI, COMR, ENCR, EQU2, ETCO, GRID, LINK, MLLT,
+# TODO: AENC, ASPI, COMR, ENCR, EQU2, ETCO, LINK, MLLT,
 # TODO: OWNE, PCNT, PCST, POPM, POSS, RBUF, RGAD, RVA2, RVRB,
 # TODO: SEEK, SIGN, TPRO, XRVA
 ID3v2FrameTypes = {
@@ -926,6 +966,7 @@ ID3v2FrameTypes = {
 	'UFI': ID3v2UniqueFileIdentifierFrame,
 
 	'GEOB': ID3v2GeneralEncapsulatedObjectFrame,
+	'GRID': ID3v2GRIDFrame,
 	'PRIV': ID3v2PrivateFrame,
 	'SYTC': ID3v2SynchronizedTempoCodesFrame,
 	'UFID': ID3v2UniqueFileIdentifierFrame,

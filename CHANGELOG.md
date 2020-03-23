@@ -36,6 +36,9 @@ This project adheres to [Semantic Versioning](https://semver.org).
 * Support for ID3v2 ``USER`` frames.
 	* ``ID3v2TermsOfUse``.
 	* ``ID3v2USERFrame``.
+* Support for ID3v2 ``GRID`` frames.
+	* ``ID3v2GroupID``.
+	* ``ID3v2GRIDFrame``.
 
 ### Changed
 
