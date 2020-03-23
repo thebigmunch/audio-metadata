@@ -129,11 +129,12 @@ def get_image_size(data):
 def humanize_bitrate(bitrate):
 	"""Humanize bitrate from integer."""
 
-	for divisor, symbol in [(1000 ** 1, 'Kbps'), (1, 'bps')]:
-		if bitrate >= divisor:
-			break
+	if bitrate is not None:
+		for divisor, symbol in [(1000 ** 1, 'Kbps'), (1, 'bps')]:
+			if bitrate >= divisor:
+				break
 
-	return f'{round(bitrate / divisor)} {symbol}'
+		return f'{round(bitrate / divisor)} {symbol}'
 
 
 def humanize_sample_rate(sample_rate):

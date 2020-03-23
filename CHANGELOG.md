@@ -70,6 +70,9 @@ This project adheres to [Semantic Versioning](https://semver.org).
 	* ``ID3v2GEOBFrame`` -> ``ID3v2GeneralEncapsulatedObjectFrame``.
 	* ``ID3v2TDATFrame`` -> ``ID3v2DateFrame``.
 	* ``ID3v2TIMEFrame`` -> ``ID3v2TimeFrame``.
+* Refactor ``FLAC.parse``.
+	* Move metadata block parsing into separate method.
+	* Add ``FormatError`` exceptions where needed.
 
 ### Removed
 

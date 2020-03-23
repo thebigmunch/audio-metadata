@@ -445,6 +445,47 @@ class FLAC(Format):
 		super().__init__()
 		self._blocks = []
 
+	@staticmethod
+	@datareader
+	def _parse_metadata_block(data):
+		is_last_block, block_type, block_size = bitstruct.unpack(
+			'b1 u7 u24',
+			data.read(4),
+		)
+
+		if block_size == 0:
+			raise FormatError("FLAC metadata block size must be greater than 0.")
+
+		# There are examples of tools writing incorrect block sizes.
+		# The FLAC reference implementation unintentionally (I hope?) parses them.
+		# I've chosen not to add special handling for these invalid files.
+		# If needed, mutagen (https://github.com/quodlibet/mutagen) may support them.
+		metadata_block_data = data.read(block_size)
+
+		if block_type == FLACMetadataBlockType.STREAMINFO:
+			metadata_block = FLACStreamInfo.parse(metadata_block_data)
+		elif block_type == FLACMetadataBlockType.PADDING:
+			metadata_block = FLACPadding.parse(metadata_block_data)
+		elif block_type == FLACMetadataBlockType.APPLICATION:
+			metadata_block = FLACApplication.parse(metadata_block_data)
+		elif block_type == FLACMetadataBlockType.SEEKTABLE:
+			metadata_block = FLACSeekTable.parse(metadata_block_data)
+		elif block_type == FLACMetadataBlockType.VORBIS_COMMENT:
+			metadata_block = FLACVorbisComments.parse(metadata_block_data)
+		elif block_type == FLACMetadataBlockType.CUESHEET:
+			metadata_block = FLACCueSheet.parse(metadata_block_data)
+		elif block_type == FLACMetadataBlockType.PICTURE:
+			metadata_block = FLACPicture.parse(metadata_block_data)
+		elif block_type >= 127:
+			raise FormatError(f"{block_type} is not a valid FLAC metadata block type.")
+		else:
+			metadata_block = FLACMetadataBlock(
+				type=block_type,
+				data=metadata_block_data,
+			)
+
+		return metadata_block, is_last_block
+
 	@classmethod
 	def parse(cls, data):
 		self = super()._load(data)
@@ -456,54 +497,46 @@ class FLAC(Format):
 		if self._obj.read(4) != b'fLaC':
 			raise FormatError("Valid FLAC header not found.")
 
-		header_data = self._obj.read(4)
-
+		is_first = True
 		while True:
-			is_last_block, block_type, block_size = bitstruct.unpack(
-				'b1 u7 u24',
-				header_data,
-			)
+			metadata_block, is_last_block = self._parse_metadata_block(self._obj)
 
-			# There are examples of tools writing incorrect block sizes.
-			# The FLAC reference implementation unintentionally (I hope?) parses them.
-			# I've chosen not to add special handling for these invalid files.
-			# If needed, mutagen (https://github.com/quodlibet/mutagen) may support them.
-			metadata_block_data = self._obj.read(block_size)
+			if (
+				is_first
+				and not isinstance(metadata_block, FLACStreamInfo)
+			):
+				raise FormatError("FLAC streaminfo block must be first.")
 
-			if block_type == FLACMetadataBlockType.STREAMINFO:
-				streaminfo_block = FLACStreamInfo.parse(metadata_block_data)
-				self.streaminfo = streaminfo_block
-				self._blocks.append(streaminfo_block)
-			elif block_type == FLACMetadataBlockType.PADDING:
-				self._blocks.append(FLACPadding.parse(metadata_block_data))
-			elif block_type == FLACMetadataBlockType.APPLICATION:
-				application_block = FLACApplication.parse(metadata_block_data)
-				self._blocks.append(application_block)
-			elif block_type == FLACMetadataBlockType.SEEKTABLE:
-				seektable = FLACSeekTable.parse(metadata_block_data)
-				self.seektable = seektable
-				self._blocks.append(seektable)
-			elif block_type == FLACMetadataBlockType.VORBIS_COMMENT:
-				comment_block = FLACVorbisComments.parse(metadata_block_data)
-				self.tags = comment_block
-				self._blocks.append(comment_block)
-			elif block_type == FLACMetadataBlockType.CUESHEET:
-				cuesheet_block = FLACCueSheet.parse(metadata_block_data)
-				self.cuesheet = cuesheet_block
-				self._blocks.append(cuesheet_block)
-			elif block_type == FLACMetadataBlockType.PICTURE:
-				picture = FLACPicture.parse(metadata_block_data)
-				self.pictures.append(picture)
-				self._blocks.append(picture)
-			elif block_type >= 127:
-				raise FormatError(f"{block_type} is not a valid FLAC metadata block type.")
+			is_first = False
+
+			if isinstance(metadata_block, FLACStreamInfo):
+				if 'streaminfo' in self:
+					raise FormatError("Multiple FLAC streaminfo blocks found.")
+
+				self.streaminfo = metadata_block
+			elif isinstance(metadata_block, FLACPadding):
+				self.padding = metadata_block
+			elif isinstance(metadata_block, FLACApplication):
+				self.setdefault('applications', []).append(metadata_block)
+			elif isinstance(metadata_block, FLACSeekTable):
+				if 'seektable' in self:
+					raise FormatError("Multiple FLAC seektable blocks found.")
+
+				self.seektable = metadata_block
+			elif isinstance(metadata_block, FLACVorbisComments):
+				if self.tags:
+					raise FormatError("Multiple FLAC Vorbis comment blocks found.")
+
+				self.tags = metadata_block
+			elif isinstance(metadata_block, FLACCueSheet):
+				if 'cuesheet' in self:
+					raise FormatError("Multiple FLAC cuesheet blocks found.")
+
+				self.cuesheet = metadata_block
+			elif isinstance(metadata_block, FLACPicture):
+				self.pictures.append(metadata_block)
 			else:
-				self._blocks.append(
-					FLACMetadataBlock(
-						type=block_type,
-						data=metadata_block_data,
-					)
-				)
+				self._blocks.append(metadata_block)
 
 			if is_last_block:
 				pos = self._obj.tell()
@@ -516,8 +549,6 @@ class FLAC(Format):
 					self.streaminfo.bitrate = 0
 
 				break
-			else:
-				header_data = self._obj.read(4)
 
 		self._obj.close()
 

@@ -115,12 +115,14 @@ def test_get_image_size():
 )
 def _(
 	bitrate=each(
+		None,
 		0,
 		1,
 		100,
 		1000,
 	),
 	humanized=each(
+		None,
 		'0 bps',
 		'1 bps',
 		'100 bps',
