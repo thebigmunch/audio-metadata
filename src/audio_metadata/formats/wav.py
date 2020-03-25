@@ -192,7 +192,7 @@ class WAV(Format):
 		try:
 			self.streaminfo._start = audio_start
 			self.streaminfo._size = audio_size
-			self.streaminfo.duration = self.streaminfo._size / self.streaminfo.bitrate / 8
+			self.streaminfo.duration = self.streaminfo._size / (self.streaminfo.bitrate / 8)
 		except UnboundLocalError:
 			raise FormatError("Valid WAVE stream info not found.")
 
