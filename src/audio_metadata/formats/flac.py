@@ -445,8 +445,8 @@ class FLAC(Format):
 		super().__init__()
 		self._blocks = []
 
-	@staticmethod
 	@datareader
+	@staticmethod
 	def _parse_metadata_block(data):
 		is_last_block, block_type, block_size = bitstruct.unpack(
 			'b1 u7 u24',

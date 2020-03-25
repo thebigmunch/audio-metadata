@@ -12,6 +12,7 @@ from audio_metadata.utils import (
 	determine_encoding,
 	get_image_size,
 	humanize_bitrate,
+	humanize_duration,
 	humanize_sample_rate,
 	split_encoded
 )
@@ -133,17 +134,42 @@ def _(
 
 
 @test(
+	"humanize_duration",
+	tags=['unit', 'utils', 'humanize_duration']
+)
+def _(
+	duration=each(
+		None,
+		0,
+		1,
+		60,
+		3600,
+	),
+	humanized=each(
+		None,
+		'00:00',
+		'00:01',
+		'01:00',
+		'01:00:00',
+	),
+):
+	assert humanize_duration(duration) == humanized
+
+
+@test(
 	"humanize_sample_rate",
 	tags=['unit', 'utils', 'humanize_sample_rate']
 )
 def _(
 	sample_rate=each(
+		None,
 		0,
 		1,
 		1000,
 		44100,
 	),
 	humanized=each(
+		None,
 		'0.0 Hz',
 		'1.0 Hz',
 		'1.0 KHz',

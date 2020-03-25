@@ -6,6 +6,7 @@ __all__ = [
 	'RIFFTags',
 	'WAV',
 	'WAVStreamInfo',
+	'WAVSubchunk',
 ]
 
 import os
@@ -16,7 +17,10 @@ from attr import (
 	attrs,
 )
 from bidict import frozenbidict
-from tbm_utils import datareader
+from tbm_utils import (
+	AttrMapping,
+	datareader,
+)
 
 from .id3v2 import ID3v2
 from ..exceptions import FormatError
@@ -89,6 +93,15 @@ class RIFFTags(Tags):
 	repr=False,
 	kw_only=True,
 )
+class WAVSubchunk(AttrMapping):
+	id = attrib()  # noqa
+	data = attrib()
+
+
+@attrs(
+	repr=False,
+	kw_only=True,
+)
 class WAVStreamInfo(StreamInfo):
 	_start = attrib()
 	_size = attrib()
@@ -137,6 +150,35 @@ class WAV(Format):
 
 	tags_type = RIFFTags
 
+	@datareader
+	@staticmethod
+	def _parse_subchunk(data):
+		subchunk_id, subchunk_size = struct.unpack(
+			'4sI',
+			data.read(8),
+		)
+
+		if subchunk_id == b'fmt ':
+			subchunk = WAVStreamInfo.parse(data)
+			data.read(subchunk_size - 16)  # Read through rest of subchunk if not PCM.
+		elif (
+			subchunk_id == b'LIST'
+			and data.peek(4) == b'INFO'
+		):
+			subchunk = RIFFTags.parse(data.read(subchunk_size))
+		elif subchunk_id.lower() == b'id3 ':
+			try:
+				subchunk = ID3v2.parse(data)
+			except FormatError:
+				raise
+		else:
+			subchunk = WAVSubchunk(
+				id=subchunk_id,
+				data=data.read(subchunk_size),
+			)
+
+		return subchunk
+
 	@classmethod
 	def parse(cls, data):
 		self = super()._load(data)
@@ -151,37 +193,26 @@ class WAV(Format):
 		if chunk_id != b'RIFF' or format_ != b'WAVE':
 			raise FormatError("Valid WAVE header not found.")
 
-		subchunk_header = self._obj.read(8)
+		subchunk_header = self._obj.peek(8)
 		while len(subchunk_header) == 8:
-			subchunk_id, subchunk_size = struct.unpack(
-				'4sI',
-				subchunk_header,
-			)
+			subchunk = self._parse_subchunk(self._obj)
 
-			if subchunk_id == b'fmt ':
-				self.streaminfo = WAVStreamInfo.parse(self._obj)
-				self._obj.read(subchunk_size - 16)  # Read through rest of subchunk if not PCM.
-			elif subchunk_id == b'data':
-				audio_start = self._obj.tell()
-				audio_size = subchunk_size
-				self._obj.seek(subchunk_size, os.SEEK_CUR)
-			elif (
-				subchunk_id == b'LIST'
-				and self._obj.peek(4) == b'INFO'
+			if (
+				isinstance(subchunk, WAVSubchunk)
+				and subchunk.id == b'data'
 			):
-				self._riff = RIFFTags.parse(self._obj.read(subchunk_size))
-			elif subchunk_id.lower() == b'id3 ':
-				try:
-					id3 = ID3v2.parse(self._obj)
-				except FormatError:
-					raise
-				else:
-					self._id3 = id3
-			else:  # pragma: nocover
-				# TODO
-				self._obj.seek(subchunk_size, os.SEEK_CUR)
+				audio_size = len(subchunk.data)
+				audio_start = self._obj.tell() - audio_size
+			elif isinstance(subchunk, WAVStreamInfo):
+				self.streaminfo = subchunk
+			elif isinstance(subchunk, RIFFTags):
+				self._riff = subchunk
+			elif isinstance(subchunk, ID3v2):
+				self._id3 = subchunk
+			else:
+				pass  # TODO
 
-			subchunk_header = self._obj.read(8)
+			subchunk_header = self._obj.peek(8)
 
 		if '_id3' in self:
 			self.pictures = self._id3.pictures

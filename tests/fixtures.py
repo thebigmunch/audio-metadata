@@ -201,11 +201,6 @@ def null():
 
 
 @fixture(scope='global')
-def riff_tags():
-	return Path(TEST_PATH, 'data', 'wav', 'riff-tags.bin').read_bytes()
-
-
-@fixture(scope='global')
 def vbri_header():
 	return Path(TEST_PATH, 'data', 'mp3', 'vbri-header.bin').read_bytes()
 
@@ -223,3 +218,23 @@ def xing_header_no_lame():
 @fixture(scope='global')
 def xing_toc():
 	return Path(TEST_PATH, 'data', 'mp3', 'xing-toc.bin').read_bytes()
+
+
+@fixture(scope='global')
+def wav_riff_tags_subchunk():
+	return Path(TEST_PATH, 'data', 'wav', 'wav-riff-tags-subchunk.bin').read_bytes()
+
+
+@fixture(scope='global')
+def wav_riff_tags_data():
+	return Path(TEST_PATH, 'data', 'wav', 'wav-riff-tags-subchunk.bin').read_bytes()[8:]
+
+
+@fixture(scope='global')
+def wav_streaminfo_subchunk():
+	return Path(TEST_PATH, 'data', 'wav', 'wav-streaminfo-subchunk.bin').read_bytes()
+
+
+@fixture(scope='global')
+def wav_streaminfo_data():
+	return Path(TEST_PATH, 'data', 'wav', 'wav-streaminfo-subchunk.bin').read_bytes()[8:]

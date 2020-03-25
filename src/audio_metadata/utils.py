@@ -7,6 +7,7 @@ from codecs import (
 from functools import reduce
 
 from tbm_utils import datareader
+from tbm_utils import humanize_duration as tbm_humanize_duration
 
 
 def decode_synchsafe_int(data, per_byte):
@@ -137,13 +138,21 @@ def humanize_bitrate(bitrate):
 		return f'{round(bitrate / divisor)} {symbol}'
 
 
+def humanize_duration(duration):
+	"""Humanize duration from integer."""
+
+	if duration is not None:
+		return tbm_humanize_duration(duration)
+
+
 def humanize_sample_rate(sample_rate):
 	"""Humanize sample rate from integer."""
 
-	for divisor, symbol in [(1000 ** 1, 'KHz'), (1, 'Hz')]:
-		if sample_rate >= divisor:
-			break
+	if sample_rate is not None:
+		for divisor, symbol in [(1000 ** 1, 'KHz'), (1, 'Hz')]:
+			if sample_rate >= divisor:
+				break
 
-	value = sample_rate / divisor
+		value = sample_rate / divisor
 
-	return f'{value if value.is_integer() else value:.1f} {symbol}'
+		return f'{value if value.is_integer() else value:.1f} {symbol}'
