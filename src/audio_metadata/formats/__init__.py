@@ -8,7 +8,7 @@ from .oggopus import *
 from .oggvorbis import *
 from .tables import *
 from .vorbis_comments import *
-from .wav import *
+from .wave import *
 
 
 __all__ = [
@@ -22,5 +22,5 @@ __all__ = [
 	*oggvorbis.__all__,
 	*tables.__all__,
 	*vorbis_comments.__all__,
-	*wav.__all__,
+	*wave.__all__,
 ]

@@ -5,31 +5,31 @@ from ward import (
 )
 
 from audio_metadata import (
-	WAV,
+	WAVE,
 	FormatError,
 	RIFFTags,
-	WAVStreamInfo,
+	WAVEStreamInfo,
 )
 from tests.fixtures import (
 	null,
-	wav_riff_tags_data,
-	wav_riff_tags_subchunk,
-	wav_streaminfo_data,
-	wav_streaminfo_subchunk,
+	wave_riff_tags_data,
+	wave_riff_tags_subchunk,
+	wave_streaminfo_data,
+	wave_streaminfo_subchunk,
 )
 
 
 @test(
 	"RIFFTags",
-	tags=['unit', 'wav', 'RIFFTags']
+	tags=['unit', 'wave', 'RIFFTags']
 )
 @using(
 	null=null,
-	wav_riff_tags_data=wav_riff_tags_data,
+	wave_riff_tags_data=wave_riff_tags_data,
 )
 def _(
 	null,
-	wav_riff_tags_data,
+	wave_riff_tags_data,
 ):
 	with raises(FormatError) as exc:
 		RIFFTags.parse(null)
@@ -44,19 +44,19 @@ def _(
 		title=['test-title'],
 		tracknumber=['1'],
 	)
-	riff_tags_load = RIFFTags.parse(wav_riff_tags_data)
+	riff_tags_load = RIFFTags.parse(wave_riff_tags_data)
 
 	assert riff_tags_init == riff_tags_load
 
 
 @test(
-	"WAVStreamInfo",
-	tags=['unit', 'wav', 'RIFFTags']
+	"WAVEStreamInfo",
+	tags=['unit', 'wave', 'RIFFTags']
 )
-@using(wav_streaminfo_data=wav_streaminfo_data)
-def _(wav_streaminfo_data):
+@using(wave_streaminfo_data=wave_streaminfo_data)
+def _(wave_streaminfo_data):
 
-	wav_stream_info_init = WAVStreamInfo(
+	wave_stream_info_init = WAVEStreamInfo(
 		size=None,
 		start=None,
 		bit_depth=16,
@@ -65,18 +65,18 @@ def _(wav_streaminfo_data):
 		duration=None,
 		sample_rate=44100,
 	)
-	wav_stream_info_load = WAVStreamInfo.parse(wav_streaminfo_data)
+	wave_stream_info_load = WAVEStreamInfo.parse(wave_streaminfo_data)
 
-	assert wav_stream_info_init == wav_stream_info_load
+	assert wave_stream_info_init == wave_stream_info_load
 
 
 @test(
 	"Parse RIFF tags subchunk",
-	tags=['unit', 'wav', 'WAV'],
+	tags=['unit', 'wave', 'WAVE'],
 )
-@using(wav_riff_tags_subchunk=wav_riff_tags_subchunk)
-def _(wav_riff_tags_subchunk):
-	riff_tags = WAV._parse_subchunk(wav_riff_tags_subchunk)
+@using(wave_riff_tags_subchunk=wave_riff_tags_subchunk)
+def _(wave_riff_tags_subchunk):
+	riff_tags = WAVE._parse_subchunk(wave_riff_tags_subchunk)
 
 	assert riff_tags == RIFFTags(
 		album=['test-album'],
@@ -90,14 +90,14 @@ def _(wav_riff_tags_subchunk):
 
 
 @test(
-	"Parse WAV streaminfo subchunk",
-	tags=['unit', 'wav', 'WAV'],
+	"Parse WAVE streaminfo subchunk",
+	tags=['unit', 'wave', 'WAVE'],
 )
-@using(wav_streaminfo_subchunk=wav_streaminfo_subchunk)
-def _(wav_streaminfo_subchunk):
-	wav_streaminfo = WAV._parse_subchunk(wav_streaminfo_subchunk)
+@using(wave_streaminfo_subchunk=wave_streaminfo_subchunk)
+def _(wave_streaminfo_subchunk):
+	wave_streaminfo = WAVE._parse_subchunk(wave_streaminfo_subchunk)
 
-	assert wav_streaminfo == WAVStreamInfo(
+	assert wave_streaminfo == WAVEStreamInfo(
 		size=None,
 		start=None,
 		bit_depth=16,
@@ -110,30 +110,30 @@ def _(wav_streaminfo_subchunk):
 
 @test(
 	"Invalid header",
-	tags=['unit', 'wav', 'WAV']
+	tags=['unit', 'wave', 'WAVE']
 )
 @using(null=null)
 def _(null):
 	with raises(FormatError) as exc:
-		WAV.parse(null)
+		WAVE.parse(null)
 	assert str(exc.raised) == "Valid WAVE header not found."
 
 
 @test(
 	"Invalid ID3",
-	tags=['unit', 'wav', 'WAV']
+	tags=['unit', 'wave', 'WAVE']
 )
 def _():
 	with raises(FormatError) as exc:
-		WAV.parse(b'RIFF0000WAVEid3 1234')
+		WAVE.parse(b'RIFF0000WAVEid3 1234')
 	assert str(exc.raised) == "Valid ID3v2 header not found."
 
 
 @test(
 	"Invalid stream info",
-	tags=['unit', 'wav', 'WAV']
+	tags=['unit', 'wave', 'WAVE']
 )
 def _():
 	with raises(FormatError) as exc:
-		WAV.parse(b'RIFF0000WAVE')
+		WAVE.parse(b'RIFF0000WAVE')
 	assert str(exc.raised) == "Valid WAVE stream info not found."

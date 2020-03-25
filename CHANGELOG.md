@@ -14,9 +14,10 @@ This project adheres to [Semantic Versioning](https://semver.org).
 
 ### Changed
 
-* Refactor ``WAV.parse``.
+* 'WAV' -> 'WAVE' to match the name rather than extension.
+* Refactor ``WAVE.parse``.
 	* Move subchunk parsing into separate method.
-	* Add ``WAVSubchunk``.
+	* Add ``WAVESubchunk``.
 
 ### Fixed
 

@@ -4,9 +4,9 @@
 __all__ = [
 	'RIFFTag',
 	'RIFFTags',
-	'WAV',
-	'WAVStreamInfo',
-	'WAVSubchunk',
+	'WAVE',
+	'WAVEStreamInfo',
+	'WAVESubchunk',
 ]
 
 import os
@@ -93,7 +93,7 @@ class RIFFTags(Tags):
 	repr=False,
 	kw_only=True,
 )
-class WAVSubchunk(AttrMapping):
+class WAVESubchunk(AttrMapping):
 	id = attrib()  # noqa
 	data = attrib()
 
@@ -102,7 +102,7 @@ class WAVSubchunk(AttrMapping):
 	repr=False,
 	kw_only=True,
 )
-class WAVStreamInfo(StreamInfo):
+class WAVEStreamInfo(StreamInfo):
 	_start = attrib()
 	_size = attrib()
 	bit_depth = attrib()
@@ -137,8 +137,8 @@ class WAVStreamInfo(StreamInfo):
 		)
 
 
-class WAV(Format):
-	"""WAV file format object.
+class WAVE(Format):
+	"""WAVE file format object.
 
 	Extends `Format`.
 
@@ -159,7 +159,7 @@ class WAV(Format):
 		)
 
 		if subchunk_id == b'fmt ':
-			subchunk = WAVStreamInfo.parse(data)
+			subchunk = WAVEStreamInfo.parse(data)
 			data.read(subchunk_size - 16)  # Read through rest of subchunk if not PCM.
 		elif (
 			subchunk_id == b'LIST'
@@ -172,7 +172,7 @@ class WAV(Format):
 			except FormatError:
 				raise
 		else:
-			subchunk = WAVSubchunk(
+			subchunk = WAVESubchunk(
 				id=subchunk_id,
 				data=data.read(subchunk_size),
 			)
@@ -198,12 +198,12 @@ class WAV(Format):
 			subchunk = self._parse_subchunk(self._obj)
 
 			if (
-				isinstance(subchunk, WAVSubchunk)
+				isinstance(subchunk, WAVESubchunk)
 				and subchunk.id == b'data'
 			):
 				audio_size = len(subchunk.data)
 				audio_start = self._obj.tell() - audio_size
-			elif isinstance(subchunk, WAVStreamInfo):
+			elif isinstance(subchunk, WAVEStreamInfo):
 				self.streaminfo = subchunk
 			elif isinstance(subchunk, RIFFTags):
 				self._riff = subchunk

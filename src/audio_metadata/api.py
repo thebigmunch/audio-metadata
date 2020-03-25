@@ -19,7 +19,7 @@ from .exceptions import (
 from .formats import (
 	FLAC,
 	MP3,
-	WAV,
+	WAVE,
 	ID3v2,
 	MP3StreamInfo,
 	OggOpus,
@@ -66,7 +66,7 @@ def determine_format(data):
 		return FLAC
 
 	if d.startswith(b'RIFF'):
-		return WAV
+		return WAVE
 
 	if d.startswith(b'ID3'):
 		ID3v2.parse(data)

@@ -125,7 +125,9 @@ Vorbis
 WAV
 ---
 
-.. autoclass:: WAV
+.. autoclass:: WAVE
 
+.. autoclass:: RIFFTag
 .. autoclass:: RIFFTags
-.. autoclass:: WAVStreamInfo
+.. autoclass:: WAVEStreamInfo
+.. autoclass:: WAVESubchunk

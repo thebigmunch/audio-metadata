@@ -221,20 +221,20 @@ def xing_toc():
 
 
 @fixture(scope='global')
-def wav_riff_tags_subchunk():
-	return Path(TEST_PATH, 'data', 'wav', 'wav-riff-tags-subchunk.bin').read_bytes()
+def wave_riff_tags_subchunk():
+	return Path(TEST_PATH, 'data', 'wave', 'wave-riff-tags-subchunk.bin').read_bytes()
 
 
 @fixture(scope='global')
-def wav_riff_tags_data():
-	return Path(TEST_PATH, 'data', 'wav', 'wav-riff-tags-subchunk.bin').read_bytes()[8:]
+def wave_riff_tags_data():
+	return Path(TEST_PATH, 'data', 'wave', 'wave-riff-tags-subchunk.bin').read_bytes()[8:]
 
 
 @fixture(scope='global')
-def wav_streaminfo_subchunk():
-	return Path(TEST_PATH, 'data', 'wav', 'wav-streaminfo-subchunk.bin').read_bytes()
+def wave_streaminfo_subchunk():
+	return Path(TEST_PATH, 'data', 'wave', 'wave-streaminfo-subchunk.bin').read_bytes()
 
 
 @fixture(scope='global')
-def wav_streaminfo_data():
-	return Path(TEST_PATH, 'data', 'wav', 'wav-streaminfo-subchunk.bin').read_bytes()[8:]
+def wave_streaminfo_data():
+	return Path(TEST_PATH, 'data', 'wave', 'wave-streaminfo-subchunk.bin').read_bytes()[8:]
