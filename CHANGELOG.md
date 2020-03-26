@@ -21,6 +21,7 @@ This project adheres to [Semantic Versioning](https://semver.org).
 * Refactor ``WAVE.parse``.
 	* Move subchunk parsing into separate method.
 	* Add ``WAVESubchunk``.
+* Keep unhandled WAVE subchunks.
 
 ### Fixed
 

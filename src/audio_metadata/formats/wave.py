@@ -155,6 +155,10 @@ class WAVE(Format):
 
 	tags_type = RIFFTags
 
+	def __init__(self):
+		super().__init__()
+		self._subchunks = []
+
 	@datareader
 	@staticmethod
 	def _parse_subchunk(data):
@@ -216,7 +220,7 @@ class WAVE(Format):
 			elif isinstance(subchunk, ID3v2):
 				self._id3 = subchunk
 			else:
-				pass  # TODO
+				self._subchunks.append(subchunk)
 
 			subchunk_header = self._obj.peek(8)
 
