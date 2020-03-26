@@ -13,6 +13,7 @@ This project adheres to [Semantic Versioning](https://semver.org).
 * ``WAVSubchunk``.
 * ``audio_format`` attribute to ``WAVEStreamInfo``.
 * ``WAVEAudioFormat`` enum.
+* Audio format extension data to ``WAVEStreamInfo``.
 
 ### Changed
 

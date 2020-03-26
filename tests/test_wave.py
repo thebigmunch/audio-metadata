@@ -60,6 +60,7 @@ def _(wave_streaminfo_data):
 	wave_stream_info_init = WAVEStreamInfo(
 		size=None,
 		start=None,
+		extension_data=None,
 		audio_format=WAVEAudioFormat.PCM,
 		bit_depth=16,
 		bitrate=1411200,
@@ -102,6 +103,7 @@ def _(wave_streaminfo_subchunk):
 	assert wave_streaminfo == WAVEStreamInfo(
 		size=None,
 		start=None,
+		extension_data=None,
 		audio_format=WAVEAudioFormat.PCM,
 		bit_depth=16,
 		bitrate=1411200,

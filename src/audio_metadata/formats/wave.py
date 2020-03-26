@@ -106,6 +106,7 @@ class WAVESubchunk(AttrMapping):
 class WAVEStreamInfo(StreamInfo):
 	_start = attrib()
 	_size = attrib()
+	_extension_data = attrib()
 	audio_format = attrib(converter=WAVEAudioFormat)
 	bit_depth = attrib()
 	bitrate = attrib()
@@ -131,6 +132,7 @@ class WAVEStreamInfo(StreamInfo):
 		return cls(
 			start=None,
 			size=None,
+			extension_data=None,
 			audio_format=WAVEAudioFormat(audio_format),
 			bit_depth=bit_depth,
 			bitrate=bitrate,
@@ -163,7 +165,8 @@ class WAVE(Format):
 
 		if subchunk_id == b'fmt ':
 			subchunk = WAVEStreamInfo.parse(data)
-			data.read(subchunk_size - 16)  # Read through rest of subchunk if not PCM.
+			if subchunk_size > 16:
+				subchunk._extension_data = data.read(subchunk_size - 16)  # Add raw extension data if not PCM.
 		elif (
 			subchunk_id == b'LIST'
 			and data.peek(4) == b'INFO'
