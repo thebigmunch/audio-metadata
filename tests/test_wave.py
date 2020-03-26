@@ -8,6 +8,7 @@ from audio_metadata import (
 	WAVE,
 	FormatError,
 	RIFFTags,
+	WAVEAudioFormat,
 	WAVEStreamInfo,
 )
 from tests.fixtures import (
@@ -59,6 +60,7 @@ def _(wave_streaminfo_data):
 	wave_stream_info_init = WAVEStreamInfo(
 		size=None,
 		start=None,
+		audio_format=WAVEAudioFormat.PCM,
 		bit_depth=16,
 		bitrate=1411200,
 		channels=2,
@@ -100,6 +102,7 @@ def _(wave_streaminfo_subchunk):
 	assert wave_streaminfo == WAVEStreamInfo(
 		size=None,
 		start=None,
+		audio_format=WAVEAudioFormat.PCM,
 		bit_depth=16,
 		bitrate=1411200,
 		channels=2,

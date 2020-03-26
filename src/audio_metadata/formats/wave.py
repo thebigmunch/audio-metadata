@@ -23,6 +23,7 @@ from tbm_utils import (
 )
 
 from .id3v2 import ID3v2
+from .tables import WAVEAudioFormat
 from ..exceptions import FormatError
 from ..models import (
 	Format,
@@ -105,6 +106,7 @@ class WAVESubchunk(AttrMapping):
 class WAVEStreamInfo(StreamInfo):
 	_start = attrib()
 	_size = attrib()
+	audio_format = attrib(converter=WAVEAudioFormat)
 	bit_depth = attrib()
 	bitrate = attrib()
 	channels = attrib()
@@ -129,6 +131,7 @@ class WAVEStreamInfo(StreamInfo):
 		return cls(
 			start=None,
 			size=None,
+			audio_format=WAVEAudioFormat(audio_format),
 			bit_depth=bit_depth,
 			bitrate=bitrate,
 			channels=channels,
