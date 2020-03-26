@@ -214,18 +214,18 @@ class WAVE(Format):
 
 			subchunk_header = self._obj.peek(8)
 
-		if '_id3' in self:
-			self.pictures = self._id3.pictures
-			self.tags = self._id3.tags
-		elif '_riff' in self:
-			self.tags = self._riff
-
 		try:
 			self.streaminfo._start = audio_start
 			self.streaminfo._size = audio_size
 			self.streaminfo.duration = self.streaminfo._size / (self.streaminfo.bitrate / 8)
 		except UnboundLocalError:
-			raise FormatError("Valid WAVE stream info not found.")
+			raise FormatError("Valid WAVE stream info not found.") from None
+
+		if '_id3' in self:
+			self.pictures = self._id3.pictures
+			self.tags = self._id3.tags
+		elif '_riff' in self:
+			self.tags = self._riff
 
 		self._obj.close()
 
