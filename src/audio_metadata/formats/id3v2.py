@@ -99,8 +99,8 @@ class ID3v2Frames(Tags):
 			):
 				warnings.warn(
 					(
-						f"Ignoring '{frame.name}' frame with value '{frame.value}'.\n"
-						f"'{frame.name}' is not supported in the ID3v2.{id3_version.value[1]} specification.\n"
+						f"Ignoring ``{frame.name}`` frame with value ``{frame.value}``.\n"
+						f"``{frame.name}`` is not supported in the ID3v2.{id3_version.value[1]} specification.\n"
 					),
 					AudioMetadataWarning,
 				)
