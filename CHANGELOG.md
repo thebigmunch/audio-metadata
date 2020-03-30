@@ -22,6 +22,7 @@ This project adheres to [Semantic Versioning](https://semver.org).
 	* Move subchunk parsing into separate method.
 	* Add ``WAVESubchunk``.
 * Keep unhandled WAVE subchunks.
+* Store ``ID3v2`` in ``FLAC`` in ``_id3`` attribute.
 
 ### Fixed
 

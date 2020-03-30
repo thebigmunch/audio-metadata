@@ -492,7 +492,7 @@ class FLAC(Format):
 
 		# Ignore ID3v2 in FLAC.
 		if self._obj.peek(3) == b'ID3':
-			ID3v2.parse(self._obj)
+			self._id3 = ID3v2.parse(self._obj)
 
 		if self._obj.read(4) != b'fLaC':
 			raise FormatError("Valid FLAC header not found.")
