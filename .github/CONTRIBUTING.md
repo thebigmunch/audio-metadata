@@ -1,6 +1,6 @@
 ## Forward
 
-Due to general and personal experience, I feel it is necessary to
+Due to general and personal experience, I feel compelled to
 preface this with a short, pointed statement.
 
 Developers, maintainers, and others usually contribute to open source software
