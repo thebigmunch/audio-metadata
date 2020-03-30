@@ -1,7 +1,9 @@
 ### Checklist
 
-[Contributing Guidelines](https://github.com/thebigmunch/audio-metadata/blob/master/.github/CONTRIBUTING.md#submitting-code)
-
+- [ ] Read the
+	[Contributing Guidelines](https://github.com/thebigmunch/audio-metadata/blob/master/.github/CONTRIBUTING.md)
+	and
+	[Code of Conduct](https://github.com/thebigmunch/audio-metadata/blob/master/.github/CODE_OF_CONDUCT.md)
 - [ ] An issue has been opened to link to this PR
 - [ ] Each commit encompasses the smallest logical changeset
 - [ ] Each commit message is written in a
