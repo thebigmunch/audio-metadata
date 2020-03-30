@@ -51,6 +51,7 @@ __all__ = [
 import re
 import string
 import struct
+import warnings
 from urllib.parse import unquote
 
 import more_itertools
@@ -73,6 +74,7 @@ from .tables import (
 	ID3v2TempoTimestampFormat,
 )
 from ..exceptions import (
+	AudioMetadataWarning,
 	FormatError,
 	TagError,
 )
@@ -309,7 +311,15 @@ class ID3v2Frame(Tag):
 				value=frame_value,
 				encoding=frame_encoding,
 			)
-		except (TypeError, TagError):  # Bad frame value.
+		except (TypeError, TagError) as exc:  # Bad frame value.
+			warnings.warn(
+				(
+					f"Ignoring ``{frame_type}`` with bad value.\n"
+					f"{exc}\n"
+				),
+				AudioMetadataWarning,
+			)
+
 			return None
 
 
