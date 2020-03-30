@@ -27,6 +27,7 @@ This project adheres to [Semantic Versioning](https://semver.org).
 ### Fixed
 
 * Invalid duration calculation for ``WAV``.
+* Properly handle invalid comment, involved people list, and TMCL frames
 
 
 ## [0.9.0](https://github.com/thebigmunch/audio-metadata/releases/tag/0.9.0) (2020-03-25)

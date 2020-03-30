@@ -342,7 +342,7 @@ class ID3v2CommentFrame(ID3v2Frame):
 
 		# Ignore empty comments.
 		if not value:
-			return None
+			raise TagError("No comment found in comment frame.")
 
 		comment = ID3v2Comment(
 			language=decode_bytestring(frame_data[1:4]),
@@ -853,10 +853,16 @@ class ID3v2InvolvedPeopleListFrame(ID3v2PeopleListFrame):
 
 		encoding = determine_encoding(frame_data)
 
-		values = more_itertools.sliced(
-			split_encoded(frame_data[1:], encoding),
-			2,
+		values = list(
+			more_itertools.sliced(
+				split_encoded(frame_data[1:], encoding),
+				2,
+			)
 		)
+
+		# Ignore empty people list.
+		if len(values) < 1:
+			raise TagError("No people found in involved people list frame.")
 
 		people = [
 			ID3v2InvolvedPerson(
@@ -865,10 +871,6 @@ class ID3v2InvolvedPeopleListFrame(ID3v2PeopleListFrame):
 			)
 			for involvement, name in values
 		]
-
-		# Ignore empty people list.
-		if len(values) < 1:
-			return None
 
 		return (
 			people,
@@ -916,10 +918,16 @@ class ID3v2TMCLFrame(ID3v2InvolvedPeopleListFrame):
 
 		encoding = determine_encoding(frame_data)
 
-		values = more_itertools.sliced(
-			split_encoded(frame_data[1:], encoding),
-			2,
+		values = list(
+			more_itertools.sliced(
+				split_encoded(frame_data[1:], encoding),
+				2,
+			)
 		)
+
+		# Ignore empty people list.
+		if len(values) < 1:
+			raise TagError("No musicians found in TMCL frame.")
 
 		performers = [
 			ID3v2Performer(
@@ -928,10 +936,6 @@ class ID3v2TMCLFrame(ID3v2InvolvedPeopleListFrame):
 			)
 			for instrument, name in values
 		]
-
-		# Ignore empty people list.
-		if len(values) < 1:
-			return None
 
 		return (
 			performers,
