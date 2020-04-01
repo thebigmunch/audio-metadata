@@ -306,6 +306,9 @@ class ID3v2Frame(Tag):
 		try:
 			frame_value, frame_encoding = frame_type._parse_frame_data(data, frame_size)
 
+			if not frame_value:
+				raise TagError(f"No value found in ``{frame_id}`` frame.")
+
 			return frame_type(
 				name=frame_id,
 				value=frame_value,
@@ -314,7 +317,7 @@ class ID3v2Frame(Tag):
 		except (TypeError, TagError) as exc:  # Bad frame value.
 			warnings.warn(
 				(
-					f"Ignoring ``{frame_type}`` with bad value.\n"
+					f"Ignoring ``{frame_id}`` with bad value.\n"
 					f"{exc}\n"
 				),
 				AudioMetadataWarning,
