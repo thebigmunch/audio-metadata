@@ -331,7 +331,7 @@ class ID3v2Frame(Tag):
 		except (TypeError, TagError) as exc:  # Bad frame value.
 			warnings.warn(
 				(
-					f"Ignoring ``{frame_id}`` with bad value.\n"
+					f"Ignoring ``{frame_id}``.\n"
 					f"{exc}\n"
 				),
 				AudioMetadataWarning,
@@ -365,11 +365,14 @@ class ID3v2CommentFrame(ID3v2Frame):
 		frame_data = data.read(frame_size)
 
 		encoding = determine_encoding(frame_data)
-		description, value = split_encoded(frame_data[4:], encoding)
 
-		# Ignore empty comments.
-		if not value:
-			raise TagError("No comment found in comment frame.")
+		try:
+			description, value = split_encoded(frame_data[4:], encoding, 1)
+		except ValueError:
+			raise TagError("Missing data in comment frame.") from None
+		else:
+			if not value:
+				raise TagError("No comment found in comment frame.")
 
 		comment = ID3v2Comment(
 			language=decode_bytestring(frame_data[1:4]),
@@ -395,10 +398,17 @@ class ID3v2GenreFrame(ID3v2Frame):
 
 		encoding = determine_encoding(frame_data)
 
-		values = [
-			decode_bytestring(value, encoding)
-			for value in split_encoded(frame_data[1:], encoding)
-		]
+		try:
+			values = [
+				decode_bytestring(value, encoding)
+				for value in split_encoded(frame_data[1:], encoding)
+				if value
+			]
+		except ValueError:
+			raise TagError("Missing data in genre frame.") from None
+		else:
+			if not values:
+				raise TagError("No genres found in genre frame.")
 
 		genres = []
 		for value in values:
@@ -505,11 +515,18 @@ class ID3v2NumericTextFrame(ID3v2Frame):
 		frame_data = data.read(frame_size)
 
 		encoding = determine_encoding(frame_data)
-		values = [
-			decode_bytestring(value, encoding)
-			for value in split_encoded(frame_data[1:], encoding)
-			if value
-		]
+
+		try:
+			values = [
+				decode_bytestring(value, encoding)
+				for value in split_encoded(frame_data[1:], encoding)
+				if value
+			]
+		except ValueError:
+			raise TagError("Missing data in numeric text frame.") from None
+		else:
+			if not values:
+				raise TagError("No values found in numeric text frame.")
 
 		return (
 			values,
@@ -588,7 +605,14 @@ class ID3v2SynchronizedLyricsFrame(ID3v2LyricsFrame):
 		frame_data = data.read(frame_size)
 
 		encoding = determine_encoding(frame_data)
-		description, text = split_encoded(frame_data[6:], encoding)
+
+		try:
+			description, text = split_encoded(frame_data[6:], encoding)
+		except ValueError:
+			raise TagError("Missing data in synchronized lyrics frame.") from None
+		else:
+			if not text:
+				raise TagError("No lyrics found in synchronized lyrics frame.")
 
 		return (
 			ID3v2SynchronizedLyrics(
@@ -632,11 +656,18 @@ class ID3v2TextFrame(ID3v2Frame):
 		frame_data = data.read(frame_size)
 
 		encoding = determine_encoding(frame_data)
-		values = [
-			decode_bytestring(value, encoding)
-			for value in split_encoded(frame_data[1:], encoding)
-			if value
-		]
+
+		try:
+			values = [
+				decode_bytestring(value, encoding)
+				for value in split_encoded(frame_data[1:], encoding)
+				if value
+			]
+		except ValueError:
+			raise TagError("Missing data in text frame.") from None
+		else:
+			if not values:
+				raise TagError("No values found in text frame.")
 
 		return (
 			values,
@@ -665,11 +696,18 @@ class ID3v2TimestampFrame(ID3v2Frame):
 		frame_data = data.read(frame_size)
 
 		encoding = determine_encoding(frame_data)
-		values = [
-			decode_bytestring(value, encoding)
-			for value in split_encoded(frame_data[1:], encoding)
-			if value
-		]
+
+		try:
+			values = [
+				decode_bytestring(value, encoding)
+				for value in split_encoded(frame_data[1:], encoding)
+				if value
+			]
+		except ValueError:
+			raise TagError("Missing data in timestamp frame.") from None
+		else:
+			if not values:
+				raise TagError("No values found in timestamp frame.")
 
 		return (
 			values,
@@ -704,7 +742,14 @@ class ID3v2UnsynchronizedLyricsFrame(ID3v2LyricsFrame):
 		frame_data = data.read(frame_size)
 
 		encoding = determine_encoding(frame_data)
-		description, text = split_encoded(frame_data[4:], encoding)
+
+		try:
+			description, text = split_encoded(frame_data[4:], encoding)
+		except ValueError:
+			raise TagError("Missing data in unsynchronized lyrics frame.")
+		else:
+			if not text:
+				raise TagError("No lyrics found in unsynchronized lyrics frame.")
 
 		return (
 			ID3v2UnsynchronizedLyrics(
@@ -727,13 +772,20 @@ class ID3v2UserTextFrame(ID3v2Frame):
 		frame_data = data.read(frame_size)
 
 		encoding = determine_encoding(frame_data)
-		description, *remainder = split_encoded(frame_data[1:], encoding)
+
+		try:
+			description, *remainder = split_encoded(frame_data[1:], encoding)
+		except ValueError:
+			raise TagError("Missing data in user text frame.") from None
 
 		values = [
 			decode_bytestring(value, encoding)
 			for value in remainder
 			if value
 		]
+
+		if not values:
+			raise TagError("No values found in user text frame.")
 
 		return (
 			ID3v2UserText(
@@ -755,7 +807,14 @@ class ID3v2UserURLLinkFrame(ID3v2Frame):
 		frame_data = data.read(frame_size)
 
 		encoding = determine_encoding(frame_data)
-		description, url = split_encoded(frame_data[1:], encoding, 1)
+
+		try:
+			description, url = split_encoded(frame_data[1:], encoding, 1)
+		except ValueError:
+			raise TagError("Missing data in user URL link frame.") from None
+		else:
+			if not url:
+				raise TagError("No URL found in user URL link frame.")
 
 		return (
 			ID3v2UserURLLink(
@@ -843,14 +902,17 @@ class ID3v2GeneralEncapsulatedObjectFrame(ID3v2Frame):
 
 		encoding = determine_encoding(frame_data)
 
-		mime_type, filename, description, value = split_encoded(frame_data[1:], encoding)
+		try:
+			mime_type, filename, description, object_ = split_encoded(frame_data[1:], encoding, 3)
+		except ValueError:
+			raise TagError("Missing data in general encapsulated object frame.")
 
 		return (
 			ID3v2GeneralEncapsulatedObject(
 				mime_type=mime_type,
 				filename=filename,
 				description=description,
-				value=value,
+				object=object_,
 			),
 			encoding,
 		)
@@ -896,14 +958,16 @@ class ID3v2InvolvedPeopleListFrame(ID3v2PeopleListFrame):
 
 		encoding = determine_encoding(frame_data)
 
-		values = list(
-			more_itertools.sliced(
-				split_encoded(frame_data[1:], encoding),
-				2,
+		try:
+			values = list(
+				more_itertools.sliced(
+					split_encoded(frame_data[1:], encoding),
+					2,
+				)
 			)
-		)
+		except ValueError:
+			raise TagError("Missing data found in involved people list frame.") from None
 
-		# Ignore empty people list.
 		if len(values) < 1:
 			raise TagError("No people found in involved people list frame.")
 
@@ -961,14 +1025,16 @@ class ID3v2TMCLFrame(ID3v2InvolvedPeopleListFrame):
 
 		encoding = determine_encoding(frame_data)
 
-		values = list(
-			more_itertools.sliced(
-				split_encoded(frame_data[1:], encoding),
-				2,
+		try:
+			values = list(
+				more_itertools.sliced(
+					split_encoded(frame_data[1:], encoding),
+					2,
+				)
 			)
-		)
+		except ValueError:
+			raise TagError("Missing data in TMCL frame.") from None
 
-		# Ignore empty people list.
 		if len(values) < 1:
 			raise TagError("No musicians found in TMCL frame.")
 

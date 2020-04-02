@@ -26,6 +26,7 @@ This project adheres to [Semantic Versioning](https://semver.org).
 * Store ``ID3v2`` in ``FLAC`` in ``_id3`` attribute.
 * Emit warning when ignoring ID3v2 frames with bad values.
 * Ignore ID3v2 frames with no value.
+* Catch and raise more exceptions when parsing ID3v2 frames.
 
 ### Fixed
 
