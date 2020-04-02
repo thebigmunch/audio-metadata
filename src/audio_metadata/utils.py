@@ -107,7 +107,7 @@ def get_image_size(data):
 
 		size = 2
 		ftype = 0
-		while not 0xc0 <= ftype <= 0xcf or ftype in [0xc4, 0xc8, 0xcc]:
+		while not 0xC0 <= ftype <= 0xCF or ftype in [0xC4, 0xC8, 0xCC]:
 			data.seek(size, os.SEEK_CUR)
 			while True:
 				b = data.read(1)
@@ -122,7 +122,7 @@ def get_image_size(data):
 	elif size >= 12 and b.startswith(b'\x00\x00\x00\x0cjP'):
 		height, width = struct.unpack('>LL', b[48:])
 	else:
-		raise ValueError(f"'data' is not a supported image file.")
+		raise ValueError(f"Unsupported image file format.")
 
 	return width, height
 
