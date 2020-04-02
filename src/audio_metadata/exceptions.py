@@ -57,3 +57,9 @@ del showwarning
 
 class AudioMetadataWarning(UserWarning):
 	"""Base warning for audio-metadata."""
+
+
+warnings.simplefilter(
+	'always',
+	category=AudioMetadataWarning,
+)
