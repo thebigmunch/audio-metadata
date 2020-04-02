@@ -1,6 +1,7 @@
 # http://id3.org/Developer%20Information
 
 __all__ = [
+	'ID3v2APICFrame',
 	'ID3v2BinaryDataFrame',
 	'ID3v2Comment',
 	'ID3v2CommentFrame',
@@ -20,10 +21,10 @@ __all__ = [
 	'ID3v2NumericTextFrame',
 	'ID3v2OWNEFrame',
 	'ID3v2OwnershipTransaction',
+	'ID3v2PICFrame',
 	'ID3v2PeopleListFrame',
 	'ID3v2Performer',
 	'ID3v2Picture',
-	'ID3v2PictureFrame',
 	'ID3v2PrivateFrame',
 	'ID3v2PrivateInfo',
 	'ID3v2SynchronizedLyrics',
@@ -182,20 +183,33 @@ class ID3v2Performer(AttrMapping):
 class ID3v2Picture(Picture):
 	@datareader
 	@classmethod
-	def parse(cls, data):
+	def parse(cls, data, *, id3v22=False):
 		data = data.read()
 
 		encoding = determine_encoding(data[0:1])
-		mime_start = 1
-		mime_end = data.index(b'\x00', 1)
-		mime_type = decode_bytestring(data[mime_start:mime_end])
+
+		if id3v22:
+			mime_type = decode_bytestring(data[1:4])
+			mime_end = 3
+		else:
+			mime_end = data[1:].index(b'\x00', 0) + 1
+			mime_type = decode_bytestring(data[1:mime_end])
 
 		type_ = ID3PictureType(data[mime_end + 1])
 
-		desc_start = mime_end + 2
-		description, image_data = split_encoded(data[desc_start:], encoding, 1)
+		try:
+			description, image_data = split_encoded(data[mime_end + 2:], encoding, 1)
+		except ValueError:
+			raise TagError("Missing data in picture frame.") from None
+		else:
+			if not image_data.strip(b'\x00'):
+				raise TagError("No image data in picture frame.")
+
 		description = decode_bytestring(description, encoding)
-		width, height = get_image_size(image_data)
+		try:
+			width, height = get_image_size(image_data)
+		except ValueError as exc:
+			raise TagError(str(exc)) from None
 
 		return cls(
 			type=type_,
@@ -515,7 +529,7 @@ class ID3v2PeopleListFrame(ID3v2Frame):
 	repr=False,
 	kw_only=True,
 )
-class ID3v2PictureFrame(ID3v2Frame):
+class ID3v2APICFrame(ID3v2Frame):
 	@datareader
 	@classmethod
 	def _parse_frame_data(cls, data, frame_size):
@@ -523,6 +537,22 @@ class ID3v2PictureFrame(ID3v2Frame):
 
 		return (
 			ID3v2Picture.parse(frame_data),
+			None,
+		)
+
+
+@attrs(
+	repr=False,
+	kw_only=True,
+)
+class ID3v2PICFrame(ID3v2Frame):
+	@datareader
+	@classmethod
+	def _parse_frame_data(cls, data, frame_size):
+		frame_data = data.read(frame_size)
+
+		return (
+			ID3v2Picture.parse(frame_data, id3v22=True),
 			None,
 		)
 
@@ -1079,9 +1109,9 @@ ID3v2FrameTypes = {
 	'TYER': ID3v2YearFrame,
 
 	# Picture Frames
-	'PIC': ID3v2PictureFrame,
+	'PIC': ID3v2PICFrame,
 
-	'APIC': ID3v2PictureFrame,
+	'APIC': ID3v2APICFrame,
 
 	# Text Frames
 	'TAL': ID3v2TextFrame,
