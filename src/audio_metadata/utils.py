@@ -121,6 +121,8 @@ def get_image_size(data):
 		height, width = struct.unpack('>HH', data.read(4))
 	elif size >= 12 and b.startswith(b'\x00\x00\x00\x0cjP'):
 		height, width = struct.unpack('>LL', b[48:])
+	elif b.startswith(b'BM'):
+		width, height = struct.unpack('<II', b[18:26])
 	else:
 		raise ValueError(f"Unsupported image file format.")
 

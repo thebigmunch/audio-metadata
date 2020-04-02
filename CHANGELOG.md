@@ -14,6 +14,7 @@ This project adheres to [Semantic Versioning](https://semver.org).
 * ``audio_format`` attribute to ``WAVEStreamInfo``.
 * ``WAVEAudioFormat`` enum.
 * Audio format extension data to ``WAVEStreamInfo``.
+* Support for bitmap images.
 
 ### Changed
 
