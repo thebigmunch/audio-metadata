@@ -10,6 +10,20 @@ from tbm_utils import datareader
 from tbm_utils import humanize_duration as tbm_humanize_duration
 
 
+def apply_unsynchronization(data):
+	split = bytearray(data).split(b'\xFF')
+
+	for s in split[1:]:
+		if (
+			not s
+			or not s[0]
+			or s[0] >= 224
+		):
+			s.insert(0, 0)
+
+	return bytes(bytearray(b'\xFF').join(split))
+
+
 def decode_synchsafe_int(data, per_byte):
 	"""Decode synchsafe integers from ID3v2 tags."""
 
@@ -49,6 +63,28 @@ def determine_encoding(b):
 		encoding = 'iso-8859-1'
 
 	return encoding
+
+
+def remove_unsynchronization(data):
+	split = bytearray(data).split(b'\xFF')
+
+	if (
+		len(split) > 1
+		and not split[-1]
+	):
+		raise Exception  # TODO
+
+	for s in split[1:]:
+		if (
+			not s
+			or s[0] >= 224
+		):
+			raise Exception  # TODO
+
+		if not s[0]:
+			del s[0]
+
+	return bytes(bytearray(b'\xFF').join(split))
 
 
 def split_encoded(data, encoding, max_split=None):

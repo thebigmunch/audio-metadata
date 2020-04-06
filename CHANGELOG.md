@@ -15,7 +15,8 @@ This project adheres to [Semantic Versioning](https://semver.org).
 * ``WAVEAudioFormat`` enum.
 * Audio format extension data to ``WAVEStreamInfo``.
 * Support for bitmap images.
-* Properly support ``ID3v2`` header flag differences between versions.
+* Properly support ID3v2 header flag differences between versions.
+* Support for ID3v2 unsynchronization and frame flags.
 
 ### Changed
 

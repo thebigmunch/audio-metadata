@@ -7,6 +7,7 @@ __all__ = [
 	'ID3v2CommentFrame',
 	'ID3v2DateFrame',
 	'ID3v2Frame',
+	'ID3v2FrameFlags',
 	'ID3v2FrameTypes',
 	'ID3v2GeneralEncapsulatedObject',
 	'ID3v2GeneralEncapsulatedObjectFrame',
@@ -49,12 +50,15 @@ __all__ = [
 	'ID3v2YearFrame',
 ]
 
+import os
 import re
 import string
 import struct
 import warnings
+import zlib
 from urllib.parse import unquote
 
+import bitstruct
 import more_itertools
 from attr import (
 	attrib,
@@ -79,6 +83,7 @@ from ..exceptions import (
 	AudioMetadataWarning,
 	FormatError,
 	TagError,
+	UnsupportedFormat,
 )
 from ..models import (
 	Picture,
@@ -89,6 +94,7 @@ from ..utils import (
 	decode_synchsafe_int,
 	determine_encoding,
 	get_image_size,
+	remove_unsynchronization,
 	split_encoded,
 )
 
@@ -280,6 +286,62 @@ class ID3v2UserURLLink(AttrMapping):
 	repr=False,
 	kw_only=True,
 )
+class ID3v2FrameFlags(AttrMapping):
+	alter_tag = attrib(default=False, converter=bool)
+	alter_file = attrib(default=False, converter=bool)
+	read_only = attrib(default=False, converter=bool)
+	grouped = attrib(default=False, converter=bool)
+	compressed = attrib(default=False, converter=bool)
+	encrypted = attrib(default=False, converter=bool)
+	unsync = attrib(default=False, converter=bool)
+	data_length_indicator = attrib(default=False, converter=bool)
+
+	@datareader
+	@classmethod
+	def parse(cls, data, id3_version):
+		id3_version = ID3Version(id3_version)
+		if id3_version not in [
+			ID3Version.v23,
+			ID3Version.v24,
+		]:
+			raise ValueError(f"Frame flags not supported for ID3 version: {id3_version}.")  # pragma: nocover
+
+		if id3_version is ID3Version.v24:
+			flags = bitstruct.unpack_dict(
+				'p1 b1 b1 b1 p5 b1 p2 b1 b1 b1 b1',
+				[
+					'alter_tag',
+					'alter_file',
+					'read_only',
+					'grouped',
+					'compressed',
+					'encrypted',
+					'unsync',
+					'data_length_indicator',
+				],
+				data.read(2),
+			)
+		else:
+			flags = bitstruct.unpack_dict(
+				'b1 b1 b1 p5 b1 b1 b1 p5',
+				[
+					'alter_tag',
+					'alter_file',
+					'read_only',
+					'compressed',
+					'encrypted',
+					'grouped',
+				],
+				data.read(2),
+			)
+
+		return cls(**flags)
+
+
+@attrs(
+	repr=False,
+	kw_only=True,
+)
 class ID3v2Frame(Tag):
 	encoding = attrib(default=None)
 
@@ -302,6 +364,7 @@ class ID3v2Frame(Tag):
 		]:
 			raise ValueError(f"Unsupported ID3 version: {id3_version}.")  # pragma: nocover
 
+		flags = None
 		if id3_version is ID3Version.v22:
 			try:
 				id_, size = struct.unpack(
@@ -312,13 +375,13 @@ class ID3v2Frame(Tag):
 				raise FormatError("Not enough data.")
 
 			frame_size = struct.unpack(
-				'I',
+				'>I',
 				b'\x00' + size,
 			)[0]
 		elif id3_version is ID3Version.v23:
 			try:
 				id_, frame_size, flags = struct.unpack(
-					'4sI2s',
+					'>4sI2s',
 					data.read(10),
 				)
 			except struct.error:
@@ -337,13 +400,18 @@ class ID3v2Frame(Tag):
 		if frame_size == 0:
 			raise FormatError("Not a valid ID3v2 frame")
 
+		if flags is not None:
+			frame_flags = ID3v2FrameFlags.parse(flags, id3_version)
+		else:
+			frame_flags = ID3v2FrameFlags()
+
 		frame_id = id_.decode('iso-8859-1')
 
-		return frame_id, frame_size
+		return frame_id, frame_size, frame_flags
 
 	@datareader
 	@classmethod
-	def parse(cls, data, id3_version):
+	def parse(cls, data, id3_version, unsync):
 		id3_version = ID3Version(id3_version)
 		if id3_version not in [
 			ID3Version.v22,
@@ -352,13 +420,37 @@ class ID3v2Frame(Tag):
 		]:
 			raise ValueError(f"Unsupported ID3 version: {id3_version}.")  # pragma: nocover
 
-		frame_id, frame_size = ID3v2Frame._parse_frame_header(
+		frame_id, frame_size, frame_flags = ID3v2Frame._parse_frame_header(
 			data,
 			id3_version,
 		)
 
+		if frame_flags.encrypted:
+			raise UnsupportedFormat("ID3v2 frame encryption is not supported.")
+
+		if frame_flags.compressed:
+			if not frame_flags.data_length_indicator:
+				raise FormatError("ID3v2 frame compression flag set without data length indicator.")
+
+			data.seek(4, os.SEEK_CUR)
+
 		frame_type = ID3v2FrameTypes.get(frame_id, ID3v2Frame)
-		frame_data = data.read(frame_size)
+
+		if (
+			unsync
+			or frame_flags.unsync
+		):
+			read_size = frame_size
+			frame_data = remove_unsynchronization(data.read(read_size))
+			while len(frame_data) < frame_size:
+				data.seek(-read_size, os.SEEK_CUR)
+				read_size += 1
+				frame_data = remove_unsynchronization(data.read(read_size))
+		else:
+			frame_data = data.read(frame_size)
+
+		if frame_flags.compressed:
+			frame_data = zlib.decompress(frame_data)
 
 		try:
 			frame_value, frame_encoding = frame_type._parse_frame_data(frame_data)

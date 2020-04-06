@@ -62,7 +62,7 @@ class ID3v2Frames(Tags):
 
 	@datareader
 	@classmethod
-	def parse(cls, data, id3_version):
+	def parse(cls, data, id3_version, unsync=False):
 		id3_version = ID3Version(id3_version)
 		if id3_version not in [
 			ID3Version.v22,
@@ -74,7 +74,7 @@ class ID3v2Frames(Tags):
 		frames = defaultdict(list)
 		while True:
 			try:
-				frame = ID3v2Frame.parse(data, id3_version)
+				frame = ID3v2Frame.parse(data, id3_version, unsync)
 			except FormatError:
 				break
 
@@ -229,7 +229,6 @@ class ID3v2(AttrMapping):
 				struct.unpack('4B', data.read(4))[0:4],
 				7,
 			)
-			self._size += ext_size
 
 			if self._header is ID3Version.v24:
 				data.read(ext_size - 4)
@@ -243,6 +242,7 @@ class ID3v2(AttrMapping):
 		self.tags = ID3v2Frames.parse(
 			data.read(self._header._size),
 			self._header.version,
+			self._header.flags.unsync,
 		)
 		self.pictures = self.tags.pop('pictures', [])
 
