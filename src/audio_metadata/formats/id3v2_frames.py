@@ -283,10 +283,10 @@ class ID3v2Frame(Tag):
 	encoding = attrib(default=None)
 
 	@datareader
-	@classmethod
-	def _parse_frame_data(cls, data, frame_size):
+	@staticmethod
+	def _parse_frame_data(data):
 		return (
-			data.read(frame_size),
+			data.read(),
 			None,
 		)
 
@@ -316,9 +316,10 @@ class ID3v2Frame(Tag):
 		)
 
 		frame_type = ID3v2FrameTypes.get(frame_id, ID3v2Frame)
+		frame_data = data.read(frame_size)
 
 		try:
-			frame_value, frame_encoding = frame_type._parse_frame_data(data, frame_size)
+			frame_value, frame_encoding = frame_type._parse_frame_data(frame_data)
 
 			if not frame_value:
 				raise TagError(f"No value found in ``{frame_id}`` frame.")
@@ -345,13 +346,7 @@ class ID3v2Frame(Tag):
 	kw_only=True,
 )
 class ID3v2BinaryDataFrame(ID3v2Frame):
-	@datareader
-	@classmethod
-	def _parse_frame_data(cls, data, frame_size):
-		return (
-			data.read(frame_size),
-			None,
-		)
+	pass
 
 
 @attrs(
@@ -360,9 +355,9 @@ class ID3v2BinaryDataFrame(ID3v2Frame):
 )
 class ID3v2CommentFrame(ID3v2Frame):
 	@datareader
-	@classmethod
-	def _parse_frame_data(cls, data, frame_size):
-		frame_data = data.read(frame_size)
+	@staticmethod
+	def _parse_frame_data(data):
+		frame_data = data.read()
 
 		encoding = determine_encoding(frame_data)
 
@@ -392,9 +387,9 @@ class ID3v2CommentFrame(ID3v2Frame):
 )
 class ID3v2GenreFrame(ID3v2Frame):
 	@datareader
-	@classmethod
-	def _parse_frame_data(cls, data, frame_size):
-		frame_data = data.read(frame_size)
+	@staticmethod
+	def _parse_frame_data(data):
+		frame_data = data.read()
 
 		encoding = determine_encoding(frame_data)
 
@@ -472,9 +467,9 @@ class ID3v2NumberFrame(ID3v2Frame):
 			)
 
 	@datareader
-	@classmethod
-	def _parse_frame_data(cls, data, frame_size):
-		frame_data = data.read(frame_size)
+	@staticmethod
+	def _parse_frame_data(data):
+		frame_data = data.read()
 
 		encoding = determine_encoding(frame_data)
 
@@ -510,9 +505,9 @@ class ID3v2NumericTextFrame(ID3v2Frame):
 			raise TagError("Numeric text frame values must consist only of digits.")
 
 	@datareader
-	@classmethod
-	def _parse_frame_data(cls, data, frame_size):
-		frame_data = data.read(frame_size)
+	@staticmethod
+	def _parse_frame_data(data):
+		frame_data = data.read()
 
 		encoding = determine_encoding(frame_data)
 
@@ -548,9 +543,9 @@ class ID3v2PeopleListFrame(ID3v2Frame):
 )
 class ID3v2APICFrame(ID3v2Frame):
 	@datareader
-	@classmethod
-	def _parse_frame_data(cls, data, frame_size):
-		frame_data = data.read(frame_size)
+	@staticmethod
+	def _parse_frame_data(data):
+		frame_data = data.read()
 
 		return (
 			ID3v2Picture.parse(frame_data),
@@ -564,9 +559,9 @@ class ID3v2APICFrame(ID3v2Frame):
 )
 class ID3v2PICFrame(ID3v2Frame):
 	@datareader
-	@classmethod
-	def _parse_frame_data(cls, data, frame_size):
-		frame_data = data.read(frame_size)
+	@staticmethod
+	def _parse_frame_data(data):
+		frame_data = data.read()
 
 		return (
 			ID3v2Picture.parse(frame_data, id3v22=True),
@@ -580,9 +575,9 @@ class ID3v2PICFrame(ID3v2Frame):
 )
 class ID3v2PrivateFrame(ID3v2Frame):
 	@datareader
-	@classmethod
-	def _parse_frame_data(cls, data, frame_size):
-		frame_data = data.read(frame_size)
+	@staticmethod
+	def _parse_frame_data(data):
+		frame_data = data.read()
 		owner_end = frame_data.index(b'\x00')
 
 		return (
@@ -600,9 +595,9 @@ class ID3v2PrivateFrame(ID3v2Frame):
 )
 class ID3v2SynchronizedLyricsFrame(ID3v2LyricsFrame):
 	@datareader
-	@classmethod
-	def _parse_frame_data(cls, data, frame_size):
-		frame_data = data.read(frame_size)
+	@staticmethod
+	def _parse_frame_data(data):
+		frame_data = data.read()
 
 		encoding = determine_encoding(frame_data)
 
@@ -632,9 +627,9 @@ class ID3v2SynchronizedLyricsFrame(ID3v2LyricsFrame):
 )
 class ID3v2SynchronizedTempoCodesFrame(ID3v2Frame):
 	@datareader
-	@classmethod
-	def _parse_frame_data(cls, data, frame_size):
-		frame_data = data.read(frame_size)
+	@staticmethod
+	def _parse_frame_data(data):
+		frame_data = data.read()
 
 		return (
 			ID3v2SynchronizedTempoCodes(
@@ -651,9 +646,9 @@ class ID3v2SynchronizedTempoCodesFrame(ID3v2Frame):
 )
 class ID3v2TextFrame(ID3v2Frame):
 	@datareader
-	@classmethod
-	def _parse_frame_data(cls, data, frame_size):
-		frame_data = data.read(frame_size)
+	@staticmethod
+	def _parse_frame_data(data):
+		frame_data = data.read()
 
 		encoding = determine_encoding(frame_data)
 
@@ -691,9 +686,9 @@ class ID3v2TimestampFrame(ID3v2Frame):
 				raise TagError("Timestamp frame values must conform to the ID3v2-compliant subset of ISO 8601.")
 
 	@datareader
-	@classmethod
-	def _parse_frame_data(cls, data, frame_size):
-		frame_data = data.read(frame_size)
+	@staticmethod
+	def _parse_frame_data(data):
+		frame_data = data.read()
 
 		encoding = determine_encoding(frame_data)
 
@@ -721,9 +716,9 @@ class ID3v2TimestampFrame(ID3v2Frame):
 )
 class ID3v2URLLinkFrame(ID3v2Frame):
 	@datareader
-	@classmethod
-	def _parse_frame_data(cls, data, frame_size):
-		frame_data = data.read(frame_size)
+	@staticmethod
+	def _parse_frame_data(data):
+		frame_data = data.read()
 
 		return (
 			unquote(decode_bytestring(frame_data)),
@@ -737,9 +732,9 @@ class ID3v2URLLinkFrame(ID3v2Frame):
 )
 class ID3v2UnsynchronizedLyricsFrame(ID3v2LyricsFrame):
 	@datareader
-	@classmethod
-	def _parse_frame_data(cls, data, frame_size):
-		frame_data = data.read(frame_size)
+	@staticmethod
+	def _parse_frame_data(data):
+		frame_data = data.read()
 
 		encoding = determine_encoding(frame_data)
 
@@ -767,9 +762,9 @@ class ID3v2UnsynchronizedLyricsFrame(ID3v2LyricsFrame):
 )
 class ID3v2UserTextFrame(ID3v2Frame):
 	@datareader
-	@classmethod
-	def _parse_frame_data(cls, data, frame_size):
-		frame_data = data.read(frame_size)
+	@staticmethod
+	def _parse_frame_data(data):
+		frame_data = data.read()
 
 		encoding = determine_encoding(frame_data)
 
@@ -802,9 +797,9 @@ class ID3v2UserTextFrame(ID3v2Frame):
 )
 class ID3v2UserURLLinkFrame(ID3v2Frame):
 	@datareader
-	@classmethod
-	def _parse_frame_data(cls, data, frame_size):
-		frame_data = data.read(frame_size)
+	@staticmethod
+	def _parse_frame_data(data):
+		frame_data = data.read()
 
 		encoding = determine_encoding(frame_data)
 
@@ -896,9 +891,9 @@ class ID3v2YearFrame(ID3v2NumericTextFrame):
 )
 class ID3v2GeneralEncapsulatedObjectFrame(ID3v2Frame):
 	@datareader
-	@classmethod
-	def _parse_frame_data(cls, data, frame_size):
-		frame_data = data.read(frame_size)
+	@staticmethod
+	def _parse_frame_data(data):
+		frame_data = data.read()
 
 		encoding = determine_encoding(frame_data)
 
@@ -924,9 +919,9 @@ class ID3v2GeneralEncapsulatedObjectFrame(ID3v2Frame):
 )
 class ID3v2GRIDFrame(ID3v2Frame):
 	@datareader
-	@classmethod
-	def _parse_frame_data(cls, data, frame_size):
-		frame_data = data.read(frame_size)
+	@staticmethod
+	def _parse_frame_data(data):
+		frame_data = data.read()
 		owner, remainder = frame_data.split(b'\x00', 1)
 		symbol = remainder[0:1]
 
@@ -952,9 +947,9 @@ class ID3v2GRIDFrame(ID3v2Frame):
 )
 class ID3v2InvolvedPeopleListFrame(ID3v2PeopleListFrame):
 	@datareader
-	@classmethod
-	def _parse_frame_data(cls, data, frame_size):
-		frame_data = data.read(frame_size)
+	@staticmethod
+	def _parse_frame_data(data):
+		frame_data = data.read()
 
 		encoding = determine_encoding(frame_data)
 
@@ -991,9 +986,9 @@ class ID3v2InvolvedPeopleListFrame(ID3v2PeopleListFrame):
 )
 class ID3v2OWNEFrame(ID3v2Frame):
 	@datareader
-	@classmethod
-	def _parse_frame_data(cls, data, frame_size):
-		frame_data = data.read(frame_size)
+	@staticmethod
+	def _parse_frame_data(data):
+		frame_data = data.read()
 
 		encoding = determine_encoding(frame_data)
 
@@ -1019,9 +1014,9 @@ class ID3v2OWNEFrame(ID3v2Frame):
 )
 class ID3v2TMCLFrame(ID3v2InvolvedPeopleListFrame):
 	@datareader
-	@classmethod
-	def _parse_frame_data(cls, data, frame_size):
-		frame_data = data.read(frame_size)
+	@staticmethod
+	def _parse_frame_data(data):
+		frame_data = data.read()
 
 		encoding = determine_encoding(frame_data)
 
@@ -1058,9 +1053,9 @@ class ID3v2TMCLFrame(ID3v2InvolvedPeopleListFrame):
 )
 class ID3v2UniqueFileIdentifierFrame(ID3v2Frame):
 	@datareader
-	@classmethod
-	def _parse_frame_data(cls, data, frame_size):
-		frame_data = data.read(frame_size)
+	@staticmethod
+	def _parse_frame_data(data):
+		frame_data = data.read()
 		owner, identifier = frame_data.split(b'\x00')
 
 		if len(identifier) > 64:
@@ -1081,9 +1076,9 @@ class ID3v2UniqueFileIdentifierFrame(ID3v2Frame):
 )
 class ID3v2USERFrame(ID3v2Frame):
 	@datareader
-	@classmethod
-	def _parse_frame_data(cls, data, frame_size):
-		frame_data = data.read(frame_size)
+	@staticmethod
+	def _parse_frame_data(data):
+		frame_data = data.read()
 
 		encoding = determine_encoding(frame_data)
 
