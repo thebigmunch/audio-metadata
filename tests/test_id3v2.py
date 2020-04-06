@@ -92,33 +92,39 @@ def _(null, id3v22, id3v23, id3v24):
 def _(
 	flags=each(
 		ID3v2Flags(
+			compressed=1,
 			extended=1,
 			experimental=1,
 			footer=1,
 			unsync=1,
 		),
 		ID3v2Flags(
+			compressed=True,
 			extended=True,
 			experimental=True,
 			footer=True,
 			unsync=True,
 		),
 		ID3v2Flags(
+			compressed=0,
 			extended=0,
 			experimental=0,
 			footer=0,
 			unsync=0,
 		),
 		ID3v2Flags(
+			compressed=False,
 			extended=False,
 			experimental=False,
 			footer=False,
 			unsync=False,
 		),
+		ID3v2Flags(),
 	),
 	expected=each(
 		True,
 		True,
+		False,
 		False,
 		False,
 	)

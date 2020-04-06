@@ -133,10 +133,11 @@ class ID3v2Frames(Tags):
 	kw_only=True,
 )
 class ID3v2Flags(AttrMapping):
-	unsync = attrib(converter=bool)
-	extended = attrib(converter=bool)
-	experimental = attrib(converter=bool)
-	footer = attrib(converter=bool)
+	unsync = attrib(default=False, converter=bool)
+	compressed = attrib(default=False, converter=bool)
+	extended = attrib(default=False, converter=bool)
+	experimental = attrib(default=False, converter=bool)
+	footer = attrib(default=False, converter=bool)
 
 
 @attrs(
@@ -170,16 +171,36 @@ class ID3v2Header(AttrMapping):
 		except ValueError:  # pragma: nocover
 			raise UnsupportedFormat(f"Unsupported ID3 version (2.{major}).")
 
-		flags = bitstruct.unpack_dict(
-			'b1 b1 b1 b1',
-			[
-				'unsync',
-				'extended',
-				'experimental',
-				'footer',
-			],
-			flags_,
-		)
+		if version is ID3Version.v22:
+			flags = bitstruct.unpack_dict(
+				'b1 b1',
+				[
+					'unsync',
+					'compressed',
+				],
+				flags_,
+			)
+		elif version is ID3Version.v23:
+			flags = bitstruct.unpack_dict(
+				'b1 b1 b1',
+				[
+					'unsync',
+					'extended',
+					'experimental',
+				],
+				flags_,
+			)
+		else:
+			flags = bitstruct.unpack_dict(
+				'b1 b1 b1 b1',
+				[
+					'unsync',
+					'extended',
+					'experimental',
+					'footer',
+				],
+				flags_,
+			)
 
 		size = decode_synchsafe_int(sync_size, 7)
 
