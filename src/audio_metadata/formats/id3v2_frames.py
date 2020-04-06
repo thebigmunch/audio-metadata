@@ -69,6 +69,7 @@ from tbm_utils import (
 
 from .tables import (
 	ID3PictureType,
+	ID3Version,
 	ID3v1Genres,
 	ID3v2LyricsContentType,
 	ID3v2LyricsTimestampFormat,
@@ -292,27 +293,68 @@ class ID3v2Frame(Tag):
 
 	@datareader
 	@staticmethod
-	def _parse_frame_header(data, struct_pattern, size_len, per_byte):
-		try:
-			frame = struct.unpack(struct_pattern, data.read(struct.calcsize(struct_pattern)))
-		except struct.error:
-			raise FormatError("Not enough data.")
+	def _parse_frame_header(data, id3_version):
+		id3_version = ID3Version(id3_version)
+		if id3_version not in [
+			ID3Version.v22,
+			ID3Version.v23,
+			ID3Version.v24,
+		]:
+			raise ValueError(f"Unsupported ID3 version: {id3_version}.")  # pragma: nocover
 
-		frame_id = frame[0].decode('iso-8859-1')
-		frame_size = decode_synchsafe_int(frame[1:1 + size_len], per_byte)
+		if id3_version is ID3Version.v22:
+			try:
+				id_, size = struct.unpack(
+					'3s3s',
+					data.read(6),
+				)
+			except struct.error:
+				raise FormatError("Not enough data.")
+
+			frame_size = struct.unpack(
+				'I',
+				b'\x00' + size,
+			)[0]
+		elif id3_version is ID3Version.v23:
+			try:
+				id_, frame_size, flags = struct.unpack(
+					'4sI2s',
+					data.read(10),
+				)
+			except struct.error:
+				raise FormatError("Not enough data.")
+		elif id3_version is ID3Version.v24:
+			try:
+				id_, size, flags = struct.unpack(
+					'4s4s2s',
+					data.read(10),
+				)
+			except struct.error:
+				raise FormatError("Not enough data.")
+
+			frame_size = decode_synchsafe_int(size, 7)
+
 		if frame_size == 0:
 			raise FormatError("Not a valid ID3v2 frame")
+
+		frame_id = id_.decode('iso-8859-1')
 
 		return frame_id, frame_size
 
 	@datareader
 	@classmethod
-	def parse(cls, data, struct_pattern, size_len, per_byte):
+	def parse(cls, data, id3_version):
+		id3_version = ID3Version(id3_version)
+		if id3_version not in [
+			ID3Version.v22,
+			ID3Version.v23,
+			ID3Version.v24,
+		]:
+			raise ValueError(f"Unsupported ID3 version: {id3_version}.")  # pragma: nocover
+
 		frame_id, frame_size = ID3v2Frame._parse_frame_header(
 			data,
-			struct_pattern,
-			size_len,
-			per_byte,
+			id3_version,
 		)
 
 		frame_type = ID3v2FrameTypes.get(frame_id, ID3v2Frame)

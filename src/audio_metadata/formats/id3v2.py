@@ -64,25 +64,17 @@ class ID3v2Frames(Tags):
 	@classmethod
 	def parse(cls, data, id3_version):
 		id3_version = ID3Version(id3_version)
-		if id3_version is ID3Version.v22:
-			struct_pattern = '3s3B'
-			size_len = 3
-			per_byte = 8
-		elif id3_version is ID3Version.v23:
-			struct_pattern = '4s4B2B'
-			size_len = 4
-			per_byte = 8
-		elif id3_version is ID3Version.v24:
-			struct_pattern = '4s4B2B'
-			size_len = 4
-			per_byte = 7
-		else:
+		if id3_version not in [
+			ID3Version.v22,
+			ID3Version.v23,
+			ID3Version.v24,
+		]:
 			raise ValueError(f"Unsupported ID3 version: {id3_version}.")  # pragma: nocover
 
 		frames = defaultdict(list)
 		while True:
 			try:
-				frame = ID3v2Frame.parse(data, struct_pattern, size_len, per_byte)
+				frame = ID3v2Frame.parse(data, id3_version)
 			except FormatError:
 				break
 
