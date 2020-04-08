@@ -11,17 +11,32 @@ from tbm_utils import humanize_duration as tbm_humanize_duration
 
 
 def apply_unsynchronization(data):
-	split = bytearray(data).split(b'\xFF')
+	sync_index = data.find(b'\xFF')
+	if sync_index == -1:
+		return data
 
-	for s in split[1:]:
-		if (
-			not s
-			or not s[0]
-			or s[0] >= 224
-		):
-			s.insert(0, 0)
+	data = bytearray(data)
 
-	return bytes(bytearray(b'\xFF').join(split))
+	d = bytearray()
+	while sync_index != -1:
+		d += data[:sync_index + 1]
+
+		b = data[sync_index + 1 : sync_index + 2]
+		if b >= b'\xE0':
+			d += b'\x00'
+			d += b
+		elif b == b'\x00':
+			d += b'\x00\x00'
+		else:
+			d += b
+
+		data = data[sync_index + 2:]
+
+		sync_index = data.find(b'\xFF')
+
+	d += data
+
+	return bytes(d)
 
 
 def decode_synchsafe_int(data, per_byte):
@@ -66,25 +81,31 @@ def determine_encoding(b):
 
 
 def remove_unsynchronization(data):
-	split = bytearray(data).split(b'\xFF')
+	sync_index = data.find(b'\xFF')
+	if sync_index == -1:
+		return data
 
-	if (
-		len(split) > 1
-		and not split[-1]
-	):
-		raise Exception  # TODO
+	data = bytearray(data)
 
-	for s in split[1:]:
-		if (
-			not s
-			or s[0] >= 224
-		):
-			raise Exception  # TODO
+	d = bytearray()
+	while sync_index != -1:
+		d += data[:sync_index]
 
-		if not s[0]:
-			del s[0]
+		if data[sync_index + 1 : sync_index + 3] == b'\x00\x00':
+			d += b'\xFF\x00'
+			data = data[sync_index + 3:]
+		elif data[sync_index + 1 : sync_index + 2] == b'\x00':
+			d += b'\xFF'
+			data = data[sync_index + 2:]
+		else:
+			d += b'\xFF'
+			data = data[sync_index + 1:]
 
-	return bytes(bytearray(b'\xFF').join(split))
+		sync_index = data.find(b'\xFF')
+
+	d += data
+
+	return bytes(d)
 
 
 def split_encoded(data, encoding, max_split=None):

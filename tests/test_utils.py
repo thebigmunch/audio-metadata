@@ -7,6 +7,7 @@ from ward import (
 )
 
 from audio_metadata.utils import (
+	apply_unsynchronization,
 	decode_bytestring,
 	decode_synchsafe_int,
 	determine_encoding,
@@ -14,10 +15,40 @@ from audio_metadata.utils import (
 	humanize_bitrate,
 	humanize_duration,
 	humanize_sample_rate,
+	remove_unsynchronization,
 	split_encoded
 )
 
 images = (Path(__file__).parent / 'image').glob('*.*')
+
+
+@test(
+	"apply_unsynchronization",
+	tags=['unit', 'utils', 'apply_unsynchronization'],
+)
+def _(
+	b=each(
+		b'TEST',
+		b'\xFF',
+		b'\x00',
+		b'\xFF\xFE',
+		b'\xFF\x00',
+		b'\xFF\x00\xFF',
+		b'\xFF\x00\x00',
+		b'\xFF\x00\xFF\xFE',
+	),
+	expected=each(
+		b'TEST',
+		b'\xFF',
+		b'\x00',
+		b'\xFF\x00\xFE',
+		b'\xFF\x00\x00',
+		b'\xFF\x00\x00\xFF',
+		b'\xFF\x00\x00\x00',
+		b'\xFF\x00\x00\xFF\x00\xFE',
+	),
+):
+	assert apply_unsynchronization(b) == expected
 
 
 @test(
@@ -95,6 +126,35 @@ def _(
 	),
 ):
 	assert determine_encoding(b) == encoding
+
+
+@test(
+	"remove_unsynchronization",
+	tags=['unit', 'utils', 'remove_unsynchronization'],
+)
+def _(
+	b=each(
+		b'TEST',
+		b'\xFF',
+		b'\x00',
+		b'\xFF\x00\xFE',
+		b'\xFF\x00\x00',
+		b'\xFF\x00\x00\xFF',
+		b'\xFF\x00\x00\x00',
+		b'\xFF\x00\x00\xFF\x00\xFE',
+	),
+	expected=each(
+		b'TEST',
+		b'\xFF',
+		b'\x00',
+		b'\xFF\xFE',
+		b'\xFF\x00',
+		b'\xFF\x00\xFF',
+		b'\xFF\x00\x00',
+		b'\xFF\x00\xFF\xFE',
+	),
+):
+	assert remove_unsynchronization(b) == expected
 
 
 @test(
