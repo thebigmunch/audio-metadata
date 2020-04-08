@@ -11,6 +11,8 @@ from tbm_utils import humanize_duration as tbm_humanize_duration
 
 
 def apply_unsynchronization(data):
+	"""Apply ID3v2 unsynchronization scheme to data."""
+
 	sync_index = data.find(b'\xFF')
 	if sync_index == -1:
 		return data
@@ -31,6 +33,36 @@ def apply_unsynchronization(data):
 			d += b
 
 		data = data[sync_index + 2:]
+
+		sync_index = data.find(b'\xFF')
+
+	d += data
+
+	return bytes(d)
+
+
+def remove_unsynchronization(data):
+	"""Remove ID3v2 unsynchronization scheme from data."""
+
+	sync_index = data.find(b'\xFF')
+	if sync_index == -1:
+		return data
+
+	data = bytearray(data)
+
+	d = bytearray()
+	while sync_index != -1:
+		d += data[:sync_index]
+
+		if data[sync_index + 1 : sync_index + 3] == b'\x00\x00':
+			d += b'\xFF\x00'
+			data = data[sync_index + 3:]
+		elif data[sync_index + 1 : sync_index + 2] == b'\x00':
+			d += b'\xFF'
+			data = data[sync_index + 2:]
+		else:
+			d += b'\xFF'
+			data = data[sync_index + 1:]
 
 		sync_index = data.find(b'\xFF')
 
@@ -78,34 +110,6 @@ def determine_encoding(b):
 		encoding = 'iso-8859-1'
 
 	return encoding
-
-
-def remove_unsynchronization(data):
-	sync_index = data.find(b'\xFF')
-	if sync_index == -1:
-		return data
-
-	data = bytearray(data)
-
-	d = bytearray()
-	while sync_index != -1:
-		d += data[:sync_index]
-
-		if data[sync_index + 1 : sync_index + 3] == b'\x00\x00':
-			d += b'\xFF\x00'
-			data = data[sync_index + 3:]
-		elif data[sync_index + 1 : sync_index + 2] == b'\x00':
-			d += b'\xFF'
-			data = data[sync_index + 2:]
-		else:
-			d += b'\xFF'
-			data = data[sync_index + 1:]
-
-		sync_index = data.find(b'\xFF')
-
-	d += data
-
-	return bytes(d)
 
 
 def split_encoded(data, encoding, max_split=None):
