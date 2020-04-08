@@ -1,8 +1,30 @@
-name: test
+name: CI
 
 on: [push, pull_request]
 
 jobs:
+  lint:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-python@v1
+        with:
+          python-version: 3.8
+      - run: pip install -U nox
+      - run: nox -s lint
+
+  doc:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-python@v1
+        with:
+          python-version: 3.8
+      - run: pip install -U nox
+      - run: nox -s doc
+
   test:
     runs-on: ${{ matrix.os }}
 

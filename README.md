@@ -1,11 +1,9 @@
 # audio-metadata
 
 [![PyPI](https://img.shields.io/pypi/v/audio-metadata.svg?label=PyPI)](https://pypi.org/project/audio-metadata/)
-![](https://img.shields.io/badge/Python-3.6%2B-blue.svg)
+![](https://img.shields.io/badge/Python-3.6%2B-blue.svg)  
+[![GitHub CI](https://img.shields.io/github/workflow/status/thebigmunch/audio-metadata/CI?label=GitHub%20CI)](https://github.com/thebigmunch/audio-metadata/actions?query=workflow%3ACI)
 [![Codecov](https://img.shields.io/codecov/c/github/thebigmunch/audio-metadata.svg?label=Codecov)](https://codecov.io/gh/thebigmunch/audio-metadata)  
-[![CI (doc)](https://img.shields.io/github/workflow/status/thebigmunch/audio-metadata/doc?label=CI%20%28doc%29)](https://github.com/thebigmunch/audio-metadata/actions?query=workflow%3Adoc)
-[![CI (lint)](https://img.shields.io/github/workflow/status/thebigmunch/audio-metadata/lint?label=CI%20%28lint%29)](https://github.com/thebigmunch/audio-metadata/actions?query=workflow%3Alint)
-[![CI (test)](https://img.shields.io/github/workflow/status/thebigmunch/audio-metadata/test?label=CI%20%28test%29)](https://github.com/thebigmunch/audio-metadata/actions?query=workflow%3Atest)  
 [![Docs - Stable](https://img.shields.io/readthedocs/audio-metadata/stable.svg?label=Docs%20%28Stable%29)](https://audio-metadata.readthedocs.io/en/stable/)
 [![Docs - Latest](https://img.shields.io/readthedocs/audio-metadata/latest.svg?label=Docs%20%28Latest%29)](https://audio-metadata.readthedocs.io/en/latest/)
 
