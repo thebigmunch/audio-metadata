@@ -16,7 +16,7 @@ from tbm_utils import datareader
 
 from .flac import FLACPicture
 from .ogg import Ogg
-from .vorbis_comments import VorbisComments
+from .vorbiscomments import VorbisComments
 from ..exceptions import FormatError
 from ..models import StreamInfo
 

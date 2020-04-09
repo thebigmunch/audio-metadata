@@ -20,7 +20,7 @@ from tbm_utils import (
 	datareader,
 )
 
-from .id3v2_frames import (
+from .id3v2frames import (
 	ID3v2Frame,
 	ID3v2GenreFrame,
 	ID3v2NumericTextFrame,

@@ -34,7 +34,7 @@ from .tables import (
 	FLACMetadataBlockType,
 	ID3PictureType,
 )
-from .vorbis_comments import VorbisComments
+from .vorbiscomments import VorbisComments
 from ..exceptions import FormatError
 from ..models import (
 	Format,
