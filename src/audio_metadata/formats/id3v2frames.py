@@ -686,7 +686,7 @@ class ID3v2NumericTextFrame(ID3v2Frame):
 	value = attrib()
 
 	@value.validator
-	def validate_value(self, attribute, value):
+	def _validate_value(self, attribute, value):
 		if not all(v.isdigit() for v in value):
 			raise TagError("Numeric text frame values must consist only of digits.")
 
@@ -864,7 +864,7 @@ class ID3v2TimestampFrame(ID3v2Frame):
 	value = attrib()
 
 	@value.validator
-	def validate_value(self, attribute, value):
+	def _validate_value(self, attribute, value):
 		for v in value:
 			try:
 				parse_iso8601(v)
@@ -1014,7 +1014,7 @@ class ID3v2DateFrame(ID3v2NumericTextFrame):
 	value = attrib()
 
 	@value.validator
-	def validate_value(self, attribute, value):
+	def _validate_value(self, attribute, value):
 		if not all(
 			(
 				v.isdigit()
@@ -1037,7 +1037,7 @@ class ID3v2TimeFrame(ID3v2NumericTextFrame):
 	value = attrib()
 
 	@value.validator
-	def validate_value(self, attribute, value):
+	def _validate_value(self, attribute, value):
 		if not all(
 			(
 				v.isdigit()
@@ -1060,7 +1060,7 @@ class ID3v2YearFrame(ID3v2NumericTextFrame):
 	value = attrib()
 
 	@value.validator
-	def validate_value(self, attribute, value):
+	def _validate_value(self, attribute, value):
 		if not all(
 			(
 				v.isdigit()
