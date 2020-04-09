@@ -1,7 +1,9 @@
 # http://id3.org/Developer%20Information
 
 __all__ = [
+	'ID3v2AENCFrame',
 	'ID3v2APICFrame',
+	'ID3v2AudioEncryption',
 	'ID3v2BinaryDataFrame',
 	'ID3v2Comment',
 	'ID3v2CommentFrame',
@@ -107,6 +109,17 @@ from ..utils import (
 )
 
 _genre_re = re.compile(r"((?:\((?P<id>\d+|RX|CR)\))*)(?P<name>.+)?")
+
+
+@attrs(
+	repr=False,
+	kw_only=True,
+)
+class ID3v2AudioEncryption(AttrMapping):
+	owner = attrib()
+	preview_start = attrib()
+	preview_size = attrib()
+	info = attrib()
 
 
 @attrs(
@@ -1056,6 +1069,30 @@ class ID3v2UserURLLinkFrame(ID3v2Frame):
 	repr=False,
 	kw_only=True,
 )
+class ID3v2AENCFrame(ID3v2Frame):
+	@datareader
+	@staticmethod
+	def _parse_frame_data(data):
+		frame_data = data.read()
+
+		owner, remainder = frame_data.split(b'\x00', 1)
+		preview_start, preview_size = struct.unpack('>HH', remainder[0:4])
+
+		return (
+			ID3v2AudioEncryption(
+				owner=owner.decode('iso-8859-1'),
+				preview_start=preview_start,
+				preview_size=preview_size,
+				info=remainder[4:],
+			),
+			None,
+		)
+
+
+@attrs(
+	repr=False,
+	kw_only=True,
+)
 class ID3v2DateFrame(ID3v2NumericTextFrame):
 	value = attrib()
 
@@ -1355,11 +1392,11 @@ class ID3v2USERFrame(ID3v2Frame):
 # TODO: REV, RVA
 
 # TODO: ID3v2.3
-# TODO: AENC, COMR, ENCR, EQUA, ETCO, LINK, MLLT, OWNE
+# TODO: COMR, ENCR, EQUA, ETCO, LINK, MLLT, OWNE
 # TODO: PCNT, POSS, RBUF, RGAD, RVAD, RVRB, XRVA
 
 # TODO: ID3v2.4
-# TODO: AENC, ASPI, COMR, ENCR, EQU2, ETCO, LINK, MLLT,
+# TODO: ASPI, COMR, ENCR, EQU2, ETCO, LINK, MLLT,
 # TODO: OWNE, PCNT, POSS, RBUF, RGAD, RVA2, RVRB,
 # TODO: SEEK, SIGN, XRVA
 ID3v2FrameTypes = {
@@ -1372,6 +1409,7 @@ ID3v2FrameTypes = {
 	'STC': ID3v2SynchronizedTempoCodesFrame,
 	'UFI': ID3v2UniqueFileIdentifierFrame,
 
+	'AENC': ID3v2AENCFrame,
 	'GEOB': ID3v2GeneralEncapsulatedObjectFrame,
 	'GRID': ID3v2GRIDFrame,
 	'PRIV': ID3v2PrivateFrame,
