@@ -95,10 +95,66 @@ def _(
 
 @test(
 	"decode_synchsafe_int",
-	tags=['unit', 'utils', 'decode_synchsafe_int']
+	tags=['unit', 'utils', 'decode_synchsafe_int'],
 )
-def _():
-	assert decode_synchsafe_int(b'\x01\x7f', 7) == 255
+def _(
+	args=each(
+		(b'\x00\x00\x01\x7f', 7),
+		(b'\x00\x00\x02\x7f', 6),
+		(b'\x00\x00\x01\x7f', 6),
+	),
+	expected=each(
+		255,
+		255,
+		191,
+	)
+):
+	assert decode_synchsafe_int(*args) == expected
+
+
+@test(
+	"Decoding too large synchsafe int raises ValueError",
+	tags=['unit', 'utils', 'decode_synchsafe_int'],
+)
+def _(
+	args=each(
+		(b'\x80\x00\x00\x00', 7),
+		(b'@\x00\x00\x00', 6),
+	)
+):
+	with raises(ValueError):
+		decode_synchsafe_int(*args)
+
+
+@test(
+	"encode_synchsafe_int",
+	tags=['unit', 'utils', 'encode_synchsafe_int'],
+)
+def _(
+	args=each(
+		(255, 7),
+		(255, 6),
+	),
+	expected=each(
+		b'\x00\x00\x01\x7f',
+		b'\x00\x00\x02\x7f',
+	),
+):
+	assert encode_synchsafe_int(*args) == expected
+
+
+@test(
+	"Encoding too large synchsafe int raises ValueError",
+	tags=['unit', 'utils', 'encode_synchsafe_int'],
+)
+def _(
+	args=each(
+		(268435456, 7),
+		(16777216, 6),
+	)
+):
+	with raises(ValueError):
+		encode_synchsafe_int(*args)
 
 
 @test(
