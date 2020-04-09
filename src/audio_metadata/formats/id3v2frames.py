@@ -35,6 +35,7 @@ __all__ = [
 	'ID3v2SynchronizedTempoCodes',
 	'ID3v2SynchronizedTempoCodesFrame',
 	'ID3v2TMCLFrame',
+	'ID3v2TPROFrame',
 	'ID3v2TimeFrame',
 	'ID3v2TermsOfUse',
 	'ID3v2TextFrame',
@@ -1237,6 +1238,25 @@ class ID3v2TMCLFrame(ID3v2InvolvedPeopleListFrame):
 	repr=False,
 	kw_only=True,
 )
+class ID3v2TPROFrame(ID3v2TextFrame):
+	value = attrib()
+
+	@value.validator
+	def _validate_value(self, attribute, value):
+		if (
+			not all(
+				v.isdigit()
+				for v in value[0:4]
+			)
+			or not value[4] == ' '
+		):
+			raise TagError("TPRO frame values must start with a year followed by a space.")
+
+
+@attrs(
+	repr=False,
+	kw_only=True,
+)
 class ID3v2UniqueFileIdentifierFrame(ID3v2Frame):
 	@datareader
 	@staticmethod
@@ -1288,7 +1308,7 @@ class ID3v2USERFrame(ID3v2Frame):
 # TODO: ID3v2.4
 # TODO: AENC, ASPI, COMR, ENCR, EQU2, ETCO, LINK, MLLT,
 # TODO: OWNE, PCNT, PCST, POPM, POSS, RBUF, RGAD, RVA2, RVRB,
-# TODO: SEEK, SIGN, TPRO, XRVA
+# TODO: SEEK, SIGN, XRVA
 ID3v2FrameTypes = {
 	# Binary data frames
 	'MCDI': ID3v2BinaryDataFrame,
@@ -1417,6 +1437,7 @@ ID3v2FrameTypes = {
 	'TPE2': ID3v2TextFrame,
 	'TPE3': ID3v2TextFrame,
 	'TPE4': ID3v2TextFrame,
+	'TPRO': ID3v2TPROFrame,
 	'TPUB': ID3v2TextFrame,
 	'TRDA': ID3v2TextFrame,
 	'TRSN': ID3v2TextFrame,

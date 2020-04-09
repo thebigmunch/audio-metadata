@@ -200,6 +200,7 @@ ID3v2FrameAliases = {
 			'performers': 'TMCL',
 			'pictures': 'APIC',
 			'playcount': 'PCNT',
+			'producednotice': 'TPRO',
 			'private': 'PRIV',
 			'rating': 'POPM',
 			'remixer': 'TPE4',
