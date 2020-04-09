@@ -28,6 +28,10 @@ This project adheres to [Semantic Versioning](https://semver.org).
 	(``ID3v2Disc`` or ``ID3v2Track``) rather than having
 	the number/total abstraction on the frame class itself.
 
+### Fixed
+
+* Missing maxsplit argument in ``ID3v2UniqueFileIdentiferFrame`` parsing.
+
 
 ## [0.10.0](https://github.com/thebigmunch/audio-metadata/releases/tag/0.10.0) (2020-04-08)
 

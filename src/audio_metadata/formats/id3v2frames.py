@@ -1352,7 +1352,7 @@ class ID3v2UniqueFileIdentifierFrame(ID3v2Frame):
 	@staticmethod
 	def _parse_frame_data(data):
 		frame_data = data.read()
-		owner, identifier = frame_data.split(b'\x00')
+		owner, identifier = frame_data.split(b'\x00', 1)
 
 		if len(identifier) > 64:
 			raise TagError("ID3v2 unique file identifier must be no more than 64 bytes.")
