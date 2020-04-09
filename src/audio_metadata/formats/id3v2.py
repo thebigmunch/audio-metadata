@@ -23,6 +23,7 @@ from tbm_utils import (
 from .id3v2frames import (
 	ID3v2Frame,
 	ID3v2GenreFrame,
+	ID3v2NumberFrame,
 	ID3v2NumericTextFrame,
 	ID3v2PeopleListFrame,
 	ID3v2TextFrame,
@@ -111,6 +112,11 @@ class ID3v2Frames(Tags):
 				),
 			):
 				frames[frame.name] = frame.value
+			elif isinstance(frame, ID3v2NumberFrame):
+				if frame.value.total is not None:
+					frames[frame.name] = [f"{frame.value.number}/{frame.value.total}"]
+				else:
+					frames[frame.name] = [frame.value.number]
 			else:
 				frames[frame.name].append(frame.value)
 

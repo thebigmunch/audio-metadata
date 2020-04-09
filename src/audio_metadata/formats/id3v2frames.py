@@ -6,6 +6,8 @@ __all__ = [
 	'ID3v2Comment',
 	'ID3v2CommentFrame',
 	'ID3v2DateFrame',
+	'ID3v2Disc',
+	'ID3v2DiscFrame',
 	'ID3v2Frame',
 	'ID3v2FrameFlags',
 	'ID3v2FrameTypes',
@@ -37,6 +39,8 @@ __all__ = [
 	'ID3v2TermsOfUse',
 	'ID3v2TextFrame',
 	'ID3v2TimestampFrame',
+	'ID3v2Track',
+	'ID3v2TrackFrame',
 	'ID3v2USERFrame',
 	'ID3v2UniqueFileIdentifier',
 	'ID3v2UniqueFileIdentifierFrame',
@@ -109,6 +113,15 @@ class ID3v2Comment(AttrMapping):
 	language = attrib()
 	description = attrib()
 	text = attrib()
+
+
+@attrs(
+	repr=False,
+	kw_only=True,
+)
+class ID3v2Disc(AttrMapping):
+	number = attrib()
+	total = attrib(default=None)
 
 
 @attrs(
@@ -253,6 +266,15 @@ class ID3v2SynchronizedTempoCodes(AttrMapping):
 class ID3v2TermsOfUse(AttrMapping):
 	language = attrib()
 	text = attrib()
+
+
+@attrs(
+	repr=False,
+	kw_only=True,
+)
+class ID3v2Track(AttrMapping):
+	number = attrib()
+	total = attrib(default=None)
 
 
 @attrs(
@@ -593,13 +615,18 @@ class ID3v2LyricsFrame(ID3v2Frame):
 class ID3v2NumberFrame(ID3v2Frame):
 	value = attrib()
 
-	@value.validator
-	def validate_value(self, attribute, value):
+	def _validate_value(value):
 		if not all(char in [*string.digits, '/'] for char in value):
 			raise TagError(
 				"Number frame values must consist only of digits and '/'.",
 			)
 
+
+@attrs(
+	repr=False,
+	kw_only=True,
+)
+class ID3v2DiscFrame(ID3v2NumberFrame):
 	@datareader
 	@staticmethod
 	def _parse_frame_data(data):
@@ -607,23 +634,48 @@ class ID3v2NumberFrame(ID3v2Frame):
 
 		encoding = determine_encoding(frame_data)
 
+		value = decode_bytestring(frame_data[1:], encoding)
+		ID3v2NumberFrame._validate_value(value)
+
+		values = value.split('/')
+		number = values[0]
+		total = values[1] if len(values) == 2 else None
+
 		return (
-			decode_bytestring(frame_data[1:], encoding),
+			ID3v2Disc(
+				number=number,
+				total=total,
+			),
 			encoding,
 		)
 
-	@property
-	def number(self):
-		return self.value.split('/')[0]
 
-	@property
-	def total(self):
-		try:
-			tot = self.value.split('/')[1]
-		except IndexError:
-			tot = None
+@attrs(
+	repr=False,
+	kw_only=True,
+)
+class ID3v2TrackFrame(ID3v2NumberFrame):
+	@datareader
+	@staticmethod
+	def _parse_frame_data(data):
+		frame_data = data.read()
 
-		return tot
+		encoding = determine_encoding(frame_data)
+
+		value = decode_bytestring(frame_data[1:], encoding)
+		ID3v2NumberFrame._validate_value(value)
+
+		values = value.split('/')
+		number = values[0]
+		total = values[1] if len(values) == 2 else None
+
+		return (
+			ID3v2Track(
+				number=number,
+				total=total,
+			),
+			encoding,
+		)
 
 
 @attrs(
@@ -1278,11 +1330,11 @@ ID3v2FrameTypes = {
 	'USLT': ID3v2UnsynchronizedLyricsFrame,
 
 	# Number Frames
-	'TPA': ID3v2NumberFrame,
-	'TRK': ID3v2NumberFrame,
+	'TPA': ID3v2DiscFrame,
+	'TRK': ID3v2TrackFrame,
 
-	'TPOS': ID3v2NumberFrame,
-	'TRCK': ID3v2NumberFrame,
+	'TPOS': ID3v2DiscFrame,
+	'TRCK': ID3v2TrackFrame,
 
 	# Numeric Text Frames
 	'TBP': ID3v2NumericTextFrame,

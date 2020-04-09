@@ -8,6 +8,19 @@ This project adheres to [Semantic Versioning](https://semver.org).
 
 [Commits](https://github.com/thebigmunch/audio-metadata/compare/0.10.0...master)
 
+### Added
+
+* ``ID3v2Disc``.
+* ``ID3v2DiscFrame``.
+* ``ID3v2Track``.
+* ``ID3v2TrackFrame``.
+
+### Changed
+
+* ``ID3v2NumberFrame`` value is not the appropriate class
+	(``ID3v2Disc`` or ``ID3v2Track``) rather than having
+	the number/total abstraction on the frame class itself.
+
 
 ## [0.10.0](https://github.com/thebigmunch/audio-metadata/releases/tag/0.10.0) (2020-04-08)
 
