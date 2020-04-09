@@ -53,45 +53,32 @@ def _(
 
 
 @test(
-	"decode_bytestring",
-	tags=['unit', 'utils', 'decode_bytestring'],
+	"remove_unsynchronization",
+	tags=['unit', 'utils', 'remove_unsynchronization'],
 )
 def _(
 	b=each(
-		b'test\x00',
-		b'\xff\xfet\x00e\x00s\x00t\x00',
-		b'\xff\xfet\x00e\x00s\x00t\x00\x00',
-		b'\xfe\xff\x00t\x00e\x00s\x00t',
-		b'\xfe\xff\x00t\x00e\x00s\x00t\x00',
-		b'test\x00',
-		b'test\x00',
-		b''
-	),
-	encoding=each(
-		'iso-8859-1',
-		'utf-16-le',
-		'utf-16-le',
-		'utf-16-be',
-		'utf-16-be',
-		'utf-8',
-		None,
-		None,
+		b'TEST',
+		b'\xFF',
+		b'\x00',
+		b'\xFF\x00\xFE',
+		b'\xFF\x00\x00',
+		b'\xFF\x00\x00\xFF',
+		b'\xFF\x00\x00\x00',
+		b'\xFF\x00\x00\xFF\x00\xFE',
 	),
 	expected=each(
-		'test',
-		'test',
-		'test',
-		'test',
-		'test',
-		'test',
-		'test',
-		'',
-	)
+		b'TEST',
+		b'\xFF',
+		b'\x00',
+		b'\xFF\xFE',
+		b'\xFF\x00',
+		b'\xFF\x00\xFF',
+		b'\xFF\x00\x00',
+		b'\xFF\x00\xFF\xFE',
+	),
 ):
-	if encoding is None:
-		assert decode_bytestring(b) == expected
-	else:
-		assert decode_bytestring(b, encoding=encoding) == expected
+	assert remove_unsynchronization(b) == expected
 
 
 @test(
@@ -159,6 +146,48 @@ def _(
 
 
 @test(
+	"decode_bytestring",
+	tags=['unit', 'utils', 'decode_bytestring'],
+)
+def _(
+	b=each(
+		b'test\x00',
+		b'\xff\xfet\x00e\x00s\x00t\x00',
+		b'\xff\xfet\x00e\x00s\x00t\x00\x00',
+		b'\xfe\xff\x00t\x00e\x00s\x00t',
+		b'\xfe\xff\x00t\x00e\x00s\x00t\x00',
+		b'test\x00',
+		b'test\x00',
+		b''
+	),
+	encoding=each(
+		'iso-8859-1',
+		'utf-16-le',
+		'utf-16-le',
+		'utf-16-be',
+		'utf-16-be',
+		'utf-8',
+		None,
+		None,
+	),
+	expected=each(
+		'test',
+		'test',
+		'test',
+		'test',
+		'test',
+		'test',
+		'test',
+		'',
+	)
+):
+	if encoding is None:
+		assert decode_bytestring(b) == expected
+	else:
+		assert decode_bytestring(b, encoding=encoding) == expected
+
+
+@test(
 	"determine_encoding",
 	tags=['unit', 'utils', 'determine_encoding'],
 )
@@ -183,35 +212,6 @@ def _(
 	),
 ):
 	assert determine_encoding(b) == encoding
-
-
-@test(
-	"remove_unsynchronization",
-	tags=['unit', 'utils', 'remove_unsynchronization'],
-)
-def _(
-	b=each(
-		b'TEST',
-		b'\xFF',
-		b'\x00',
-		b'\xFF\x00\xFE',
-		b'\xFF\x00\x00',
-		b'\xFF\x00\x00\xFF',
-		b'\xFF\x00\x00\x00',
-		b'\xFF\x00\x00\xFF\x00\xFE',
-	),
-	expected=each(
-		b'TEST',
-		b'\xFF',
-		b'\x00',
-		b'\xFF\xFE',
-		b'\xFF\x00',
-		b'\xFF\x00\xFF',
-		b'\xFF\x00\x00',
-		b'\xFF\x00\xFF\xFE',
-	),
-):
-	assert remove_unsynchronization(b) == expected
 
 
 @test(
