@@ -16,4 +16,4 @@ jobs:
       - uses: dschep/install-poetry-action@v1.3
         with:
           create_virtualenvs: true
-      - run: poetry publish --build --username=__token__ --pasword=${{ secrets.PYPI_TOKEN }}
+      - run: poetry publish --build --username __token__ --password ${{ secrets.PYPI_TOKEN }}
