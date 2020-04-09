@@ -1475,7 +1475,9 @@ ID3v2FrameTypes = {
 	'TT3': ID3v2TextFrame,
 	'TXT': ID3v2TextFrame,
 
+	'GRP1': ID3v2TextFrame,
 	'TALB': ID3v2TextFrame,
+	'TCAT': ID3v2TextFrame,
 	'TCMP': ID3v2TextFrame,
 	'TCOM': ID3v2TextFrame,
 	'TCOP': ID3v2TextFrame,

@@ -19,6 +19,7 @@ This project adheres to [Semantic Versioning](https://semver.org).
 	* ``ID3v2Popularimeter``.
 	* ``ID3v2PopularimeterFrame``.
 * ``ID3v2PodcastFrame``.
+* Support for Apple ``GRP1`` and ``TCAT`` ID3v2 frames
 
 ### Changed
 
