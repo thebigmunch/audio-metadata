@@ -11,6 +11,7 @@ from audio_metadata.utils import (
 	decode_bytestring,
 	decode_synchsafe_int,
 	determine_encoding,
+	encode_synchsafe_int,
 	get_image_size,
 	humanize_bitrate,
 	humanize_duration,
@@ -53,7 +54,7 @@ def _(
 
 @test(
 	"decode_bytestring",
-	tags=['unit', 'utils', 'decode_bytestring']
+	tags=['unit', 'utils', 'decode_bytestring'],
 )
 def _(
 	b=each(
@@ -159,7 +160,7 @@ def _(
 
 @test(
 	"determine_encoding",
-	tags=['unit', 'utils', 'determine_encoding']
+	tags=['unit', 'utils', 'determine_encoding'],
 )
 def _(
 	b=each(
@@ -228,7 +229,7 @@ def test_get_image_size():
 
 @test(
 	"humanize_bitrate",
-	tags=['unit', 'utils', 'humanize_bitrate']
+	tags=['unit', 'utils', 'humanize_bitrate'],
 )
 def _(
 	bitrate=each(
@@ -251,7 +252,7 @@ def _(
 
 @test(
 	"humanize_duration",
-	tags=['unit', 'utils', 'humanize_duration']
+	tags=['unit', 'utils', 'humanize_duration'],
 )
 def _(
 	duration=each(
@@ -274,7 +275,7 @@ def _(
 
 @test(
 	"humanize_sample_rate",
-	tags=['unit', 'utils', 'humanize_sample_rate']
+	tags=['unit', 'utils', 'humanize_sample_rate'],
 )
 def _(
 	sample_rate=each(
@@ -297,7 +298,7 @@ def _(
 
 @test(
 	"split_encoded ({b}, {encoding})",
-	tags=['unit', 'utils', 'split_encoded']
+	tags=['unit', 'utils', 'split_encoded'],
 )
 def _(
 	b=each(
