@@ -24,6 +24,7 @@ __all__ = [
 	'ID3v2NumericTextFrame',
 	'ID3v2OWNEFrame',
 	'ID3v2OwnershipTransaction',
+	'ID3v2PodcastFrame',
 	'ID3v2PICFrame',
 	'ID3v2PeopleListFrame',
 	'ID3v2Performer',
@@ -1243,6 +1244,14 @@ class ID3v2OWNEFrame(ID3v2Frame):
 	repr=False,
 	kw_only=True,
 )
+class ID3v2PodcastFrame(ID3v2BinaryDataFrame):
+	pass
+
+
+@attrs(
+	repr=False,
+	kw_only=True,
+)
 class ID3v2TMCLFrame(ID3v2InvolvedPeopleListFrame):
 	@datareader
 	@staticmethod
@@ -1342,16 +1351,16 @@ class ID3v2USERFrame(ID3v2Frame):
 
 
 # TODO:ID3v2.2
-# TODO: BUF, CNT, CRA, CRM, ETC, EQU, LNK, MCI, MLL, PCS,
+# TODO: BUF, CNT, CRA, CRM, ETC, EQU, LNK, MCI, MLL,
 # TODO: REV, RVA
 
 # TODO: ID3v2.3
 # TODO: AENC, COMR, ENCR, EQUA, ETCO, LINK, MLLT, OWNE
-# TODO: PCNT, PCST, POSS, RBUF, RGAD, RVAD, RVRB, XRVA
+# TODO: PCNT, POSS, RBUF, RGAD, RVAD, RVRB, XRVA
 
 # TODO: ID3v2.4
 # TODO: AENC, ASPI, COMR, ENCR, EQU2, ETCO, LINK, MLLT,
-# TODO: OWNE, PCNT, PCST, POSS, RBUF, RGAD, RVA2, RVRB,
+# TODO: OWNE, PCNT, POSS, RBUF, RGAD, RVA2, RVRB,
 # TODO: SEEK, SIGN, XRVA
 ID3v2FrameTypes = {
 	# Binary data frames
@@ -1423,6 +1432,11 @@ ID3v2FrameTypes = {
 	'PIC': ID3v2PICFrame,
 
 	'APIC': ID3v2APICFrame,
+
+	# Podcast Frames
+	'PCS': ID3v2PodcastFrame,
+
+	'PCST': ID3v2PodcastFrame,
 
 	# Popularimeter Frames
 	'POP': ID3v2PopularimeterFrame,

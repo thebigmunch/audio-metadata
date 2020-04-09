@@ -18,6 +18,7 @@ This project adheres to [Semantic Versioning](https://semver.org).
 * Support for ID3v2 Popularimeter frames.
 	* ``ID3v2Popularimeter``.
 	* ``ID3v2PopularimeterFrame``.
+* ``ID3v2PodcastFrame``.
 
 ### Changed
 
