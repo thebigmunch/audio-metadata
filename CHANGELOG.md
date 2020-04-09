@@ -15,6 +15,9 @@ This project adheres to [Semantic Versioning](https://semver.org).
 * ``ID3v2Track``.
 * ``ID3v2TrackFrame``.
 * ``ID3v2TPROFrame``.
+* Support for ID3v2 Popularimeter frames.
+	* ``ID3v2Popularimeter``.
+	* ``ID3v2PopularimeterFrame``.
 
 ### Changed
 

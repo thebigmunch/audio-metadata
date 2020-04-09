@@ -28,6 +28,8 @@ __all__ = [
 	'ID3v2PeopleListFrame',
 	'ID3v2Performer',
 	'ID3v2Picture',
+	'ID3v2Popularimeter',
+	'ID3v2PopularimeterFrame',
 	'ID3v2PrivateFrame',
 	'ID3v2PrivateInfo',
 	'ID3v2SynchronizedLyrics',
@@ -163,6 +165,16 @@ class ID3v2Lyrics(AttrMapping):
 	language = attrib()
 	description = attrib()
 	text = attrib()
+
+
+@attrs(
+	repr=False,
+	kw_only=True,
+)
+class ID3v2Popularimeter(AttrMapping):
+	email = attrib()
+	rating = attrib()
+	count = attrib(default=None)
 
 
 @attrs(
@@ -722,6 +734,38 @@ class ID3v2NumericTextFrame(ID3v2Frame):
 )
 class ID3v2PeopleListFrame(ID3v2Frame):
 	pass
+
+
+@attrs(
+	repr=False,
+	kw_only=True,
+)
+class ID3v2PopularimeterFrame(ID3v2Frame):
+	@datareader
+	@staticmethod
+	def _parse_frame_data(data):
+		frame_data = data.read()
+
+		email, remainder = frame_data.split(b'\x00', 1)
+		rating = remainder[0]
+		remainder = remainder[1:]
+
+		if not remainder:
+			count = None
+		else:
+			if len(remainder) < 4:
+				raise TagError("Popularimeter count must be at least 4 bytes long.")
+
+			count = int.from_bytes(remainder, byteorder='big')
+
+		return (
+			ID3v2Popularimeter(
+				email=email.decode('iso-8859-1'),
+				rating=rating,
+				count=count,
+			),
+			None,
+		)
 
 
 @attrs(
@@ -1299,15 +1343,15 @@ class ID3v2USERFrame(ID3v2Frame):
 
 # TODO:ID3v2.2
 # TODO: BUF, CNT, CRA, CRM, ETC, EQU, LNK, MCI, MLL, PCS,
-# TODO: POP, REV, RVA
+# TODO: REV, RVA
 
 # TODO: ID3v2.3
 # TODO: AENC, COMR, ENCR, EQUA, ETCO, LINK, MLLT, OWNE
-# TODO: PCNT, PCST, POPM, POSS, RBUF, RGAD, RVAD, RVRB, XRVA
+# TODO: PCNT, PCST, POSS, RBUF, RGAD, RVAD, RVRB, XRVA
 
 # TODO: ID3v2.4
 # TODO: AENC, ASPI, COMR, ENCR, EQU2, ETCO, LINK, MLLT,
-# TODO: OWNE, PCNT, PCST, POPM, POSS, RBUF, RGAD, RVA2, RVRB,
+# TODO: OWNE, PCNT, PCST, POSS, RBUF, RGAD, RVA2, RVRB,
 # TODO: SEEK, SIGN, XRVA
 ID3v2FrameTypes = {
 	# Binary data frames
@@ -1379,6 +1423,11 @@ ID3v2FrameTypes = {
 	'PIC': ID3v2PICFrame,
 
 	'APIC': ID3v2APICFrame,
+
+	# Popularimeter Frames
+	'POP': ID3v2PopularimeterFrame,
+
+	'POPM': ID3v2PopularimeterFrame,
 
 	# Text Frames
 	'TAL': ID3v2TextFrame,
