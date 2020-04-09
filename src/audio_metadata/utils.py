@@ -74,7 +74,15 @@ def remove_unsynchronization(data):
 def decode_synchsafe_int(data, per_byte):
 	"""Decode synchsafe integers from ID3v2 tags."""
 
-	return reduce(lambda value, element: (value << per_byte) + element, data, 0)
+	i = reduce(lambda value, element: (value << per_byte) + element, data, 0)
+
+	if i > 2 ** (per_byte * 4) - 1:
+		raise ValueError(
+			f"{data} is too large to be a synchsafe "
+			f"integer with {per_byte} bits per byte."
+		)
+
+	return i
 
 
 def encode_synchsafe_int(i, per_byte):

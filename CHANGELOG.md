@@ -30,6 +30,7 @@ This project adheres to [Semantic Versioning](https://semver.org).
 * Emit warning when ignoring ID3v2 frames with bad values.
 * Ignore ID3v2 frames with no value.
 * Catch and raise more exceptions when parsing ID3v2 frames.
+* Raise exception when decoding too large synchsafe integer.
 
 ### Fixed
 
