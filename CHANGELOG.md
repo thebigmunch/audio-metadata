@@ -17,6 +17,7 @@ This project adheres to [Semantic Versioning](https://semver.org).
 * Support for bitmap images.
 * Properly support ID3v2 header flag differences between versions.
 * Support for ID3v2 unsynchronization and frame flags.
+* ``encode_synchsafe_int``.
 
 ### Changed
 

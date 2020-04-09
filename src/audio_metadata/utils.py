@@ -77,6 +77,29 @@ def decode_synchsafe_int(data, per_byte):
 	return reduce(lambda value, element: (value << per_byte) + element, data, 0)
 
 
+def encode_synchsafe_int(i, per_byte):
+	"""Encode synchsafe integers for ID3v2 tags."""
+
+	if i > 2 ** (per_byte * 4) - 1:
+		raise ValueError(
+			f"{i} is too large to be represented by a synchsafe "
+			f"integer with {per_byte} bits per byte."
+		)
+
+	v = 0
+	mask = 0x7F
+
+	value = i
+	while ((mask ^ 0x7FFFFFFF) > 0):
+		v = value & ~mask
+		v = v << (8 - per_byte)
+		v = v | (value & mask)
+		mask = ((mask + 1) << 8) - 1
+		value = v
+
+	return value.to_bytes(4, byteorder='big')
+
+
 def decode_bytestring(b, encoding='iso-8859-1'):
 	"""Decode ID3v2 frame data using given encoding."""
 
