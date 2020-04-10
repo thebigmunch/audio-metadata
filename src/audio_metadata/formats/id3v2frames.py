@@ -1,9 +1,9 @@
 # http://id3.org/Developer%20Information
 
 __all__ = [
-	'ID3v2AENCFrame',
 	'ID3v2APICFrame',
 	'ID3v2AudioEncryption',
+	'ID3v2AudioEncryptionFrame',
 	'ID3v2BinaryDataFrame',
 	'ID3v2Comment',
 	'ID3v2CommentFrame',
@@ -553,7 +553,7 @@ class ID3v2BinaryDataFrame(ID3v2Frame):
 	repr=False,
 	kw_only=True,
 )
-class ID3v2AENCFrame(ID3v2Frame):
+class ID3v2AudioEncryptionFrame(ID3v2Frame):
 	@datareader
 	@staticmethod
 	def _parse_frame_data(data):
@@ -1452,8 +1452,7 @@ class ID3v2UserURLLinkFrame(ID3v2Frame):
 
 
 # TODO:ID3v2.2
-# TODO: BUF, CRA, CRM, ETC, EQU, LNK, MCI, MLL,
-# TODO: REV, RVA
+# TODO: BUF, CRM, ETC, EQU, LNK, MCI, MLL, REV, RVA
 
 # TODO: ID3v2.3
 # TODO: COMR, ENCR, EQUA, ETCO, LINK, MLLT
@@ -1461,8 +1460,7 @@ class ID3v2UserURLLinkFrame(ID3v2Frame):
 
 # TODO: ID3v2.4
 # TODO: ASPI, COMR, ENCR, EQU2, ETCO, LINK, MLLT,
-# TODO: POSS, RBUF, RGAD, RVA2, RVRB,
-# TODO: SEEK, SIGN, XRVA
+# TODO: POSS, RBUF, RGAD, RVA2, RVRB, SEEK, SIGN, XRVA
 ID3v2FrameTypes = {
 	# Binary data frames
 	'PCS': ID3v2BinaryDataFrame,
@@ -1472,11 +1470,12 @@ ID3v2FrameTypes = {
 	'PCST': ID3v2BinaryDataFrame,
 
 	# Complex binary data frames
+	'CRA': ID3v2AudioEncryptionFrame,
 	'GEO': ID3v2GeneralEncapsulatedObjectFrame,
 	'STC': ID3v2SynchronizedTempoCodesFrame,
 	'UFI': ID3v2UniqueFileIdentifierFrame,
 
-	'AENC': ID3v2AENCFrame,
+	'AENC': ID3v2AudioEncryptionFrame,
 	'GEOB': ID3v2GeneralEncapsulatedObjectFrame,
 	'GRID': ID3v2GRIDFrame,
 	'PRIV': ID3v2PrivateFrame,
