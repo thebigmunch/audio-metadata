@@ -21,6 +21,8 @@ This project adheres to [Semantic Versioning](https://semver.org).
 * ``ID3v2PodcastFrame``.
 * Support for Apple ``GRP1`` and ``TCAT`` ID3v2 frames.
 * ``ID3v2AENCFrame``.
+* Support for ID3v2 play counter frames.
+	* ``ID3v2PlayCounterFrame``.
 
 ### Changed
 

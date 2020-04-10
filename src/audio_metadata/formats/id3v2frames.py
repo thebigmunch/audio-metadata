@@ -30,6 +30,7 @@ __all__ = [
 	'ID3v2PeopleListFrame',
 	'ID3v2Performer',
 	'ID3v2Picture',
+	'ID3v2PlayCounterFrame',
 	'ID3v2Popularimeter',
 	'ID3v2PopularimeterFrame',
 	'ID3v2PrivateFrame',
@@ -1214,6 +1215,29 @@ class ID3v2PICFrame(ID3v2Frame):
 		)
 
 
+######################
+# Play Counter Frame #
+######################
+
+@attrs(
+	repr=False,
+	kw_only=True,
+)
+class ID3v2PlayCounterFrame(ID3v2Frame):
+	@datareader
+	@staticmethod
+	def _parse_frame_data(data):
+		frame_data = data.read()
+
+		if len(frame_data) < 4:
+			raise TagError("Play count must be at least 4 bytes long.")
+
+		return (
+			int.from_bytes(frame_data, byteorder='big'),
+			None,
+		)
+
+
 #######################
 # Popularimeter Frame #
 #######################
@@ -1428,16 +1452,16 @@ class ID3v2UserURLLinkFrame(ID3v2Frame):
 
 
 # TODO:ID3v2.2
-# TODO: BUF, CNT, CRA, CRM, ETC, EQU, LNK, MCI, MLL,
+# TODO: BUF, CRA, CRM, ETC, EQU, LNK, MCI, MLL,
 # TODO: REV, RVA
 
 # TODO: ID3v2.3
 # TODO: COMR, ENCR, EQUA, ETCO, LINK, MLLT
-# TODO: PCNT, POSS, RBUF, RGAD, RVAD, RVRB, XRVA
+# TODO: POSS, RBUF, RGAD, RVAD, RVRB, XRVA
 
 # TODO: ID3v2.4
 # TODO: ASPI, COMR, ENCR, EQU2, ETCO, LINK, MLLT,
-# TODO: PCNT, POSS, RBUF, RGAD, RVA2, RVRB,
+# TODO: POSS, RBUF, RGAD, RVA2, RVRB,
 # TODO: SEEK, SIGN, XRVA
 ID3v2FrameTypes = {
 	# Binary data frames
@@ -1509,6 +1533,11 @@ ID3v2FrameTypes = {
 	'PIC': ID3v2PICFrame,
 
 	'APIC': ID3v2APICFrame,
+
+	# Play Counter Frames
+	'CNT': ID3v2PlayCounterFrame,
+
+	'PCNT': ID3v2PlayCounterFrame,
 
 	# Popularimeter Frames
 	'POP': ID3v2PopularimeterFrame,
