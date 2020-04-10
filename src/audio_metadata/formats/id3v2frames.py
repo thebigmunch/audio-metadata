@@ -13,10 +13,10 @@ __all__ = [
 	'ID3v2Frame',
 	'ID3v2FrameFlags',
 	'ID3v2FrameTypes',
+	'ID3v2GRIDFrame',
 	'ID3v2GeneralEncapsulatedObject',
 	'ID3v2GeneralEncapsulatedObjectFrame',
 	'ID3v2GenreFrame',
-	'ID3v2GRIDFrame',
 	'ID3v2GroupID',
 	'ID3v2InvolvedPeopleListFrame',
 	'ID3v2InvolvedPerson',
@@ -26,7 +26,6 @@ __all__ = [
 	'ID3v2NumericTextFrame',
 	'ID3v2OWNEFrame',
 	'ID3v2OwnershipTransaction',
-	'ID3v2PodcastFrame',
 	'ID3v2PICFrame',
 	'ID3v2PeopleListFrame',
 	'ID3v2Performer',
@@ -41,18 +40,18 @@ __all__ = [
 	'ID3v2SynchronizedTempoCodesFrame',
 	'ID3v2TMCLFrame',
 	'ID3v2TPROFrame',
-	'ID3v2TimeFrame',
 	'ID3v2TermsOfUse',
 	'ID3v2TextFrame',
+	'ID3v2TimeFrame',
 	'ID3v2TimestampFrame',
 	'ID3v2Track',
 	'ID3v2TrackFrame',
+	'ID3v2URLLinkFrame',
 	'ID3v2USERFrame',
 	'ID3v2UniqueFileIdentifier',
 	'ID3v2UniqueFileIdentifierFrame',
 	'ID3v2UnsynchronizedLyrics',
 	'ID3v2UnsynchronizedLyricsFrame',
-	'ID3v2URLLinkFrame',
 	'ID3v2UserText',
 	'ID3v2UserTextFrame',
 	'ID3v2UserURLLink',
@@ -110,6 +109,10 @@ from ..utils import (
 
 _genre_re = re.compile(r"((?:\((?P<id>\d+|RX|CR)\))*)(?P<name>.+)?")
 
+
+##########
+# Models #
+##########
 
 @attrs(
 	repr=False,
@@ -179,16 +182,6 @@ class ID3v2Lyrics(AttrMapping):
 	language = attrib()
 	description = attrib()
 	text = attrib()
-
-
-@attrs(
-	repr=False,
-	kw_only=True,
-)
-class ID3v2Popularimeter(AttrMapping):
-	email = attrib()
-	rating = attrib()
-	count = attrib(default=None)
 
 
 @attrs(
@@ -272,6 +265,16 @@ class ID3v2Picture(Picture):
 	repr=False,
 	kw_only=True,
 )
+class ID3v2Popularimeter(AttrMapping):
+	email = attrib()
+	rating = attrib()
+	count = attrib(default=None)
+
+
+@attrs(
+	repr=False,
+	kw_only=True,
+)
 class ID3v2PrivateInfo(AttrMapping):
 	owner = attrib()
 	data = attrib()
@@ -330,6 +333,10 @@ class ID3v2UserURLLink(AttrMapping):
 	description = attrib()
 	url = attrib()
 
+
+########
+# Base #
+########
 
 @attrs(
 	repr=False,
@@ -524,11 +531,174 @@ class ID3v2Frame(Tag):
 			return None
 
 
+######################
+# Binary Data Frames #
+######################
+
 @attrs(
 	repr=False,
 	kw_only=True,
 )
 class ID3v2BinaryDataFrame(ID3v2Frame):
+	pass
+
+
+##############################
+# Complex Binary Data Frames #
+##############################
+
+
+@attrs(
+	repr=False,
+	kw_only=True,
+)
+class ID3v2AENCFrame(ID3v2Frame):
+	@datareader
+	@staticmethod
+	def _parse_frame_data(data):
+		frame_data = data.read()
+
+		owner, remainder = frame_data.split(b'\x00', 1)
+		preview_start, preview_size = struct.unpack('>HH', remainder[0:4])
+
+		return (
+			ID3v2AudioEncryption(
+				owner=owner.decode('iso-8859-1'),
+				preview_start=preview_start,
+				preview_size=preview_size,
+				info=remainder[4:],
+			),
+			None,
+		)
+
+
+@attrs(
+	repr=False,
+	kw_only=True,
+)
+class ID3v2GRIDFrame(ID3v2Frame):
+	@datareader
+	@staticmethod
+	def _parse_frame_data(data):
+		frame_data = data.read()
+		owner, remainder = frame_data.split(b'\x00', 1)
+		symbol = remainder[0:1]
+
+		if (
+			symbol < b'\x80'
+			or symbol > b'\xF0'
+		):
+			raise TagError(f"Invalid group symbol in ID3v2 ``GRID`` frame: {symbol}")
+
+		return (
+			ID3v2GroupID(
+				owner=owner.decode('iso-8859-1'),
+				symbol=symbol,
+				data=remainder[1:],
+			),
+			None,
+		)
+
+
+@attrs(
+	repr=False,
+	kw_only=True,
+)
+class ID3v2GeneralEncapsulatedObjectFrame(ID3v2Frame):
+	@datareader
+	@staticmethod
+	def _parse_frame_data(data):
+		frame_data = data.read()
+
+		encoding = determine_encoding(frame_data)
+
+		try:
+			mime_type, filename, description, object_ = split_encoded(frame_data[1:], encoding, 3)
+		except ValueError:
+			raise TagError("Missing data in general encapsulated object frame.")
+
+		return (
+			ID3v2GeneralEncapsulatedObject(
+				mime_type=mime_type,
+				filename=filename,
+				description=description,
+				object=object_,
+			),
+			encoding,
+		)
+
+
+@attrs(
+	repr=False,
+	kw_only=True,
+)
+class ID3v2PrivateFrame(ID3v2Frame):
+	@datareader
+	@staticmethod
+	def _parse_frame_data(data):
+		frame_data = data.read()
+		owner_end = frame_data.index(b'\x00')
+
+		return (
+			ID3v2PrivateInfo(
+				owner=frame_data[0:owner_end].decode('iso-8859-1'),
+				data=frame_data[owner_end + 1:],
+			),
+			None,
+		)
+
+
+@attrs(
+	repr=False,
+	kw_only=True,
+)
+class ID3v2SynchronizedTempoCodesFrame(ID3v2Frame):
+	@datareader
+	@staticmethod
+	def _parse_frame_data(data):
+		frame_data = data.read()
+
+		return (
+			ID3v2SynchronizedTempoCodes(
+				timestamp_format=ID3v2TempoTimestampFormat(frame_data[0]),
+				data=frame_data[1:]
+			),
+			None,
+		)
+
+
+@attrs(
+	repr=False,
+	kw_only=True,
+)
+class ID3v2UniqueFileIdentifierFrame(ID3v2Frame):
+	@datareader
+	@staticmethod
+	def _parse_frame_data(data):
+		frame_data = data.read()
+		owner, identifier = frame_data.split(b'\x00', 1)
+
+		if len(identifier) > 64:
+			raise TagError("ID3v2 unique file identifier must be no more than 64 bytes.")
+
+		return (
+			ID3v2UniqueFileIdentifier(
+				owner=owner.decode('iso-8859-1'),
+				identifier=identifier,
+			),
+			None,
+		)
+
+
+#######################
+# Complex Text Frames #
+#######################
+
+@attrs(
+	repr=False,
+	kw_only=True,
+)
+class ID3v2PeopleListFrame(ID3v2Frame):
 	pass
 
 
@@ -631,9 +801,206 @@ class ID3v2GenreFrame(ID3v2Frame):
 	repr=False,
 	kw_only=True,
 )
+class ID3v2InvolvedPeopleListFrame(ID3v2PeopleListFrame):
+	@datareader
+	@staticmethod
+	def _parse_frame_data(data):
+		frame_data = data.read()
+
+		encoding = determine_encoding(frame_data)
+
+		try:
+			values = list(
+				more_itertools.sliced(
+					split_encoded(frame_data[1:], encoding),
+					2,
+				)
+			)
+		except ValueError:
+			raise TagError("Missing data found in involved people list frame.") from None
+
+		if len(values) < 1:
+			raise TagError("No people found in involved people list frame.")
+
+		people = [
+			ID3v2InvolvedPerson(
+				involvement=decode_bytestring(involvement, encoding),
+				name=decode_bytestring(name, encoding),
+			)
+			for involvement, name in values
+		]
+
+		return (
+			people,
+			encoding,
+		)
+
+
+@attrs(
+	repr=False,
+	kw_only=True,
+)
+class ID3v2OWNEFrame(ID3v2Frame):
+	@datareader
+	@staticmethod
+	def _parse_frame_data(data):
+		frame_data = data.read()
+
+		encoding = determine_encoding(frame_data)
+
+		price_paid, remainder = frame_data[1:].split(b'\x00', 1)
+
+		date_of_purchase = remainder[:8].decode('iso-8859-1')
+		if not date_of_purchase.is_digit():
+			raise TagError("ID3v2 ``OWNE`` frame date of purchase must be in the form of ``YYYYMMDD``.")
+
+		return (
+			ID3v2OwnershipTransaction(
+				price_paid=price_paid.decode('iso-8859-1'),
+				date_of_purchase=date_of_purchase,
+				seller=decode_bytestring(remainder[8:], encoding),
+			),
+			encoding,
+		)
+
+
+@attrs(
+	repr=False,
+	kw_only=True,
+)
+class ID3v2TMCLFrame(ID3v2InvolvedPeopleListFrame):
+	@datareader
+	@staticmethod
+	def _parse_frame_data(data):
+		frame_data = data.read()
+
+		encoding = determine_encoding(frame_data)
+
+		try:
+			values = list(
+				more_itertools.sliced(
+					split_encoded(frame_data[1:], encoding),
+					2,
+				)
+			)
+		except ValueError:
+			raise TagError("Missing data in TMCL frame.") from None
+
+		if len(values) < 1:
+			raise TagError("No musicians found in TMCL frame.")
+
+		performers = [
+			ID3v2Performer(
+				instrument=decode_bytestring(instrument, encoding),
+				name=decode_bytestring(name, encoding),
+			)
+			for instrument, name in values
+		]
+
+		return (
+			performers,
+			encoding,
+		)
+
+
+@attrs(
+	repr=False,
+	kw_only=True,
+)
+class ID3v2USERFrame(ID3v2Frame):
+	@datareader
+	@staticmethod
+	def _parse_frame_data(data):
+		frame_data = data.read()
+
+		encoding = determine_encoding(frame_data)
+
+		return (
+			ID3v2TermsOfUse(
+				language=decode_bytestring(frame_data[1:4]),
+				text=decode_bytestring(frame_data[4:], encoding),
+			),
+			encoding,
+		)
+
+
+#################
+# Lyrics Frames #
+#################
+
+@attrs(
+	repr=False,
+	kw_only=True,
+)
 class ID3v2LyricsFrame(ID3v2Frame):
 	pass
 
+
+@attrs(
+	repr=False,
+	kw_only=True,
+)
+class ID3v2SynchronizedLyricsFrame(ID3v2LyricsFrame):
+	@datareader
+	@staticmethod
+	def _parse_frame_data(data):
+		frame_data = data.read()
+
+		encoding = determine_encoding(frame_data)
+
+		try:
+			description, text = split_encoded(frame_data[6:], encoding)
+		except ValueError:
+			raise TagError("Missing data in synchronized lyrics frame.") from None
+		else:
+			if not text:
+				raise TagError("No lyrics found in synchronized lyrics frame.")
+
+		return (
+			ID3v2SynchronizedLyrics(
+				language=decode_bytestring(frame_data[1:4]),
+				description=decode_bytestring(description, encoding),
+				text=decode_bytestring(text, encoding),
+				timestamp_format=ID3v2LyricsTimestampFormat(frame_data[4]),
+				content_type=frame_data[5],
+			),
+			encoding,
+		)
+
+
+@attrs(
+	repr=False,
+	kw_only=True,
+)
+class ID3v2UnsynchronizedLyricsFrame(ID3v2LyricsFrame):
+	@datareader
+	@staticmethod
+	def _parse_frame_data(data):
+		frame_data = data.read()
+
+		encoding = determine_encoding(frame_data)
+
+		try:
+			description, text = split_encoded(frame_data[4:], encoding)
+		except ValueError:
+			raise TagError("Missing data in unsynchronized lyrics frame.")
+		else:
+			if not text:
+				raise TagError("No lyrics found in unsynchronized lyrics frame.")
+
+		return (
+			ID3v2UnsynchronizedLyrics(
+				language=decode_bytestring(frame_data[1:4]),
+				description=decode_bytestring(description, encoding),
+				text=decode_bytestring(text, encoding)
+			),
+			encoding,
+		)
+
+
+#################
+# Number Frames #
+#################
 
 @attrs(
 	repr=False,
@@ -705,6 +1072,10 @@ class ID3v2TrackFrame(ID3v2NumberFrame):
 		)
 
 
+#######################
+# Numeric Text Frames #
+#######################
+
 @attrs(
 	repr=False,
 	kw_only=True,
@@ -746,41 +1117,70 @@ class ID3v2NumericTextFrame(ID3v2Frame):
 	repr=False,
 	kw_only=True,
 )
-class ID3v2PeopleListFrame(ID3v2Frame):
-	pass
+class ID3v2DateFrame(ID3v2NumericTextFrame):
+	value = attrib()
+
+	@value.validator
+	def _validate_value(self, attribute, value):
+		if not all(
+			(
+				v.isdigit()
+				and len(v) == 4
+				and int(v[0:2]) in range(1, 32)
+				and int(v[2:4]) in range(1, 13)
+			)
+			for v in value
+		):
+			raise TagError(
+				"ID3v2 date frame values must be a 4-character number string in the ``DDMM`` format.",
+			)
 
 
 @attrs(
 	repr=False,
 	kw_only=True,
 )
-class ID3v2PopularimeterFrame(ID3v2Frame):
-	@datareader
-	@staticmethod
-	def _parse_frame_data(data):
-		frame_data = data.read()
+class ID3v2TimeFrame(ID3v2NumericTextFrame):
+	value = attrib()
 
-		email, remainder = frame_data.split(b'\x00', 1)
-		rating = remainder[0]
-		remainder = remainder[1:]
+	@value.validator
+	def _validate_value(self, attribute, value):
+		if not all(
+			(
+				v.isdigit()
+				and len(v) == 4
+				and int(v[0:2]) in range(0, 24)
+				and int(v[2:4]) in range(0, 60)
+			)
+			for v in value
+		):
+			raise TagError(
+				"ID3v2 ``TIME`` frame values must be a 4-character number string in the ``HHMM`` format.",
+			)
 
-		if not remainder:
-			count = None
-		else:
-			if len(remainder) < 4:
-				raise TagError("Popularimeter count must be at least 4 bytes long.")
 
-			count = int.from_bytes(remainder, byteorder='big')
+@attrs(
+	repr=False,
+	kw_only=True,
+)
+class ID3v2YearFrame(ID3v2NumericTextFrame):
+	value = attrib()
 
-		return (
-			ID3v2Popularimeter(
-				email=email.decode('iso-8859-1'),
-				rating=rating,
-				count=count,
-			),
-			None,
-		)
+	@value.validator
+	def _validate_value(self, attribute, value):
+		if not all(
+			(
+				v.isdigit()
+				and len(v) == 4
+			)
+			for v in value
+		):
+			raise TagError("Year frame values must be 4-character number strings.")
 
+
+##################
+# Picture Frames #
+##################
 
 @attrs(
 	repr=False,
@@ -814,76 +1214,45 @@ class ID3v2PICFrame(ID3v2Frame):
 		)
 
 
-@attrs(
-	repr=False,
-	kw_only=True,
-)
-class ID3v2PrivateFrame(ID3v2Frame):
-	@datareader
-	@staticmethod
-	def _parse_frame_data(data):
-		frame_data = data.read()
-		owner_end = frame_data.index(b'\x00')
-
-		return (
-			ID3v2PrivateInfo(
-				owner=frame_data[0:owner_end].decode('iso-8859-1'),
-				data=frame_data[owner_end + 1:],
-			),
-			None,
-		)
-
+#######################
+# Popularimeter Frame #
+#######################
 
 @attrs(
 	repr=False,
 	kw_only=True,
 )
-class ID3v2SynchronizedLyricsFrame(ID3v2LyricsFrame):
+class ID3v2PopularimeterFrame(ID3v2Frame):
 	@datareader
 	@staticmethod
 	def _parse_frame_data(data):
 		frame_data = data.read()
 
-		encoding = determine_encoding(frame_data)
+		email, remainder = frame_data.split(b'\x00', 1)
+		rating = remainder[0]
+		remainder = remainder[1:]
 
-		try:
-			description, text = split_encoded(frame_data[6:], encoding)
-		except ValueError:
-			raise TagError("Missing data in synchronized lyrics frame.") from None
+		if not remainder:
+			count = None
 		else:
-			if not text:
-				raise TagError("No lyrics found in synchronized lyrics frame.")
+			if len(remainder) < 4:
+				raise TagError("Popularimeter count must be at least 4 bytes long.")
+
+			count = int.from_bytes(remainder, byteorder='big')
 
 		return (
-			ID3v2SynchronizedLyrics(
-				language=decode_bytestring(frame_data[1:4]),
-				description=decode_bytestring(description, encoding),
-				text=decode_bytestring(text, encoding),
-				timestamp_format=ID3v2LyricsTimestampFormat(frame_data[4]),
-				content_type=frame_data[5],
-			),
-			encoding,
-		)
-
-
-@attrs(
-	repr=False,
-	kw_only=True,
-)
-class ID3v2SynchronizedTempoCodesFrame(ID3v2Frame):
-	@datareader
-	@staticmethod
-	def _parse_frame_data(data):
-		frame_data = data.read()
-
-		return (
-			ID3v2SynchronizedTempoCodes(
-				timestamp_format=ID3v2TempoTimestampFormat(frame_data[0]),
-				data=frame_data[1:]
+			ID3v2Popularimeter(
+				email=email.decode('iso-8859-1'),
+				rating=rating,
+				count=count,
 			),
 			None,
 		)
 
+
+###############
+# Text Frames #
+###############
 
 @attrs(
 	repr=False,
@@ -959,46 +1328,19 @@ class ID3v2TimestampFrame(ID3v2Frame):
 	repr=False,
 	kw_only=True,
 )
-class ID3v2URLLinkFrame(ID3v2Frame):
-	@datareader
-	@staticmethod
-	def _parse_frame_data(data):
-		frame_data = data.read()
+class ID3v2TPROFrame(ID3v2TextFrame):
+	value = attrib()
 
-		return (
-			unquote(decode_bytestring(frame_data)),
-			None,
-		)
-
-
-@attrs(
-	repr=False,
-	kw_only=True,
-)
-class ID3v2UnsynchronizedLyricsFrame(ID3v2LyricsFrame):
-	@datareader
-	@staticmethod
-	def _parse_frame_data(data):
-		frame_data = data.read()
-
-		encoding = determine_encoding(frame_data)
-
-		try:
-			description, text = split_encoded(frame_data[4:], encoding)
-		except ValueError:
-			raise TagError("Missing data in unsynchronized lyrics frame.")
-		else:
-			if not text:
-				raise TagError("No lyrics found in unsynchronized lyrics frame.")
-
-		return (
-			ID3v2UnsynchronizedLyrics(
-				language=decode_bytestring(frame_data[1:4]),
-				description=decode_bytestring(description, encoding),
-				text=decode_bytestring(text, encoding)
-			),
-			encoding,
-		)
+	@value.validator
+	def _validate_value(self, attribute, value):
+		if (
+			not all(
+				v.isdigit()
+				for v in value[0:4]
+			)
+			or not value[4] == ' '
+		):
+			raise TagError("TPRO frame values must start with a year followed by a space.")
 
 
 @attrs(
@@ -1036,6 +1378,26 @@ class ID3v2UserTextFrame(ID3v2Frame):
 		)
 
 
+###################
+# URL Link Frames #
+###################
+
+@attrs(
+	repr=False,
+	kw_only=True,
+)
+class ID3v2URLLinkFrame(ID3v2Frame):
+	@datareader
+	@staticmethod
+	def _parse_frame_data(data):
+		frame_data = data.read()
+
+		return (
+			unquote(decode_bytestring(frame_data)),
+			None,
+		)
+
+
 @attrs(
 	repr=False,
 	kw_only=True,
@@ -1065,344 +1427,25 @@ class ID3v2UserURLLinkFrame(ID3v2Frame):
 		)
 
 
-@attrs(
-	repr=False,
-	kw_only=True,
-)
-class ID3v2AENCFrame(ID3v2Frame):
-	@datareader
-	@staticmethod
-	def _parse_frame_data(data):
-		frame_data = data.read()
-
-		owner, remainder = frame_data.split(b'\x00', 1)
-		preview_start, preview_size = struct.unpack('>HH', remainder[0:4])
-
-		return (
-			ID3v2AudioEncryption(
-				owner=owner.decode('iso-8859-1'),
-				preview_start=preview_start,
-				preview_size=preview_size,
-				info=remainder[4:],
-			),
-			None,
-		)
-
-
-@attrs(
-	repr=False,
-	kw_only=True,
-)
-class ID3v2DateFrame(ID3v2NumericTextFrame):
-	value = attrib()
-
-	@value.validator
-	def _validate_value(self, attribute, value):
-		if not all(
-			(
-				v.isdigit()
-				and len(v) == 4
-				and int(v[0:2]) in range(1, 32)
-				and int(v[2:4]) in range(1, 13)
-			)
-			for v in value
-		):
-			raise TagError(
-				"ID3v2 date frame values must be a 4-character number string in the ``DDMM`` format.",
-			)
-
-
-@attrs(
-	repr=False,
-	kw_only=True,
-)
-class ID3v2TimeFrame(ID3v2NumericTextFrame):
-	value = attrib()
-
-	@value.validator
-	def _validate_value(self, attribute, value):
-		if not all(
-			(
-				v.isdigit()
-				and len(v) == 4
-				and int(v[0:2]) in range(0, 24)
-				and int(v[2:4]) in range(0, 60)
-			)
-			for v in value
-		):
-			raise TagError(
-				"ID3v2 ``TIME`` frame values must be a 4-character number string in the ``HHMM`` format.",
-			)
-
-
-@attrs(
-	repr=False,
-	kw_only=True,
-)
-class ID3v2YearFrame(ID3v2NumericTextFrame):
-	value = attrib()
-
-	@value.validator
-	def _validate_value(self, attribute, value):
-		if not all(
-			(
-				v.isdigit()
-				and len(v) == 4
-			)
-			for v in value
-		):
-			raise TagError("Year frame values must be 4-character number strings.")
-
-
-@attrs(
-	repr=False,
-	kw_only=True,
-)
-class ID3v2GeneralEncapsulatedObjectFrame(ID3v2Frame):
-	@datareader
-	@staticmethod
-	def _parse_frame_data(data):
-		frame_data = data.read()
-
-		encoding = determine_encoding(frame_data)
-
-		try:
-			mime_type, filename, description, object_ = split_encoded(frame_data[1:], encoding, 3)
-		except ValueError:
-			raise TagError("Missing data in general encapsulated object frame.")
-
-		return (
-			ID3v2GeneralEncapsulatedObject(
-				mime_type=mime_type,
-				filename=filename,
-				description=description,
-				object=object_,
-			),
-			encoding,
-		)
-
-
-@attrs(
-	repr=False,
-	kw_only=True,
-)
-class ID3v2GRIDFrame(ID3v2Frame):
-	@datareader
-	@staticmethod
-	def _parse_frame_data(data):
-		frame_data = data.read()
-		owner, remainder = frame_data.split(b'\x00', 1)
-		symbol = remainder[0:1]
-
-		if (
-			symbol < b'\x80'
-			or symbol > b'\xF0'
-		):
-			raise TagError(f"Invalid group symbol in ID3v2 ``GRID`` frame: {symbol}")
-
-		return (
-			ID3v2GroupID(
-				owner=owner.decode('iso-8859-1'),
-				symbol=symbol,
-				data=remainder[1:],
-			),
-			None,
-		)
-
-
-@attrs(
-	repr=False,
-	kw_only=True,
-)
-class ID3v2InvolvedPeopleListFrame(ID3v2PeopleListFrame):
-	@datareader
-	@staticmethod
-	def _parse_frame_data(data):
-		frame_data = data.read()
-
-		encoding = determine_encoding(frame_data)
-
-		try:
-			values = list(
-				more_itertools.sliced(
-					split_encoded(frame_data[1:], encoding),
-					2,
-				)
-			)
-		except ValueError:
-			raise TagError("Missing data found in involved people list frame.") from None
-
-		if len(values) < 1:
-			raise TagError("No people found in involved people list frame.")
-
-		people = [
-			ID3v2InvolvedPerson(
-				involvement=decode_bytestring(involvement, encoding),
-				name=decode_bytestring(name, encoding),
-			)
-			for involvement, name in values
-		]
-
-		return (
-			people,
-			encoding,
-		)
-
-
-@attrs(
-	repr=False,
-	kw_only=True,
-)
-class ID3v2OWNEFrame(ID3v2Frame):
-	@datareader
-	@staticmethod
-	def _parse_frame_data(data):
-		frame_data = data.read()
-
-		encoding = determine_encoding(frame_data)
-
-		price_paid, remainder = frame_data[1:].split(b'\x00', 1)
-
-		date_of_purchase = remainder[:8].decode('iso-8859-1')
-		if not date_of_purchase.is_digit():
-			raise TagError("ID3v2 ``OWNE`` frame date of purchase must be in the form of ``YYYYMMDD``.")
-
-		return (
-			ID3v2OwnershipTransaction(
-				price_paid=price_paid.decode('iso-8859-1'),
-				date_of_purchase=date_of_purchase,
-				seller=decode_bytestring(remainder[8:], encoding),
-			),
-			encoding,
-		)
-
-
-@attrs(
-	repr=False,
-	kw_only=True,
-)
-class ID3v2PodcastFrame(ID3v2BinaryDataFrame):
-	pass
-
-
-@attrs(
-	repr=False,
-	kw_only=True,
-)
-class ID3v2TMCLFrame(ID3v2InvolvedPeopleListFrame):
-	@datareader
-	@staticmethod
-	def _parse_frame_data(data):
-		frame_data = data.read()
-
-		encoding = determine_encoding(frame_data)
-
-		try:
-			values = list(
-				more_itertools.sliced(
-					split_encoded(frame_data[1:], encoding),
-					2,
-				)
-			)
-		except ValueError:
-			raise TagError("Missing data in TMCL frame.") from None
-
-		if len(values) < 1:
-			raise TagError("No musicians found in TMCL frame.")
-
-		performers = [
-			ID3v2Performer(
-				instrument=decode_bytestring(instrument, encoding),
-				name=decode_bytestring(name, encoding),
-			)
-			for instrument, name in values
-		]
-
-		return (
-			performers,
-			encoding,
-		)
-
-
-@attrs(
-	repr=False,
-	kw_only=True,
-)
-class ID3v2TPROFrame(ID3v2TextFrame):
-	value = attrib()
-
-	@value.validator
-	def _validate_value(self, attribute, value):
-		if (
-			not all(
-				v.isdigit()
-				for v in value[0:4]
-			)
-			or not value[4] == ' '
-		):
-			raise TagError("TPRO frame values must start with a year followed by a space.")
-
-
-@attrs(
-	repr=False,
-	kw_only=True,
-)
-class ID3v2UniqueFileIdentifierFrame(ID3v2Frame):
-	@datareader
-	@staticmethod
-	def _parse_frame_data(data):
-		frame_data = data.read()
-		owner, identifier = frame_data.split(b'\x00', 1)
-
-		if len(identifier) > 64:
-			raise TagError("ID3v2 unique file identifier must be no more than 64 bytes.")
-
-		return (
-			ID3v2UniqueFileIdentifier(
-				owner=owner.decode('iso-8859-1'),
-				identifier=identifier,
-			),
-			None,
-		)
-
-
-@attrs(
-	repr=False,
-	kw_only=True,
-)
-class ID3v2USERFrame(ID3v2Frame):
-	@datareader
-	@staticmethod
-	def _parse_frame_data(data):
-		frame_data = data.read()
-
-		encoding = determine_encoding(frame_data)
-
-		return (
-			ID3v2TermsOfUse(
-				language=decode_bytestring(frame_data[1:4]),
-				text=decode_bytestring(frame_data[4:], encoding),
-			),
-			encoding,
-		)
-
-
 # TODO:ID3v2.2
 # TODO: BUF, CNT, CRA, CRM, ETC, EQU, LNK, MCI, MLL,
 # TODO: REV, RVA
 
 # TODO: ID3v2.3
-# TODO: COMR, ENCR, EQUA, ETCO, LINK, MLLT, OWNE
+# TODO: COMR, ENCR, EQUA, ETCO, LINK, MLLT
 # TODO: PCNT, POSS, RBUF, RGAD, RVAD, RVRB, XRVA
 
 # TODO: ID3v2.4
 # TODO: ASPI, COMR, ENCR, EQU2, ETCO, LINK, MLLT,
-# TODO: OWNE, PCNT, POSS, RBUF, RGAD, RVA2, RVRB,
+# TODO: PCNT, POSS, RBUF, RGAD, RVA2, RVRB,
 # TODO: SEEK, SIGN, XRVA
 ID3v2FrameTypes = {
 	# Binary data frames
+	'PCS': ID3v2BinaryDataFrame,
+
 	'MCDI': ID3v2BinaryDataFrame,
 	'NCON': ID3v2BinaryDataFrame,
+	'PCST': ID3v2BinaryDataFrame,
 
 	# Complex binary data frames
 	'GEO': ID3v2GeneralEncapsulatedObjectFrame,
@@ -1419,19 +1462,15 @@ ID3v2FrameTypes = {
 	# Complex Text Frames
 	'COM': ID3v2CommentFrame,
 	'IPL': ID3v2InvolvedPeopleListFrame,
-	'TXX': ID3v2UserTextFrame,
+	'TCO': ID3v2GenreFrame,
 
 	'COMM': ID3v2CommentFrame,
 	'IPLS': ID3v2InvolvedPeopleListFrame,
+	'OWNE': ID3v2OWNEFrame,
+	'TCON': ID3v2GenreFrame,
 	'TIPL': ID3v2InvolvedPeopleListFrame,
 	'TMCL': ID3v2TMCLFrame,
-	'TXXX': ID3v2UserTextFrame,
 	'USER': ID3v2USERFrame,
-
-	# Genre Frame
-	'TCO': ID3v2GenreFrame,
-
-	'TCON': ID3v2GenreFrame,
 
 	# Lyrics Frames
 	'SLT': ID3v2SynchronizedLyricsFrame,
@@ -1471,11 +1510,6 @@ ID3v2FrameTypes = {
 
 	'APIC': ID3v2APICFrame,
 
-	# Podcast Frames
-	'PCS': ID3v2PodcastFrame,
-
-	'PCST': ID3v2PodcastFrame,
-
 	# Popularimeter Frames
 	'POP': ID3v2PopularimeterFrame,
 
@@ -1512,6 +1546,7 @@ ID3v2FrameTypes = {
 	'TT2': ID3v2TextFrame,
 	'TT3': ID3v2TextFrame,
 	'TXT': ID3v2TextFrame,
+	'TXX': ID3v2UserTextFrame,
 
 	'GRP1': ID3v2TextFrame,
 	'TALB': ID3v2TextFrame,
@@ -1553,6 +1588,7 @@ ID3v2FrameTypes = {
 	'TSRC': ID3v2TextFrame,
 	'TSSE': ID3v2TextFrame,
 	'TSST': ID3v2TextFrame,
+	'TXXX': ID3v2UserTextFrame,
 	'XSOA': ID3v2TextFrame,
 	'XSOP': ID3v2TextFrame,
 	'XSOT': ID3v2TextFrame,
