@@ -1265,7 +1265,8 @@ class ID3v2RecommendedBufferFrame(ID3v2Frame):
 				size=size,
 				embedded=embedded,
 				offset=offset,
-			)
+			),
+			None,
 		)
 
 
