@@ -1008,8 +1008,6 @@ class ID3v2UnsynchronizedLyricsFrame(ID3v2LyricsFrame):
 	kw_only=True,
 )
 class ID3v2NumberFrame(ID3v2Frame):
-	value = attrib()
-
 	def _validate_value(value):
 		if not all(char in [*string.digits, '/'] for char in value):
 			raise TagError(
@@ -1179,6 +1177,61 @@ class ID3v2YearFrame(ID3v2NumericTextFrame):
 			raise TagError("Year frame values must be 4-character number strings.")
 
 
+################
+# Other Frames #
+################
+
+@attrs(
+	repr=False,
+	kw_only=True,
+)
+class ID3v2PlayCounterFrame(ID3v2Frame):
+	@datareader
+	@staticmethod
+	def _parse_frame_data(data):
+		frame_data = data.read()
+
+		if len(frame_data) < 4:
+			raise TagError("Play count must be at least 4 bytes long.")
+
+		return (
+			int.from_bytes(frame_data, byteorder='big'),
+			None,
+		)
+
+
+@attrs(
+	repr=False,
+	kw_only=True,
+)
+class ID3v2PopularimeterFrame(ID3v2Frame):
+	@datareader
+	@staticmethod
+	def _parse_frame_data(data):
+		frame_data = data.read()
+
+		email, remainder = frame_data.split(b'\x00', 1)
+		rating = remainder[0]
+		remainder = remainder[1:]
+
+		if not remainder:
+			count = None
+		else:
+			if len(remainder) < 4:
+				raise TagError("Popularimeter count must be at least 4 bytes long.")
+
+			count = int.from_bytes(remainder, byteorder='big')
+
+		return (
+			ID3v2Popularimeter(
+				email=email.decode('iso-8859-1'),
+				rating=rating,
+				count=count,
+			),
+			None,
+		)
+
+
 ##################
 # Picture Frames #
 ##################
@@ -1211,65 +1264,6 @@ class ID3v2PICFrame(ID3v2Frame):
 
 		return (
 			ID3v2Picture.parse(frame_data, id3v22=True),
-			None,
-		)
-
-
-######################
-# Play Counter Frame #
-######################
-
-@attrs(
-	repr=False,
-	kw_only=True,
-)
-class ID3v2PlayCounterFrame(ID3v2Frame):
-	@datareader
-	@staticmethod
-	def _parse_frame_data(data):
-		frame_data = data.read()
-
-		if len(frame_data) < 4:
-			raise TagError("Play count must be at least 4 bytes long.")
-
-		return (
-			int.from_bytes(frame_data, byteorder='big'),
-			None,
-		)
-
-
-#######################
-# Popularimeter Frame #
-#######################
-
-@attrs(
-	repr=False,
-	kw_only=True,
-)
-class ID3v2PopularimeterFrame(ID3v2Frame):
-	@datareader
-	@staticmethod
-	def _parse_frame_data(data):
-		frame_data = data.read()
-
-		email, remainder = frame_data.split(b'\x00', 1)
-		rating = remainder[0]
-		remainder = remainder[1:]
-
-		if not remainder:
-			count = None
-		else:
-			if len(remainder) < 4:
-				raise TagError("Popularimeter count must be at least 4 bytes long.")
-
-			count = int.from_bytes(remainder, byteorder='big')
-
-		return (
-			ID3v2Popularimeter(
-				email=email.decode('iso-8859-1'),
-				rating=rating,
-				count=count,
-			),
 			None,
 		)
 
@@ -1528,20 +1522,17 @@ ID3v2FrameTypes = {
 	'TSIZ': ID3v2NumericTextFrame,
 	'TYER': ID3v2YearFrame,
 
+	# Other Frames
+	'CNT': ID3v2PlayCounterFrame,
+	'POP': ID3v2PopularimeterFrame,
+
+	'PCNT': ID3v2PlayCounterFrame,
+	'POPM': ID3v2PopularimeterFrame,
+
 	# Picture Frames
 	'PIC': ID3v2PICFrame,
 
 	'APIC': ID3v2APICFrame,
-
-	# Play Counter Frames
-	'CNT': ID3v2PlayCounterFrame,
-
-	'PCNT': ID3v2PlayCounterFrame,
-
-	# Popularimeter Frames
-	'POP': ID3v2PopularimeterFrame,
-
-	'POPM': ID3v2PopularimeterFrame,
 
 	# Text Frames
 	'TAL': ID3v2TextFrame,
