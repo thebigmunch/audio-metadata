@@ -35,6 +35,8 @@ __all__ = [
 	'ID3v2PopularimeterFrame',
 	'ID3v2PrivateFrame',
 	'ID3v2PrivateInfo',
+	'ID3v2RecommendedBuffer',
+	'ID3v2RecommendedBufferFrame',
 	'ID3v2SynchronizedLyrics',
 	'ID3v2SynchronizedLyricsFrame',
 	'ID3v2SynchronizedTempoCodes',
@@ -279,6 +281,16 @@ class ID3v2Popularimeter(AttrMapping):
 class ID3v2PrivateInfo(AttrMapping):
 	owner = attrib()
 	data = attrib()
+
+
+@attrs(
+	repr=False,
+	kw_only=True,
+)
+class ID3v2RecommendedBuffer(AttrMapping):
+	size = attrib()
+	embedded = attrib(converter=bool)
+	offset = attrib(default=None)
 
 
 @attrs(
@@ -1232,6 +1244,32 @@ class ID3v2PopularimeterFrame(ID3v2Frame):
 		)
 
 
+@attrs(
+	repr=False,
+	kw_only=True,
+)
+class ID3v2RecommendedBufferFrame(ID3v2Frame):
+	@datareader
+	@staticmethod
+	def _parse_frame_data(data):
+		frame_data = data.read()
+
+		size = int.from_bytes(frame_data[0:3], byteorder='big')
+		embedded = bitstruct.unpack('>p7 b1', frame_data[3:4])
+		if embedded:
+			offset = struct.unpack('>I', frame_data[4:])
+		else:
+			offset = None
+
+		return (
+			ID3v2RecommendedBuffer(
+				size=size,
+				embedded=embedded,
+				offset=offset,
+			)
+		)
+
+
 ##################
 # Picture Frames #
 ##################
@@ -1446,15 +1484,15 @@ class ID3v2UserURLLinkFrame(ID3v2Frame):
 
 
 # TODO:ID3v2.2
-# TODO: BUF, CRM, ETC, EQU, LNK, MCI, MLL, REV, RVA
+# TODO: CRM, ETC, EQU, LNK, MCI, MLL, REV, RVA
 
 # TODO: ID3v2.3
 # TODO: COMR, ENCR, EQUA, ETCO, LINK, MLLT
-# TODO: POSS, RBUF, RGAD, RVAD, RVRB, XRVA
+# TODO: POSS, RGAD, RVAD, RVRB, XRVA
 
 # TODO: ID3v2.4
 # TODO: ASPI, COMR, ENCR, EQU2, ETCO, LINK, MLLT,
-# TODO: POSS, RBUF, RGAD, RVA2, RVRB, SEEK, SIGN, XRVA
+# TODO: POSS, RGAD, RVA2, RVRB, SEEK, SIGN, XRVA
 ID3v2FrameTypes = {
 	# Binary data frames
 	'PCS': ID3v2BinaryDataFrame,
@@ -1523,11 +1561,13 @@ ID3v2FrameTypes = {
 	'TYER': ID3v2YearFrame,
 
 	# Other Frames
+	'BUF': ID3v2RecommendedBufferFrame,
 	'CNT': ID3v2PlayCounterFrame,
 	'POP': ID3v2PopularimeterFrame,
 
 	'PCNT': ID3v2PlayCounterFrame,
 	'POPM': ID3v2PopularimeterFrame,
+	'RBUF': ID3v2RecommendedBufferFrame,
 
 	# Picture Frames
 	'PIC': ID3v2PICFrame,

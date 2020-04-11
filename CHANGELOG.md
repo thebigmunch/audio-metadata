@@ -23,6 +23,9 @@ This project adheres to [Semantic Versioning](https://semver.org).
 * ``ID3v2AudioEncryptionFrame``.
 * Support for ID3v2 play counter frames.
 	* ``ID3v2PlayCounterFrame``.
+* Support for ID3v2 recommended buffer frames.
+	* ``ID3v2RecommendedBuffer``.
+	* ``ID3v2RecommendedBufferFrame``.
 
 ### Changed
 
