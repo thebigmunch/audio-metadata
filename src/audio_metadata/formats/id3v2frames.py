@@ -455,7 +455,25 @@ class ID3v2Frame(Tag):
 			raise ValueError(f"Unsupported ID3 version: {id3_version}.")  # pragma: nocover
 
 		flags = None
-		if id3_version is ID3Version.v22:
+		if id3_version is ID3Version.v24:
+			try:
+				id_, size, flags = struct.unpack(
+					'4s4s2s',
+					data.read(10),
+				)
+			except struct.error:
+				raise FormatError("Not enough data.")
+
+			frame_size = decode_synchsafe_int(size, 7)
+		elif id3_version is ID3Version.v23:
+			try:
+				id_, frame_size, flags = struct.unpack(
+					'>4sI2s',
+					data.read(10),
+				)
+			except struct.error:
+				raise FormatError("Not enough data.")
+		elif id3_version is ID3Version.v22:  # pragma: nobranch
 			try:
 				id_, size = struct.unpack(
 					'3s3s',
@@ -468,27 +486,9 @@ class ID3v2Frame(Tag):
 				'>I',
 				b'\x00' + size,
 			)[0]
-		elif id3_version is ID3Version.v23:
-			try:
-				id_, frame_size, flags = struct.unpack(
-					'>4sI2s',
-					data.read(10),
-				)
-			except struct.error:
-				raise FormatError("Not enough data.")
-		elif id3_version is ID3Version.v24:
-			try:
-				id_, size, flags = struct.unpack(
-					'4s4s2s',
-					data.read(10),
-				)
-			except struct.error:
-				raise FormatError("Not enough data.")
 
-			frame_size = decode_synchsafe_int(size, 7)
-
-		if frame_size == 0:
-			raise FormatError("Not a valid ID3v2 frame")
+		if frame_size <= 0:
+			raise FormatError("ID3v2 frame size must be greater than 0.")
 
 		if flags is not None:
 			frame_flags = ID3v2FrameFlags.parse(flags, id3_version)
