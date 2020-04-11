@@ -106,9 +106,9 @@ def _(data):
 		tracknumber=['1'],
 		tracktotal=['99'],
 	)
-	vorbis_comments_load = VorbisComments.parse(data)
+	vorbis_comments_parse = VorbisComments.parse(data)
 
-	assert vorbis_comments_init == vorbis_comments_load
+	assert vorbis_comments_init == vorbis_comments_parse
 
 
 @test(

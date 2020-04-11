@@ -51,21 +51,21 @@ def _(null, id3v22, id3v23, id3v24):
 
 	v22_frames_init = ID3v2Frames(id3_version=ID3Version.v22)
 	v22_frames_init_tuple = ID3v2Frames(id3_version=(2, 2))
-	v22_frames_load = ID3v2Frames.parse(
+	v22_frames_parse = ID3v2Frames.parse(
 		id3v22[10:],
 		ID3Version.v22,
 	)
 
 	v23_frames_init = ID3v2Frames(id3_version=ID3Version.v23)
 	v23_frames_init_tuple = ID3v2Frames(id3_version=(2, 3))
-	v23_frames_load = ID3v2Frames.parse(
+	v23_frames_parse = ID3v2Frames.parse(
 		id3v23[10:],
 		ID3Version.v23,
 	)
 
 	v24_frames_init = ID3v2Frames(id3_version=ID3Version.v24)
 	v24_frames_init_tuple = ID3v2Frames(id3_version=(2, 4))
-	v24_frames_load = ID3v2Frames.parse(
+	v24_frames_parse = ID3v2Frames.parse(
 		id3v24[10:],
 		ID3Version.v24,
 	)
@@ -73,16 +73,16 @@ def _(null, id3v22, id3v23, id3v24):
 	default_frames = ID3v2Frames()
 
 	assert v22_frames_init == v22_frames_init_tuple
-	assert v22_frames_load._version == ID3Version.v22
-	assert v22_frames_load.FIELD_MAP == ID3v2FrameAliases[ID3Version.v22]
+	assert v22_frames_parse._version == ID3Version.v22
+	assert v22_frames_parse.FIELD_MAP == ID3v2FrameAliases[ID3Version.v22]
 
 	assert v23_frames_init == v23_frames_init_tuple
-	assert v23_frames_load._version == ID3Version.v23
-	assert v23_frames_load.FIELD_MAP == ID3v2FrameAliases[ID3Version.v23]
+	assert v23_frames_parse._version == ID3Version.v23
+	assert v23_frames_parse.FIELD_MAP == ID3v2FrameAliases[ID3Version.v23]
 
 	assert v24_frames_init == v24_frames_init_tuple == default_frames
-	assert v24_frames_load._version == ID3Version.v24
-	assert v24_frames_load.FIELD_MAP == ID3v2FrameAliases[ID3Version.v24]
+	assert v24_frames_parse._version == ID3Version.v24
+	assert v24_frames_parse.FIELD_MAP == ID3v2FrameAliases[ID3Version.v24]
 
 
 @test(
@@ -149,7 +149,7 @@ def _(null, id3v24, id3v24_unsync):
 		ID3v2Header.parse(null)
 	assert str(exc.raised) == "Valid ID3v2 header not found."
 
-	v24_header_load = ID3v2Header.parse(id3v24)
+	v24_header_parse = ID3v2Header.parse(id3v24)
 	v24_header_init = ID3v2Header(
 		size=2254,
 		flags=ID3v2Flags(
@@ -161,9 +161,9 @@ def _(null, id3v24, id3v24_unsync):
 		version=ID3Version.v24,
 	)
 
-	assert v24_header_load == v24_header_init
+	assert v24_header_parse == v24_header_init
 
-	v24_header_load = ID3v2Header.parse(id3v24_unsync)
+	v24_header_parse = ID3v2Header.parse(id3v24_unsync)
 	v24_header_init = ID3v2Header(
 		size=2254,
 		flags=ID3v2Flags(
@@ -175,4 +175,4 @@ def _(null, id3v24, id3v24_unsync):
 		version=ID3Version.v24,
 	)
 
-	assert v24_header_load == v24_header_init
+	assert v24_header_parse == v24_header_init

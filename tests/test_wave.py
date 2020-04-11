@@ -45,9 +45,9 @@ def _(
 		title=['test-title'],
 		tracknumber=['1'],
 	)
-	riff_tags_load = RIFFTags.parse(wave_riff_tags_data)
+	riff_tags_parse = RIFFTags.parse(wave_riff_tags_data)
 
-	assert riff_tags_init == riff_tags_load
+	assert riff_tags_init == riff_tags_parse
 
 
 @test(
@@ -68,9 +68,9 @@ def _(wave_streaminfo_data):
 		duration=None,
 		sample_rate=44100,
 	)
-	wave_stream_info_load = WAVEStreamInfo.parse(wave_streaminfo_data)
+	wave_stream_info_parse = WAVEStreamInfo.parse(wave_streaminfo_data)
 
-	assert wave_stream_info_init == wave_stream_info_load
+	assert wave_stream_info_init == wave_stream_info_parse
 
 
 @test(

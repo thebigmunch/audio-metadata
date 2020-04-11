@@ -58,12 +58,12 @@ def _(flac_application_data):
 		id='aiff',
 		data=b'FORM\x02\xe0\x9b\x08AIFF'
 	)
-	application_load = FLACApplication.parse(flac_application_data)
+	application_parse = FLACApplication.parse(flac_application_data)
 
-	assert application_init == application_load
-	assert application_init.id == application_load.id == 'aiff'
-	assert application_init.data == application_load.data == b'FORM\x02\xe0\x9b\x08AIFF'
-	assert repr(application_init) == repr(application_load) == '<FLACApplication (aiff)>'
+	assert application_init == application_parse
+	assert application_init.id == application_parse.id == 'aiff'
+	assert application_init.data == application_parse.data == b'FORM\x02\xe0\x9b\x08AIFF'
+	assert repr(application_init) == repr(application_parse) == '<FLACApplication (aiff)>'
 
 
 @test(
@@ -79,23 +79,23 @@ def _(flac_cuesheet_index_1, flac_cuesheet_index_2):
 		number=1,
 		offset=0,
 	)
-	cuesheet_index_load = FLACCueSheetIndex.parse(flac_cuesheet_index_1)
+	cuesheet_index_parse = FLACCueSheetIndex.parse(flac_cuesheet_index_1)
 
-	assert cuesheet_index_init == cuesheet_index_load
-	assert cuesheet_index_init.number == cuesheet_index_load.number == 1
-	assert cuesheet_index_init.offset == cuesheet_index_load.offset == 0
-	assert repr(cuesheet_index_init) == repr(cuesheet_index_load) == "<FLACCueSheetIndex({'number': 1, 'offset': 0})>"
+	assert cuesheet_index_init == cuesheet_index_parse
+	assert cuesheet_index_init.number == cuesheet_index_parse.number == 1
+	assert cuesheet_index_init.offset == cuesheet_index_parse.offset == 0
+	assert repr(cuesheet_index_init) == repr(cuesheet_index_parse) == "<FLACCueSheetIndex({'number': 1, 'offset': 0})>"
 
 	cuesheet_index_init = FLACCueSheetIndex(
 		number=2,
 		offset=588,
 	)
-	cuesheet_index_load = FLACCueSheetIndex.parse(flac_cuesheet_index_2)
+	cuesheet_index_parse = FLACCueSheetIndex.parse(flac_cuesheet_index_2)
 
-	assert cuesheet_index_init == cuesheet_index_load
-	assert cuesheet_index_init.number == cuesheet_index_load.number == 2
-	assert cuesheet_index_init.offset == cuesheet_index_load.offset == 588
-	assert repr(cuesheet_index_init) == repr(cuesheet_index_load) == "<FLACCueSheetIndex({'number': 2, 'offset': 588})>"
+	assert cuesheet_index_init == cuesheet_index_parse
+	assert cuesheet_index_init.number == cuesheet_index_parse.number == 2
+	assert cuesheet_index_init.offset == cuesheet_index_parse.offset == 588
+	assert repr(cuesheet_index_init) == repr(cuesheet_index_parse) == "<FLACCueSheetIndex({'number': 2, 'offset': 588})>"
 
 
 @test(
@@ -120,15 +120,15 @@ def _(flac_cuesheet_track_1, flac_cuesheet_track_2):
 			)
 		]
 	)
-	cuesheet_track_load = FLACCueSheetTrack.parse(flac_cuesheet_track_1)
+	cuesheet_track_parse = FLACCueSheetTrack.parse(flac_cuesheet_track_1)
 
-	assert cuesheet_track_init == cuesheet_track_load
-	assert cuesheet_track_init.track_number == cuesheet_track_load.track_number == 1
-	assert cuesheet_track_init.offset == cuesheet_track_load.offset == 0
-	assert cuesheet_track_init.isrc == cuesheet_track_load.isrc == '123456789012'
-	assert cuesheet_track_init.type == cuesheet_track_load.type == 0
+	assert cuesheet_track_init == cuesheet_track_parse
+	assert cuesheet_track_init.track_number == cuesheet_track_parse.track_number == 1
+	assert cuesheet_track_init.offset == cuesheet_track_parse.offset == 0
+	assert cuesheet_track_init.isrc == cuesheet_track_parse.isrc == '123456789012'
+	assert cuesheet_track_init.type == cuesheet_track_parse.type == 0
 	assert cuesheet_track_init.pre_emphasis is False
-	assert cuesheet_track_load.pre_emphasis is False
+	assert cuesheet_track_parse.pre_emphasis is False
 
 	cuesheet_track_init = FLACCueSheetTrack(
 		track_number=2,
@@ -147,15 +147,15 @@ def _(flac_cuesheet_track_1, flac_cuesheet_track_2):
 			),
 		],
 	)
-	cuesheet_track_load = FLACCueSheetTrack.parse(flac_cuesheet_track_2)
+	cuesheet_track_parse = FLACCueSheetTrack.parse(flac_cuesheet_track_2)
 
-	assert cuesheet_track_init == cuesheet_track_load
-	assert cuesheet_track_init.track_number == cuesheet_track_load.track_number == 2
-	assert cuesheet_track_init.offset == cuesheet_track_load.offset == 44100
-	assert cuesheet_track_init.isrc == cuesheet_track_load.isrc == ''
-	assert cuesheet_track_init.type == cuesheet_track_load.type == 1
+	assert cuesheet_track_init == cuesheet_track_parse
+	assert cuesheet_track_init.track_number == cuesheet_track_parse.track_number == 2
+	assert cuesheet_track_init.offset == cuesheet_track_parse.offset == 44100
+	assert cuesheet_track_init.isrc == cuesheet_track_parse.isrc == ''
+	assert cuesheet_track_init.type == cuesheet_track_parse.type == 1
 	assert cuesheet_track_init.pre_emphasis is True
-	assert cuesheet_track_load.pre_emphasis is True
+	assert cuesheet_track_parse.pre_emphasis is True
 
 
 @test(
@@ -222,10 +222,10 @@ def _(flac_cuesheet_data):
 		lead_in_samples=88200,
 		compact_disc=True,
 	)
-	cuesheet_load = FLACCueSheet.parse(flac_cuesheet_data)
+	cuesheet_parse = FLACCueSheet.parse(flac_cuesheet_data)
 
-	assert cuesheet_init == cuesheet_load
-	assert repr(cuesheet_init) == repr(cuesheet_load) == '<FLACCueSheet (4 tracks)>'
+	assert cuesheet_init == cuesheet_parse
+	assert repr(cuesheet_init) == repr(cuesheet_parse) == '<FLACCueSheet (4 tracks)>'
 
 
 @test(
@@ -250,10 +250,10 @@ def _():
 @using(flac_padding_data=flac_padding_data)
 def _(flac_padding_data):
 	padding_init = FLACPadding(size=10)
-	padding_load = FLACPadding.parse(flac_padding_data)
+	padding_parse = FLACPadding.parse(flac_padding_data)
 
-	assert padding_init == padding_load
-	assert repr(padding_init) == repr(padding_load) == '<FLACPadding (10 bytes)>'
+	assert padding_init == padding_parse
+	assert repr(padding_init) == repr(padding_parse) == '<FLACPadding (10 bytes)>'
 
 
 @test(
@@ -272,9 +272,9 @@ def _(flac_picture_data):
 		colors=0,
 		data=flac_picture_data[41:],
 	)
-	flac_picture_load = FLACPicture.parse(flac_picture_data)
+	flac_picture_parse = FLACPicture.parse(flac_picture_data)
 
-	assert flac_picture_init == flac_picture_load
+	assert flac_picture_init == flac_picture_parse
 
 
 @test(
@@ -298,10 +298,10 @@ def _(flac_seektable_data):
 	]
 
 	seektable_init = FLACSeekTable(seekpoints)
-	seektable_load = FLACSeekTable.parse(flac_seektable_data)
+	seektable_parse = FLACSeekTable.parse(flac_seektable_data)
 
-	assert seektable_init == seektable_load
-	assert seektable_init.data == seektable_load.data == seekpoints
+	assert seektable_init == seektable_parse
+	assert seektable_init.data == seektable_parse.data == seekpoints
 
 
 @test(
@@ -324,9 +324,9 @@ def _(flac_streaminfo_data):
 		md5='9b1be87c6b579fde2341515f4d82c008',
 		sample_rate=44100,
 	)
-	flac_streaminfo_load = FLACStreamInfo.parse(flac_streaminfo_data)
+	flac_streaminfo_parse = FLACStreamInfo.parse(flac_streaminfo_data)
 
-	assert flac_streaminfo_init == flac_streaminfo_load
+	assert flac_streaminfo_init == flac_streaminfo_parse
 
 
 @test(

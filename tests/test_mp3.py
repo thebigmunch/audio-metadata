@@ -58,7 +58,7 @@ def _(
 	lame_replay_gain_null,
 	lame_replay_gain_negative,
 ):
-	replay_gain_load = LAMEReplayGain.parse(lame_replay_gain)
+	replay_gain_parse = LAMEReplayGain.parse(lame_replay_gain)
 	replay_gain_init = LAMEReplayGain(
 		peak=0.21856749057769775,
 		track_type=1,
@@ -69,16 +69,16 @@ def _(
 		album_adjustment=0.0
 	)
 
-	assert replay_gain_load == replay_gain_init
-	assert replay_gain_load.peak == replay_gain_init.peak == 0.21856749057769775
-	assert replay_gain_load.track_type == replay_gain_init.track_type == 1
-	assert replay_gain_load.track_origin == replay_gain_init.track_origin == 3
-	assert replay_gain_load.track_adjustment == replay_gain_init.track_adjustment == 6.8
-	assert replay_gain_load.album_type == replay_gain_init.album_type == 0
-	assert replay_gain_load.album_origin == replay_gain_init.album_origin == 0
-	assert replay_gain_load.album_adjustment == replay_gain_init.album_adjustment == 0.0
+	assert replay_gain_parse == replay_gain_init
+	assert replay_gain_parse.peak == replay_gain_init.peak == 0.21856749057769775
+	assert replay_gain_parse.track_type == replay_gain_init.track_type == 1
+	assert replay_gain_parse.track_origin == replay_gain_init.track_origin == 3
+	assert replay_gain_parse.track_adjustment == replay_gain_init.track_adjustment == 6.8
+	assert replay_gain_parse.album_type == replay_gain_init.album_type == 0
+	assert replay_gain_parse.album_origin == replay_gain_init.album_origin == 0
+	assert replay_gain_parse.album_adjustment == replay_gain_init.album_adjustment == 0.0
 
-	replay_gain_load = LAMEReplayGain.parse(lame_replay_gain_null)
+	replay_gain_parse = LAMEReplayGain.parse(lame_replay_gain_null)
 	replay_gain_init = LAMEReplayGain(
 		peak=None,
 		track_type=0,
@@ -89,16 +89,16 @@ def _(
 		album_adjustment=0.0
 	)
 
-	assert replay_gain_load == replay_gain_init
-	assert replay_gain_load.peak is replay_gain_init.peak is None
-	assert replay_gain_load.track_type == replay_gain_init.track_type == 0
-	assert replay_gain_load.track_origin == replay_gain_init.track_origin == 0
-	assert replay_gain_load.track_adjustment == replay_gain_init.track_adjustment == 0.0
-	assert replay_gain_load.album_type == replay_gain_init.album_type == 0
-	assert replay_gain_load.album_origin == replay_gain_init.album_origin == 0
-	assert replay_gain_load.album_adjustment == replay_gain_init.album_adjustment == 0.0
+	assert replay_gain_parse == replay_gain_init
+	assert replay_gain_parse.peak is replay_gain_init.peak is None
+	assert replay_gain_parse.track_type == replay_gain_init.track_type == 0
+	assert replay_gain_parse.track_origin == replay_gain_init.track_origin == 0
+	assert replay_gain_parse.track_adjustment == replay_gain_init.track_adjustment == 0.0
+	assert replay_gain_parse.album_type == replay_gain_init.album_type == 0
+	assert replay_gain_parse.album_origin == replay_gain_init.album_origin == 0
+	assert replay_gain_parse.album_adjustment == replay_gain_init.album_adjustment == 0.0
 
-	replay_gain_load = LAMEReplayGain.parse(lame_replay_gain_negative)
+	replay_gain_parse = LAMEReplayGain.parse(lame_replay_gain_negative)
 	replay_gain_init = LAMEReplayGain(
 		peak=0.21856749057769775,
 		track_type=1,
@@ -109,14 +109,14 @@ def _(
 		album_adjustment=-0.0
 	)
 
-	assert replay_gain_load == replay_gain_init
-	assert replay_gain_load.peak == replay_gain_init.peak == 0.21856749057769775
-	assert replay_gain_load.track_type == replay_gain_init.track_type == 1
-	assert replay_gain_load.track_origin == replay_gain_init.track_origin == 3
-	assert replay_gain_load.track_adjustment == replay_gain_init.track_adjustment == -6.8
-	assert replay_gain_load.album_type == replay_gain_init.album_type == 0
-	assert replay_gain_load.album_origin == replay_gain_init.album_origin == 0
-	assert replay_gain_load.album_adjustment == replay_gain_init.album_adjustment == -0.0
+	assert replay_gain_parse == replay_gain_init
+	assert replay_gain_parse.peak == replay_gain_init.peak == 0.21856749057769775
+	assert replay_gain_parse.track_type == replay_gain_init.track_type == 1
+	assert replay_gain_parse.track_origin == replay_gain_init.track_origin == 3
+	assert replay_gain_parse.track_adjustment == replay_gain_init.track_adjustment == -6.8
+	assert replay_gain_parse.album_type == replay_gain_init.album_type == 0
+	assert replay_gain_parse.album_origin == replay_gain_init.album_origin == 0
+	assert replay_gain_parse.album_adjustment == replay_gain_init.album_adjustment == -0.0
 
 
 @test(
@@ -176,7 +176,7 @@ def _(null, lame_header):
 		LAMEHeader.parse(null, 100)
 	assert str(exc.raised) == "Valid LAME header not found."
 
-	lame_header_load = LAMEHeader.parse(lame_header, 100)
+	lame_header_parse = LAMEHeader.parse(lame_header, 100)
 	lame_header_init = LAMEHeader(
 		crc=b'\x1d|',
 		ath_type=5,
@@ -213,27 +213,27 @@ def _(null, lame_header):
 		version=(3, 99),
 	)
 
-	assert lame_header_load == lame_header_init
-	assert lame_header_load._crc == lame_header_init._crc == b'\x1d|'
-	assert lame_header_load.ath_type == lame_header_init.ath_type == 5
-	assert lame_header_load.audio_crc == lame_header_init.audio_crc == b':\xe9'
-	assert lame_header_load.audio_size == lame_header_init.audio_size == 20489
-	assert lame_header_load.bitrate == lame_header_init.bitrate == 32000
-	assert lame_header_load.bitrate_mode == lame_header_init.bitrate_mode == LAMEBitrateMode.VBR_METHOD_2
-	assert lame_header_load.channel_mode == lame_header_init.channel_mode == LAMEChannelMode.JOINT_STEREO
-	assert lame_header_load.delay == lame_header_init.delay == 576
-	assert lame_header_load.encoding_flags == lame_header_init.encoding_flags == LAMEEncodingFlags(
+	assert lame_header_parse == lame_header_init
+	assert lame_header_parse._crc == lame_header_init._crc == b'\x1d|'
+	assert lame_header_parse.ath_type == lame_header_init.ath_type == 5
+	assert lame_header_parse.audio_crc == lame_header_init.audio_crc == b':\xe9'
+	assert lame_header_parse.audio_size == lame_header_init.audio_size == 20489
+	assert lame_header_parse.bitrate == lame_header_init.bitrate == 32000
+	assert lame_header_parse.bitrate_mode == lame_header_init.bitrate_mode == LAMEBitrateMode.VBR_METHOD_2
+	assert lame_header_parse.channel_mode == lame_header_init.channel_mode == LAMEChannelMode.JOINT_STEREO
+	assert lame_header_parse.delay == lame_header_init.delay == 576
+	assert lame_header_parse.encoding_flags == lame_header_init.encoding_flags == LAMEEncodingFlags(
 		nogap_continuation=False,
 		nogap_continued=False,
 		nspsytune=True,
 		nssafejoint=True,
 	)
-	assert lame_header_load.lowpass_filter == lame_header_init.lowpass_filter == 22100
-	assert lame_header_load.mp3_gain == lame_header_init.mp3_gain == 0
-	assert lame_header_load.noise_shaping == lame_header_init.noise_shaping == 1
-	assert lame_header_load.padding == lame_header_init.padding == 1260
-	assert lame_header_load.preset == lame_header_init.preset == LAMEPreset.V0
-	assert lame_header_load.replay_gain == lame_header_init.replay_gain == LAMEReplayGain(
+	assert lame_header_parse.lowpass_filter == lame_header_init.lowpass_filter == 22100
+	assert lame_header_parse.mp3_gain == lame_header_init.mp3_gain == 0
+	assert lame_header_parse.noise_shaping == lame_header_init.noise_shaping == 1
+	assert lame_header_parse.padding == lame_header_init.padding == 1260
+	assert lame_header_parse.preset == lame_header_init.preset == LAMEPreset.V0
+	assert lame_header_parse.replay_gain == lame_header_init.replay_gain == LAMEReplayGain(
 		album_adjustment=0.0,
 		album_origin=LAMEReplayGainOrigin.NOT_SET,
 		album_type=LAMEReplayGainType.NOT_SET,
@@ -242,12 +242,12 @@ def _(null, lame_header):
 		track_origin=LAMEReplayGainOrigin.NOT_SET,
 		track_type=LAMEReplayGainType.NOT_SET,
 	)
-	assert lame_header_load.revision == lame_header_init.revision == 0
-	assert lame_header_load.source_sample_rate == lame_header_init.source_sample_rate == 1
-	assert lame_header_load.surround_info == lame_header_init.surround_info == LAMESurroundInfo.NO_SURROUND
-	assert lame_header_load.unwise_settings_used is lame_header_init.unwise_settings_used is False
-	assert lame_header_load.version == lame_header_init.version == (3, 99)
-	assert strip_repr(lame_header_load) == strip_repr(lame_header_init) == (
+	assert lame_header_parse.revision == lame_header_init.revision == 0
+	assert lame_header_parse.source_sample_rate == lame_header_init.source_sample_rate == 1
+	assert lame_header_parse.surround_info == lame_header_init.surround_info == LAMESurroundInfo.NO_SURROUND
+	assert lame_header_parse.unwise_settings_used is lame_header_init.unwise_settings_used is False
+	assert lame_header_parse.version == lame_header_init.version == (3, 99)
+	assert strip_repr(lame_header_parse) == strip_repr(lame_header_init) == (
 		"<LAMEHeader({'ath_type': 5, 'audio_crc': b':\\xe9', 'audio_size': '20.01 KiB', 'bitrate': '32 Kbps', "
 		"'bitrate_mode': <LAMEBitrateMode.VBR_METHOD_2>, 'channel_mode': <LAMEChannelMode.JOINT_STEREO>, 'delay': 576, "
 		"'encoding_flags': <LAMEEncodingFlags({'nogap_continuation': False, 'nogap_continued': False, 'nspsytune': True, "
@@ -273,7 +273,7 @@ def _(null, xing_header_no_lame):
 		XingHeader.parse(null)
 	assert str(exc.raised) == "Valid Xing header not found."
 
-	xing_header_load = XingHeader.parse(xing_header_no_lame)
+	xing_header_parse = XingHeader.parse(xing_header_no_lame)
 	xing_header_init = XingHeader(
 		lame=None,
 		num_bytes=20489,
@@ -282,12 +282,12 @@ def _(null, xing_header_no_lame):
 		toc=XingToC(bytearray(xing_header_no_lame[16:116]))
 	)
 
-	assert xing_header_load == xing_header_init
-	assert xing_header_load._lame is xing_header_init._lame is None
-	assert xing_header_load.num_bytes == xing_header_init.num_bytes == 20489
-	assert xing_header_load.num_frames == xing_header_init.num_frames == 193
-	assert xing_header_load.quality == xing_header_init.quality == 100
-	assert xing_header_load.toc == xing_header_init.toc == XingToC(bytearray(xing_header_no_lame[16:116]))
+	assert xing_header_parse == xing_header_init
+	assert xing_header_parse._lame is xing_header_init._lame is None
+	assert xing_header_parse.num_bytes == xing_header_init.num_bytes == 20489
+	assert xing_header_parse.num_frames == xing_header_init.num_frames == 193
+	assert xing_header_parse.quality == xing_header_init.quality == 100
+	assert xing_header_parse.toc == xing_header_init.toc == XingToC(bytearray(xing_header_no_lame[16:116]))
 
 
 @test(
@@ -315,7 +315,7 @@ def _(vbri_header):
 		)
 		i += 2
 
-	vbri_header_load = VBRIHeader.parse(vbri_header)
+	vbri_header_parse = VBRIHeader.parse(vbri_header)
 	vbri_header_init = VBRIHeader(
 		delay=0.00015842914581298828,
 		num_bytes=20594,
@@ -329,17 +329,17 @@ def _(vbri_header):
 		version=1,
 	)
 
-	assert vbri_header_load == vbri_header_init
-	assert vbri_header_load.delay == vbri_header_init.delay == 0.00015842914581298828
-	assert vbri_header_load.num_bytes == vbri_header_init.num_bytes == 20594
-	assert vbri_header_load.num_frames == vbri_header_init.num_frames == 194
-	assert vbri_header_load.num_toc_entries == vbri_header_init.num_toc_entries == 193
-	assert vbri_header_load.quality == vbri_header_init.quality == 75
-	assert vbri_header_load.toc == vbri_header_init.toc == VBRIToC(toc_entries)
-	assert vbri_header_load.toc_entry_num_bytes == vbri_header_init.toc_entry_num_bytes == 2
-	assert vbri_header_load.toc_entry_num_frames == vbri_header_init.toc_entry_num_frames == 1
-	assert vbri_header_load.toc_scale_factor == vbri_header_init.toc_scale_factor == 1
-	assert vbri_header_load.version == vbri_header_init.version == 1
+	assert vbri_header_parse == vbri_header_init
+	assert vbri_header_parse.delay == vbri_header_init.delay == 0.00015842914581298828
+	assert vbri_header_parse.num_bytes == vbri_header_init.num_bytes == 20594
+	assert vbri_header_parse.num_frames == vbri_header_init.num_frames == 194
+	assert vbri_header_parse.num_toc_entries == vbri_header_init.num_toc_entries == 193
+	assert vbri_header_parse.quality == vbri_header_init.quality == 75
+	assert vbri_header_parse.toc == vbri_header_init.toc == VBRIToC(toc_entries)
+	assert vbri_header_parse.toc_entry_num_bytes == vbri_header_init.toc_entry_num_bytes == 2
+	assert vbri_header_parse.toc_entry_num_frames == vbri_header_init.toc_entry_num_frames == 1
+	assert vbri_header_parse.toc_scale_factor == vbri_header_init.toc_scale_factor == 1
+	assert vbri_header_parse.version == vbri_header_init.version == 1
 
 
 @test(
@@ -359,7 +359,7 @@ def _(mpeg_frame, xing_toc):
 		MPEGFrameHeader.parse(mpeg_frame[0:1] + b'\xEE' + mpeg_frame[2:])
 	assert str(exc.raised) == "Invalid MPEG audio frame."
 
-	mpeg_frame_load = MPEGFrameHeader.parse(mpeg_frame)
+	mpeg_frame_parse = MPEGFrameHeader.parse(mpeg_frame)
 	mpeg_frame_init = MPEGFrameHeader(
 		start=0,
 		size=417,
@@ -415,18 +415,18 @@ def _(mpeg_frame, xing_toc):
 		version=1,
 	)
 
-	assert mpeg_frame_load == mpeg_frame_init
-	assert mpeg_frame_load._start == mpeg_frame_init._start == 0
-	assert mpeg_frame_load._size == mpeg_frame_init._size == 417
-	assert mpeg_frame_load.bitrate == mpeg_frame_init.bitrate == 128000
-	assert mpeg_frame_load.channel_mode == mpeg_frame_init.channel_mode == MP3ChannelMode.JOINT_STEREO
-	assert mpeg_frame_load.channels == mpeg_frame_init.channels == 2
-	assert mpeg_frame_load.layer == mpeg_frame_init.layer == 3
-	assert mpeg_frame_load.padded is mpeg_frame_init.padded is False
-	assert mpeg_frame_load.protected is mpeg_frame_init.protected is False
-	assert mpeg_frame_load.sample_rate == mpeg_frame_init.sample_rate == 44100
-	assert mpeg_frame_load.version == mpeg_frame_init.version == 1
-	assert strip_repr(mpeg_frame_load) == strip_repr(mpeg_frame_init) == (
+	assert mpeg_frame_parse == mpeg_frame_init
+	assert mpeg_frame_parse._start == mpeg_frame_init._start == 0
+	assert mpeg_frame_parse._size == mpeg_frame_init._size == 417
+	assert mpeg_frame_parse.bitrate == mpeg_frame_init.bitrate == 128000
+	assert mpeg_frame_parse.channel_mode == mpeg_frame_init.channel_mode == MP3ChannelMode.JOINT_STEREO
+	assert mpeg_frame_parse.channels == mpeg_frame_init.channels == 2
+	assert mpeg_frame_parse.layer == mpeg_frame_init.layer == 3
+	assert mpeg_frame_parse.padded is mpeg_frame_init.padded is False
+	assert mpeg_frame_parse.protected is mpeg_frame_init.protected is False
+	assert mpeg_frame_parse.sample_rate == mpeg_frame_init.sample_rate == 44100
+	assert mpeg_frame_parse.version == mpeg_frame_init.version == 1
+	assert strip_repr(mpeg_frame_parse) == strip_repr(mpeg_frame_init) == (
 		"<MPEGFrameHeader({'bitrate': '128 Kbps', 'channel_mode': <MP3ChannelMode.JOINT_STEREO>, "
 		"'channels': 2, 'layer': 3, 'padded': False, 'protected': False, 'sample_rate': '44.1 KHz', 'version': 1,})>"
 	)
