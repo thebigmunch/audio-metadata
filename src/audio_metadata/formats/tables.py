@@ -5,8 +5,7 @@ __all__ = [
 	'ID3v1Genres',
 	'ID3v2FrameIDs',
 	'ID3v2LyricsContentType',
-	'ID3v2LyricsTimestampFormat',
-	'ID3v2TempoTimestampFormat',
+	'ID3v2TimestampFormat',
 	'ID3v2UnofficialFrameIDs',
 	'LAMEBitrateMode',
 	'LAMEChannelMode',
@@ -88,12 +87,7 @@ class ID3v2LyricsContentType(_BaseIntEnum):
 	IMAGES = 8
 
 
-class ID3v2LyricsTimestampFormat(_BaseIntEnum):
-	MPEG_FRAMES = 0
-	MILLISECONDS = 1
-
-
-class ID3v2TempoTimestampFormat(_BaseIntEnum):
+class ID3v2TimestampFormat(_BaseIntEnum):
 	MPEG_FRAMES = 0
 	MILLISECONDS = 1
 

@@ -88,8 +88,7 @@ from .tables import (
 	ID3Version,
 	ID3v1Genres,
 	ID3v2LyricsContentType,
-	ID3v2LyricsTimestampFormat,
-	ID3v2TempoTimestampFormat,
+	ID3v2TimestampFormat,
 )
 from ..exceptions import (
 	AudioMetadataWarning,
@@ -192,7 +191,7 @@ class ID3v2Lyrics(AttrMapping):
 	kw_only=True,
 )
 class ID3v2SynchronizedLyrics(ID3v2Lyrics):
-	timestamp_format = attrib(converter=ID3v2LyricsTimestampFormat)
+	timestamp_format = attrib(converter=ID3v2TimestampFormat)
 	content_type = attrib(converter=ID3v2LyricsContentType)
 
 
@@ -298,7 +297,7 @@ class ID3v2RecommendedBuffer(AttrMapping):
 	kw_only=True,
 )
 class ID3v2SynchronizedTempoCodes(AttrMapping):
-	timestamp_format = attrib(converter=ID3v2TempoTimestampFormat)
+	timestamp_format = attrib(converter=ID3v2TimestampFormat)
 	data = attrib()
 
 
@@ -673,7 +672,7 @@ class ID3v2SynchronizedTempoCodesFrame(ID3v2Frame):
 
 		return (
 			ID3v2SynchronizedTempoCodes(
-				timestamp_format=ID3v2TempoTimestampFormat(frame_data[0]),
+				timestamp_format=ID3v2TimestampFormat(frame_data[0]),
 				data=frame_data[1:]
 			),
 			None,
@@ -974,7 +973,7 @@ class ID3v2SynchronizedLyricsFrame(ID3v2LyricsFrame):
 				language=decode_bytestring(frame_data[1:4]),
 				description=decode_bytestring(description, encoding),
 				text=decode_bytestring(text, encoding),
-				timestamp_format=ID3v2LyricsTimestampFormat(frame_data[4]),
+				timestamp_format=ID3v2TimestampFormat(frame_data[4]),
 				content_type=frame_data[5],
 			),
 			encoding,

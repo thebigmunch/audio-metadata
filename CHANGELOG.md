@@ -32,6 +32,14 @@ This project adheres to [Semantic Versioning](https://semver.org).
 * ``ID3v2NumberFrame`` value is not the appropriate class
 	(``ID3v2Disc`` or ``ID3v2Track``) rather than having
 	the number/total abstraction on the frame class itself.
+* Use a single enum for ID3v2 timestamp format.
+	* Remove ``ID3v2LyricsTimestampFormat``.
+	* Remove ``ID3v2TempoTimestampFormat``.
+
+### Removed
+
+* ``ID3v2LyricsTimestampFormat``.
+* ``ID3v2TempoTimestampFormat``.
 
 ### Fixed
 
