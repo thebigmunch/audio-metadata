@@ -3,6 +3,7 @@ __all__ = [
 	'ID3PictureType',
 	'ID3Version',
 	'ID3v1Genres',
+	'ID3v2EventTypes',
 	'ID3v2FrameIDs',
 	'ID3v2LyricsContentType',
 	'ID3v2TimestampFormat',
@@ -73,6 +74,32 @@ class ID3PictureType(_BaseIntEnum):
 	BAND_LOGOTYPE = 19
 	PUBLISHER_LOGOTYPE = 20
 	STUDIO_LOGOTYPE = 20
+
+
+class ID3v2EventTypes(_BaseIntEnum):
+	PADDING = 0
+	END_OF_INITIAL_SILENCE = 1
+	INTRO_START = 2
+	MAIN_PART_START = 3
+	OUTRO_START = 4
+	OUTRO_END = 5
+	VERSE_START = 6
+	REFRAIN_START = 7
+	INTERLUDE_START = 8
+	THEME_START = 9
+	VARIATION_START = 10
+	KEY_CHANGE = 11
+	TIME_CHANGE = 12
+	MOMENTARY_UNWANTED_NOISE = 13
+	SUSTAINED_NOISE = 14
+	SUSTAINED_NOISE_END = 15
+	INTRO_END = 16
+	MAIN_PART_END = 17
+	VERSE_END = 18
+	REFRAIN_END = 19
+	THEME_END = 20
+	PROFANITY = 21
+	PROFANITY_END = 22
 
 
 class ID3v2LyricsContentType(_BaseIntEnum):

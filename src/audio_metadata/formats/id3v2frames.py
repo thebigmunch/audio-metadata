@@ -10,6 +10,9 @@ __all__ = [
 	'ID3v2DateFrame',
 	'ID3v2Disc',
 	'ID3v2DiscFrame',
+	'ID3v2EventTimingCodesFrame',
+	'ID3v2Event',
+	'ID3v2Events',
 	'ID3v2Frame',
 	'ID3v2FrameFlags',
 	'ID3v2FrameTypes',
@@ -87,6 +90,7 @@ from .tables import (
 	ID3PictureType,
 	ID3Version,
 	ID3v1Genres,
+	ID3v2EventTypes,
 	ID3v2LyricsContentType,
 	ID3v2TimestampFormat,
 )
@@ -144,6 +148,24 @@ class ID3v2Comment(AttrMapping):
 class ID3v2Disc(AttrMapping):
 	number = attrib()
 	total = attrib(default=None)
+
+
+@attrs(
+	repr=False,
+	kw_only=True,
+)
+class ID3v2Event(AttrMapping):
+	type = attrib()  # noqa
+	timestamp = attrib()
+
+
+@attrs(
+	repr=False,
+	kw_only=True,
+)
+class ID3v2Events(AttrMapping):
+	timestamp_format = attrib(converter=ID3v2TimestampFormat)
+	events = attrib()
 
 
 @attrs(
@@ -1196,6 +1218,42 @@ class ID3v2YearFrame(ID3v2NumericTextFrame):
 	repr=False,
 	kw_only=True,
 )
+class ID3v2EventTimingCodesFrame(ID3v2Frame):
+	@datareader
+	@staticmethod
+	def _parse_frame_data(data):
+		frame_data = data.read()
+
+		timestamp_format = ID3v2TimestampFormat(frame_data[0])
+
+		remaining = frame_data[1:]
+		events = []
+		while len(remaining) >= 5:
+			type_, timestamp = struct.unpack('>bI', remaining[:5])
+			event_type = ID3v2EventTypes(type_)
+
+			events.append(
+				ID3v2Event(
+					type=event_type,
+					timestamp=timestamp,
+				)
+			)
+
+			remaining = remaining[5:]
+
+		return (
+			ID3v2Events(
+				timestamp_format=timestamp_format,
+				events=events,
+			),
+			None,
+		)
+
+
+@attrs(
+	repr=False,
+	kw_only=True,
+)
 class ID3v2PlayCounterFrame(ID3v2Frame):
 	@datareader
 	@staticmethod
@@ -1484,14 +1542,14 @@ class ID3v2UserURLLinkFrame(ID3v2Frame):
 
 
 # TODO:ID3v2.2
-# TODO: CRM, ETC, EQU, LNK, MCI, MLL, REV, RVA
+# TODO: CRM, EQU, LNK, MCI, MLL, REV, RVA
 
 # TODO: ID3v2.3
-# TODO: COMR, ENCR, EQUA, ETCO, LINK, MLLT
+# TODO: COMR, ENCR, EQUA, LINK, MLLT
 # TODO: POSS, RGAD, RVAD, RVRB, XRVA
 
 # TODO: ID3v2.4
-# TODO: ASPI, COMR, ENCR, EQU2, ETCO, LINK, MLLT,
+# TODO: ASPI, COMR, ENCR, EQU2, LINK, MLLT,
 # TODO: POSS, RGAD, RVA2, RVRB, SEEK, SIGN, XRVA
 ID3v2FrameTypes = {
 	# Binary data frames
@@ -1563,8 +1621,10 @@ ID3v2FrameTypes = {
 	# Other Frames
 	'BUF': ID3v2RecommendedBufferFrame,
 	'CNT': ID3v2PlayCounterFrame,
+	'ETC': ID3v2EventTimingCodesFrame,
 	'POP': ID3v2PopularimeterFrame,
 
+	'ETCO': ID3v2EventTimingCodesFrame,
 	'PCNT': ID3v2PlayCounterFrame,
 	'POPM': ID3v2PopularimeterFrame,
 	'RBUF': ID3v2RecommendedBufferFrame,

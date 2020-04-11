@@ -26,6 +26,11 @@ This project adheres to [Semantic Versioning](https://semver.org).
 * Support for ID3v2 recommended buffer frames.
 	* ``ID3v2RecommendedBuffer``.
 	* ``ID3v2RecommendedBufferFrame``.
+* Support for ID3v2 event timing codes frames.
+	* ``ID3v2Event``.
+	* ``ID3v2Events``.
+	* ``ID3v2EventTypes``.
+	* ``ID3v2EventTimingCodesFrame``.
 
 ### Changed
 
