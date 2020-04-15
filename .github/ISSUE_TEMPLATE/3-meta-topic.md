@@ -1,6 +1,7 @@
 ---
 name: Meta Topic
 about: Documentation, tooling, project management, etc.
+labels: meta
 ---
 
 ### Checklist

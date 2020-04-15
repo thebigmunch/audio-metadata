@@ -1,6 +1,7 @@
 ---
 name: Bug Report
 about: Report a bug to be fixed.
+labels: bug
 ---
 
 ### Checklist

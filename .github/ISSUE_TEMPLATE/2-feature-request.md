@@ -1,6 +1,7 @@
 ---
 name: Feature Request
 about: Request a feature be implemented.
+labels: feature
 ---
 
 ### Checklist
