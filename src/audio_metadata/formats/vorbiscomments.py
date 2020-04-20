@@ -8,7 +8,10 @@ __all__ = [
 import struct
 from collections import defaultdict
 
-from attr import attrib, attrs
+from attr import (
+	attrib,
+	attrs,
+)
 from tbm_utils import datareader
 
 from ..exceptions import (

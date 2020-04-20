@@ -12,7 +12,10 @@ import struct
 from base64 import b64decode
 
 import bitstruct
-from attr import attrib, attrs
+from attr import (
+	attrib,
+	attrs,
+)
 from tbm_utils import datareader
 
 from .flac import FLACPicture

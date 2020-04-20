@@ -13,7 +13,10 @@ import os
 import struct
 
 import bitstruct
-from attr import attrib, attrs
+from attr import (
+	attrib,
+	attrs,
+)
 from tbm_utils import (
 	AttrMapping,
 	LabelList,
