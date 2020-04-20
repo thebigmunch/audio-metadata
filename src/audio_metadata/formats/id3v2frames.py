@@ -264,16 +264,16 @@ class ID3v2Picture(Picture):
 		try:
 			description, image_data = split_encoded(data[mime_end + 2:], encoding, 1)
 		except ValueError:
-			raise TagError("Missing data in picture frame.") from None
+			raise FormatError("Missing data in ID3v2 picture.") from None
 		else:
 			if not image_data.strip(b'\x00'):
-				raise TagError("No image data in picture frame.")
+				raise FormatError("No image data in picture frame.")
 
 		description = decode_bytestring(description, encoding)
 		try:
 			width, height = get_image_size(image_data)
-		except ValueError as exc:
-			raise TagError(str(exc)) from None
+		except ValueError:
+			raise FormatError("Missing width/height in ID3v2 picture.") from None
 
 		return cls(
 			type=type_,
@@ -1342,8 +1342,13 @@ class ID3v2APICFrame(ID3v2Frame):
 	def _parse_frame_data(data):
 		frame_data = data.read()
 
+		try:
+			picture = ID3v2Picture.parse(frame_data)
+		except FormatError as exc:
+			raise TagError(str(exc)) from None
+
 		return (
-			ID3v2Picture.parse(frame_data),
+			picture,
 			None,
 		)
 
@@ -1358,8 +1363,13 @@ class ID3v2PICFrame(ID3v2Frame):
 	def _parse_frame_data(data):
 		frame_data = data.read()
 
+		try:
+			picture = ID3v2Picture.parse(frame_data, id3v22=True)
+		except FormatError as exc:
+			raise TagError(str(exc)) from None
+
 		return (
-			ID3v2Picture.parse(frame_data, id3v22=True),
+			picture,
 			None,
 		)
 
