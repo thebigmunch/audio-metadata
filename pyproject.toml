@@ -6,7 +6,7 @@ build-backend = "poetry.masonry.api"
 [tool.poetry]
 name = "audio-metadata"
 description = "A library for reading and, in the future, writing metadata from audio files."
-version = "0.10.0"
+version = "0.11.0"
 
 license = "MIT"
 
@@ -90,6 +90,18 @@ exclude_lines = [
 	"# pragma: no cover",
 	"# pragma: nobranch",
 	"# pragma: no branch",
+]
+
+
+[tool.interrogate]
+fail-under = 100
+ignore-init-method = true
+ignore-init-module = true
+ignore-magic = true
+ignore-private = true
+ignore-semiprivate = true
+exclude = [
+	"src/audio_metadata/__about__.py",
 ]
 
 
