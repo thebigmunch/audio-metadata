@@ -156,6 +156,36 @@ def id3v2_header():
 
 
 @fixture(scope='global')
+def id3v22_picture_frame():
+	return Path(TEST_PATH, 'data', 'id3', 'id3v22-picture-frame.bin').read_bytes()
+
+
+@fixture(scope='global')
+def id3v22_picture(id3v22_picture_frame=id3v22_picture_frame):
+	return id3v22_picture_frame[6:]
+
+
+@fixture(scope='global')
+def id3v22_picture_data(id3v22_picture=id3v22_picture):
+	return id3v22_picture[-92:]
+
+
+@fixture(scope='global')
+def id3v24_picture_frame():
+	return Path(TEST_PATH, 'data', 'id3', 'id3v24-picture-frame.bin').read_bytes()
+
+
+@fixture(scope='global')
+def id3v24_picture(id3v24_picture_frame=id3v24_picture_frame):
+	return id3v24_picture_frame[10:]
+
+
+@fixture(scope='global')
+def id3v24_picture_data(id3v24_picture=id3v24_picture):
+	return id3v24_picture[-92:]
+
+
+@fixture(scope='global')
 def lame_header():
 	return Path(TEST_PATH, 'data', 'mp3', 'lame-header.bin').read_bytes()
 

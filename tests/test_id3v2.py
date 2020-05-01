@@ -20,6 +20,37 @@ from tests.fixtures import (
 	id3v24_unsync,
 	null,
 )
+from tests.utils import strip_repr
+
+
+@test(
+	"Unsupported ID3 version in ID3v2Frames raises ValueError",
+	tags=['unit', 'id3', 'id3v2', 'ID3v2Frames'],
+)
+@using(null=null)
+def _(null):
+	with raises(ValueError) as exc:
+		ID3v2Frames(id3_version=(1, 0))
+	assert str(exc.raised) == "Unsupported ID3 version: (1, 0)."
+
+	with raises(ValueError) as exc:
+		ID3v2Frames.parse(null, (1, 0))
+	assert str(exc.raised) == "Unsupported ID3 version: ID3Version.v10."
+
+
+@test(
+	"Invalid ID3 version in ID3v2Frames raises ValueError",
+	tags=['unit', 'id3', 'id3v2', 'ID3v2Frames'],
+)
+@using(null=null)
+def _(null):
+	with raises(ValueError) as exc:
+		ID3v2Frames(id3_version=None)
+	assert str(exc.raised) == "None is not a valid ID3Version"
+
+	with raises(ValueError) as exc:
+		ID3v2Frames.parse(null, None)
+	assert str(exc.raised) == "None is not a valid ID3Version"
 
 
 @test(
@@ -33,22 +64,6 @@ from tests.fixtures import (
 	id3v24=id3v24,
 )
 def _(null, id3v22, id3v23, id3v24):
-	with raises(ValueError) as exc:
-		ID3v2Frames(id3_version=(1, 0))
-	assert str(exc.raised) == "Unsupported ID3 version: (1, 0)."
-
-	with raises(ValueError) as exc:
-		ID3v2Frames(id3_version=None)
-	assert str(exc.raised) == "None is not a valid ID3Version"
-
-	with raises(ValueError) as exc:
-		ID3v2Frames.parse(null, (1, 0))
-	assert str(exc.raised) == "Unsupported ID3 version: ID3Version.v10."
-
-	with raises(ValueError) as exc:
-		ID3v2Frames.parse(null, None)
-	assert str(exc.raised) == "None is not a valid ID3Version"
-
 	v22_frames_init = ID3v2Frames(id3_version=ID3Version.v22)
 	v22_frames_init_tuple = ID3v2Frames(id3_version=(2, 2))
 	v22_frames_parse = ID3v2Frames.parse(
@@ -162,6 +177,18 @@ def _(null, id3v24, id3v24_unsync):
 	)
 
 	assert v24_header_parse == v24_header_init
+	assert strip_repr(v24_header_init) == (
+		"<ID3v2Header({"
+		"'flags': <ID3v2Flags({"
+		"'compressed': False, "
+		"'experimental': False, "
+		"'extended': False, "
+		"'footer': False, "
+		"'unsync': False, "
+		"})>, "
+		"'version': <ID3Version.v24>,"
+		"})>"
+	)
 
 	v24_header_parse = ID3v2Header.parse(id3v24_unsync)
 	v24_header_init = ID3v2Header(
@@ -176,3 +203,15 @@ def _(null, id3v24, id3v24_unsync):
 	)
 
 	assert v24_header_parse == v24_header_init
+	assert strip_repr(v24_header_init) == (
+		"<ID3v2Header({"
+		"'flags': <ID3v2Flags({"
+		"'compressed': False, "
+		"'experimental': False, "
+		"'extended': False, "
+		"'footer': False, "
+		"'unsync': True, "
+		"})>, "
+		"'version': <ID3Version.v24>,"
+		"})>"
+	)
