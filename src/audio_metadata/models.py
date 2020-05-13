@@ -45,6 +45,21 @@ class Tags(AttrMapping):
 
 	FIELD_MAP = frozenbidict()
 
+	def __getattr__(self, attr):
+		a = self.FIELD_MAP.get(attr, attr)
+
+		return super().__getattr__(a)
+
+	def __setattr__(self, attr, value):
+		a = self.FIELD_MAP.get(attr, attr)
+
+		super().__setattr__(a, value)
+
+	def __delattr__(self, attr):
+		a = self.FIELD_MAP.get(attr, attr)
+
+		super().__delattr__(a)
+
 	def __getitem__(self, key):
 		k = self.FIELD_MAP.get(key, key)
 

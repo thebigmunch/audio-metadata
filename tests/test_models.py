@@ -80,12 +80,16 @@ def _():
 	test_tags = Tags(key1='value1', key2='value2')
 	test_tags.FIELD_MAP = frozenbidict({'artist': 'key1', 'title': 'key2'})
 
-	assert test_tags['artist'] == test_tags['key1']
-	assert test_tags['title'] == test_tags['key2']
+	assert test_tags['artist'] == test_tags['key1'] == test_tags.artist == test_tags.key1
+	assert test_tags['title'] == test_tags['key2'] == test_tags.title == test_tags.key2
 
 	test_tags['key3'] = 'value3'
 	del test_tags['key3']
 	assert 'key3' not in test_tags
+
+	test_tags.key3 = 'value3'
+	delattr(test_tags, 'key3')
+	assert not hasattr(test_tags, 'key3')
 
 	assert list(iter(test_tags)) == ['artist', 'title']
 
