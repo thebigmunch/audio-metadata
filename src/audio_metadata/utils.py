@@ -216,7 +216,7 @@ def get_image_size(data):
 	elif b.startswith(b'BM'):
 		width, height = struct.unpack('<II', b[18:26])
 	else:
-		raise ValueError(f"Unsupported image file format.")
+		raise ValueError("Unsupported image file format.")
 
 	return width, height
 

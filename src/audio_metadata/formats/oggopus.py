@@ -103,7 +103,7 @@ class OggOpus(Ogg):
 		page = next(self.parse_pages())
 
 		if not page.segments[0].startswith(b'OpusHead'):
-			raise FormatError(f"``OpusHead`` must be first page in Ogg Opus.")
+			raise FormatError("``OpusHead`` must be first page in Ogg Opus.")
 		else:
 			self.streaminfo = OggOpusStreamInfo.parse(page.segments[0])
 			info_serial = page.serial_number

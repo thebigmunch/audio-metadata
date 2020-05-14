@@ -111,7 +111,7 @@ class OggVorbis(Ogg):
 		page = next(self.parse_pages())
 
 		if not page.segments[0].startswith(b'\x01vorbis'):
-			raise FormatError(f"``\x01vorbis`` must be first page in Ogg Vorbis.")
+			raise FormatError("``\x01vorbis`` must be first page in Ogg Vorbis.")
 		else:
 			self.streaminfo = OggVorbisStreamInfo.parse(page.segments[0])
 			info_serial = page.serial_number
