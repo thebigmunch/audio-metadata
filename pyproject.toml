@@ -6,7 +6,7 @@ build-backend = "poetry.masonry.api"
 [tool.poetry]
 name = "audio-metadata"
 description = "A library for reading and, in the future, writing metadata from audio files."
-version = "0.11.0"
+version = "0.11.1"
 
 license = "MIT"
 
