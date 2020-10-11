@@ -1,43 +1,44 @@
-.. _api:
+# API Reference
 
-API Reference
-=============
-
+```{eval-rst}
 .. currentmodule:: audio_metadata
+```
 
 The main methods of interacting with audio metadata are :func:`load` and :func:`loads`.
 
 
-Core
-----
+## Core
 
+```{eval-rst}
 .. autofunction:: determine_format
 .. autofunction:: load
 .. autofunction:: loads
+```
 
 
-Exceptions
-----------
+## Exceptions
 
+```{eval-rst}
 .. autoexception:: AudioMetadataException
 .. autoexception:: FormatError
 .. autoexception:: TagError
 .. autoexception:: UnsupportedFormat
+```
 
+## Base Classes
 
-Base Classes
-------------
-
+```{eval-rst}
 .. autoclass:: Format
 
 .. autoclass:: Picture
 .. autoclass:: StreamInfo
 .. autoclass:: Tags
+```
 
 
-FLAC
-----
+## FLAC
 
+```{eval-rst}
 .. autoclass:: FLAC
 
 .. autoclass:: FLACApplication
@@ -51,29 +52,32 @@ FLAC
 .. autoclass:: FLACSeekTable
 .. autoclass:: FLACStreamInfo
 .. autoclass:: FLACVorbisComments
+```
 
 
-ID3v1
------
+## ID3v1
 
+```{eval-rst}
 .. autoclass:: ID3v1
 
 .. autoclass:: ID3v1Fields
+```
 
 
-ID3v2
------
+## ID3v2
 
+```{eval-rst}
 .. autoclass:: ID3v2
 
 .. autoclass:: ID3v2Flags
 .. autoclass:: ID3v2Frames
 .. autoclass:: ID3v2Header
+```
 
 
-MP3
----
+## MP3
 
+```{eval-rst}
 .. autoclass:: MP3
 
 .. autoclass:: LAMEEncodingFlags
@@ -85,49 +89,55 @@ MP3
 .. autoclass:: VBRIToC
 .. autoclass:: XingHeader
 .. autoclass:: XingToC
+```
 
 
-Ogg
----
+## Ogg
 
+```{eval-rst}
 .. autoclass:: Ogg
 
 .. autoclass:: OggPage
 .. autoclass:: OggPageHeader
 .. autoclass:: OggPageSegments
+```
 
 
-Ogg Opus
---------
+## Ogg Opus
 
+```{eval-rst}
 .. autoclass:: OggOpus
 
 .. autoclass:: OggOpusStreamInfo
 .. autoclass:: OggOpusVorbisComments
+```
 
 
-Ogg Opus
---------
+## Ogg Vorbis
 
+```{eval-rst}
 .. autoclass:: OggVorbis
 
 .. autoclass:: OggVorbisStreamInfo
 .. autoclass:: OggVorbisComments
+```
 
 
-Vorbis
-------
+## Vorbis
 
+```{eval-rst}
 .. autoclass:: VorbisComment
 .. autoclass:: VorbisComments
+```
 
 
-WAV
----
+## WAV
 
+```{eval-rst}
 .. autoclass:: WAVE
 
 .. autoclass:: RIFFTag
 .. autoclass:: RIFFTags
 .. autoclass:: WAVEStreamInfo
 .. autoclass:: WAVESubchunk
+```

@@ -18,16 +18,16 @@ class AudioMetadataException(Exception):
 	"""Base exception for audio-metadata."""
 
 
-class UnsupportedFormat(AudioMetadataException):
-	"""An unsupported format, version, or profile was encountered."""
-
-
 class FormatError(AudioMetadataException):
 	"""The binary format of a data input is invalid."""
 
 
 class TagError(AudioMetadataException):
-	"""A tag is not compliant to a specification."""
+	"""A tag is not compliant with a specification."""
+
+
+class UnsupportedFormat(AudioMetadataException):
+	"""An unsupported format, version, or profile was encountered."""
 
 
 ############

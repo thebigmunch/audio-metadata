@@ -20,7 +20,7 @@ homepage = "https://github.com/thebigmunch/audio-metadata"
 [tool.poetry.dependencies]
 python = "^3.6"
 
-attrs = ">=18.2,<19.4"
+attrs = ">=18.2"
 bidict = "0.*"
 bitstruct = ">=6.0,<9.0"
 more-itertools = ">=4.0,<9.0"
@@ -35,9 +35,10 @@ flake8-builtins = { version = "^1.0", optional = true }
 flake8-comprehensions = { version = ">=2.0,<=4.0", optional = true }
 flake8-import-order = { version = "^0.18", optional = true }
 flake8-import-order-tbm = { version = "^1.0", optional = true }
-nox = { version = "^2019", optional = true }
-sphinx = { version = "^2.0", optional = true}
-sphinx-material = { version = "0.*", optional = true }
+furo = { version = "*", optional = true, allow-prereleases = true }
+myst-parser = { version = ">=0.12", optional = true }
+nox = { version = ">=2019", optional = true }
+sphinx = { version = "^3.0", optional = true }
 ward = { version = ">=0.42.0-beta.0", optional = true }
 
 [tool.poetry.extras]
@@ -48,14 +49,16 @@ dev = [
 	"flake8-comprehensions",
 	"flake8-import-order",
 	"flake8-import-order-tbm",
+	"furo",
+	"myst-parser",
 	"nox",
 	"sphinx",
-	"sphinx-material",
 	"ward",
 ]
 doc = [
+	"furo",
+	"myst-parser",
 	"sphinx",
-	"sphinx-material",
 ]
 lint = [
 	"flake8",
