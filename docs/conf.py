@@ -51,7 +51,6 @@ language = None
 exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
 add_function_parentheses = False
 add_module_names = True
-pygments_style = 'sphinx'
 highlight_language = 'python3'
 todo_include_todos = True
 
