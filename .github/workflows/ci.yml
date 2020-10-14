@@ -3,12 +3,12 @@ name: CI
 on:
   push:
     branches:
-      - master
+      - main
     tags-ignore:
       - '**'
   pull_request:
     branches:
-      - master
+      - main
   # Allow rebuilds via API.
   repository_dispatch:
     types:

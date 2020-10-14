@@ -97,7 +97,7 @@ The high-level API and basic usage are covered, but more advanced features/funct
 
 ## TODO
 
-If you're willing to [contribute](https://github.com/thebigmunch/audio-metadata/blob/master/.github/CONTRIBUTING.md)
+If you're willing to [contribute](https://github.com/thebigmunch/audio-metadata/blob/main/.github/CONTRIBUTING.md)
 your time to work on [audio-metadata](https://github.com/thebigmunch/audio-metadata/), you can:
 
 * Post in the [Development](https://forum.thebigmunch.me/c/dev/) category on the [Discourse forum](https://forum.thebigmunch.me/).
@@ -119,7 +119,7 @@ Get your own thanks inbox at [SayThanks.io](https://saythanks.io/).
 
 #### Contribute
 
-[Contribute](https://github.com/thebigmunch/audio-metadata/blob/master/.github/CONTRIBUTING.md) by submitting bug reports, feature requests, or code.
+[Contribute](https://github.com/thebigmunch/audio-metadata/blob/main/.github/CONTRIBUTING.md) by submitting bug reports, feature requests, or code.
 
 #### Help Others/Stay Informed
 

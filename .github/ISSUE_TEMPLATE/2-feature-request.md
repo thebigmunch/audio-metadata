@@ -7,9 +7,9 @@ labels: feature
 ### Checklist
 
 - [ ] Read the
-	[Contributing Guidelines](https://github.com/thebigmunch/audio-metadata/blob/master/.github/CONTRIBUTING.md)
+	[Contributing Guidelines](https://github.com/thebigmunch/audio-metadata/blob/main/.github/CONTRIBUTING.md)
 	and
-	[Code of Conduct](https://github.com/thebigmunch/audio-metadata/blob/master/.github/CODE_OF_CONDUCT.md)
+	[Code of Conduct](https://github.com/thebigmunch/audio-metadata/blob/main/.github/CODE_OF_CONDUCT.md)
 - [ ] No duplicate found with search
 
 ### Describe the problem to be solved or the functionality desired

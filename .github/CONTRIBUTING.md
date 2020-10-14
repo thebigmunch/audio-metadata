@@ -11,7 +11,7 @@ For a longer, softer version of that message, check out [Brett Cannon's](https:/
 *Setting expectations for open source participation* talk
 ([video](https://youtu.be/tzFWz5fiVKU?t=48m55s), [text](https://snarky.ca/setting-expectations-for-open-source-participation/)).
 
-See the [Code of Conduct](https://github.com/thebigmunch/audio-metadata/blob/master/.github/CODE_OF_CONDUCT.md)
+See the [Code of Conduct](https://github.com/thebigmunch/audio-metadata/blob/main/.github/CODE_OF_CONDUCT.md)
 for behavioral expectations.
 
 
@@ -49,7 +49,7 @@ Keep your code consistent with the rest of the project.
 * Readability and understandibility are more important than arbitrary rules.
 
 [Pull Requests](https://help.github.com/articles/creating-a-pull-request) should originate from a
-[feature branch][fb] in your [fork][fork], not from the **master** branch.
+[feature branch][fb] in your [fork][fork], not from the **main** branch.
 
 Commit messages should be written in a
 [well-formed, consistent](https://sethrobertson.github.io/GitBestPractices/#usemsg) manner.
