@@ -1,7 +1,7 @@
 from pathlib import Path
 
 from bidict import frozenbidict
-from tbm_utils import DataReader
+from audio_metadata.tbm_utils import DataReader
 from ward import test
 
 from audio_metadata.models import (

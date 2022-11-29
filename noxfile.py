@@ -5,10 +5,9 @@ import nox
 
 ON_GITHUB = 'GITHUB_ACTIONS' in os.environ
 
-py36 = '3.6'
-py37 = '3.7'
-py38 = '3.8'
 py39 = '3.9'
+py310 = '3.10'
+
 
 nox.options.reuse_existing_virtualenvs = True
 nox.options.sessions = [
@@ -41,21 +40,21 @@ def doc(session):
 	)
 
 
-@nox.session(python=[py36, py37, py38, py39])
+@nox.session(python=[py39, py310])
 def test(session):
 	session.install('-U', '.[test]')
 	session.run('coverage', 'run', '-m', 'ward', *session.posargs)
 	session.notify('report')
 
 
-@nox.session(python=[py36, py37, py38, py39])
+@nox.session(python=[py39, py310])
 def integration(session):
 	session.install('-U', '.[test]')
 	session.run('coverage', 'run', '-m', 'ward', '--tags', 'integration', *session.posargs)
 	session.notify('report')
 
 
-@nox.session(python=[py36, py37, py38, py39])
+@nox.session(python=[py39, py310])
 def unit(session):
 	session.install('-U', '.[test]')
 	session.run('coverage', 'run', '-m', 'ward', '--tags', 'unit', *session.posargs)

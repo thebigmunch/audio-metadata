@@ -17,7 +17,7 @@ from attr import (
 	attrib,
 	attrs,
 )
-from tbm_utils import (
+from ..tbm_utils import (
 	AttrMapping,
 	datareader,
 )
